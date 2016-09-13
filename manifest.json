@@ -1,0 +1,14 @@
+{
+  "name" : "Conan",
+  "version" : "1.0.0",
+  "description" : "Chrome Web Auto Tester",
+  "permissions": [ "cookies", "tabs", "http://*/*", "https://*/*" ],
+  "icons": { "16": "tester.png", "48": "tester.png", "128": "tester.png" },
+  "browser_action": {
+    "default_icon": "tester.png"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "manifest_version": 2
+}
