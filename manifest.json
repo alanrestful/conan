@@ -7,8 +7,18 @@
   "browser_action": {
     "default_icon": "tester.png"
   },
+  // 插件处理后台
   "background": {
     "scripts": ["background.js"]
   },
+  // 页面监听对象
+  "content_scripts": [
+    {
+      "matches": ["http://*/*"],
+      "all_frames": true,
+      "css": ["content.css"],
+      "js": ["./vendor/jquery/jquery.min.js", "content.js"]
+    }
+  ],
   "manifest_version": 2
 }
