@@ -33,61 +33,63 @@ chrome.browserAction.onClicked.addListener(function(tab) {
  */
 chrome.extension.onRequest.addListener(
   function(request, sender, sendResponse) {
-    var testers = __storage_to_obj(localStorage.tester_arrays);
-    var req_obj = typeof(request.data) == "object" ? request.data : __storage_to_obj(request.data);
+    chrome.storage.local.get('conan', function(result){
+      var conanConfig = result.conan;
 
-    var obj = __tester_array(testers, sender.tab.url);
-    if(obj == null){
-      testers.push(new TesterArray(sender.tab.url, req_obj));
-    }else{
-      obj.tArray.push(req_obj);
-    }
+      var testers = conanConfig.tester_arrays;
 
-    console.log(testers);
-    localStorage.tester_arrays = __obj_to_storage(testers);
+      var req_obj = typeof(request.data) == "object" ? request.data : JSON.parse(request.data);
+
+      var obj = __tester_array(testers, sender.tab.url);
+      if(obj == null){
+        testers.push(new TesterArray(sender.tab.url, req_obj));
+      }else{
+        obj.tArray.push(req_obj);
+      }
+
+      chrome.storage.local.set(result);
+    });
 });
 
 //初始化localstorage数据
 function init_localStorage() {
-  // 测试同步服务端
-  if(localStorage.testerServer == null){
-    localStorage.testerServer = "http://localhost:9024";
-  }
+  chrome.storage.local.get('conan', function(result){
+      if(!result.conan){
+        result.conan = {};
+      }
 
-  // log日志级别
-  if(localStorage.logLevel == null){
-    localStorage.logLevel = "log";
-  }
+      // 测试同步服务端
+      if(!result.conan.testerServer){
+        result.conan.testerServer = "http://localhost:9024";
+      }
 
-  // 默认是否同步数据
-  if(localStorage.syncTester == null){
-    localStorage.syncTester = "true";
-  }
+      // log日志级别
+      if(!result.conan.logLevel){
+        result.conan.logLevel = "log";
+      }
 
-  // 测试本地数据
-  if(localStorage.tester_arrays == null){
-    localStorage.tester_arrays = JSON.stringify([]);
-  }
+      //默认是否同步数据
+      if(!result.conan.syncTester){
+        result.conan.syncTester = true;
+      }
 
-  // 待同步远端的数据
-  if(localStorage.needSyncTester == null){
-      localStorage.needSyncTester = JSON.stringify([]);
-  }
+      //测试本地数据
+      if(!result.conan.tester_arrays){
+        result.conan.tester_arrays = [];
+      }
 
-  // 测试结果本地数据
-  if(localStorage.log_result == null){
-    localStorage.log_result = JSON.stringify([]);
-  }
-}
+      //待同步远端的数据
+      if(!result.conan.needSyncTester){
+        result.conan.needSyncTester = [];
+      }
 
-// localStroage字符数据对象化
-function __storage_to_obj(local_str){
-  return JSON.parse(local_str);
-}
+      //测试结果本地数据
+      if(!result.conan.log_result){
+        result.conan.log_result = [];
+      }
 
-// 将数据本地字符化
-function __obj_to_storage(obj){
-  return JSON.stringify(obj);
+      chrome.storage.local.set(result);
+  });
 }
 
 // 依据url获取测试队列归组
