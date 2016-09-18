@@ -313,26 +313,8 @@ function __init_back_obj(back_obj){
   return obj;
 }
 
-function __save_action(){
-  var send_obj = {
-    test_type:"form",
-    params:{
-      el_name:"INPUT",
-      el_type:"text"
-    }
-  };
-  chrome.extension.sendRequest({data:send_obj}, function(data) {});
-}
-
-/*
- * Form: {
-  test_type:"form",
-  el_name,
-  id,
-  class,
-  name,
-  type
- }
+/**
+ * 保存content获取到的数据
  */
 function __save_content(obj_val){
   chrome.extension.sendRequest({data:obj_val}, function(data) {});

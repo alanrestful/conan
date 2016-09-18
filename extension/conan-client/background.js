@@ -81,8 +81,22 @@ function __tester_array(testers, url){
 }
 
 /********************* 数据存储对象 **********************/
-// 测试组
+function getDomainAndPath(urlPath){
+  var reg = new RegExp('^(https?|ftp|file)://[-a-zA-Z0-9+&@#%?=~_|!:,.;]*[/]', 'gm');
+
+  var oldDomainP = urlPath.match(reg)[0];
+  var domain = oldDomainP.substring(0, oldDomainP.length-1);
+  var path = urlPath.substring(domain.length , urlPath.length);
+
+  return new Array(domain , path);
+}
+
+// 测试组(同一个页面)
 function TesterArray(url , tester_obj){
+  var domainPath = getDomainAndPath(url);
+
   this.url = url;
+  this.domain = domainPath[0];
+  this.path = domainPath[1]
   this.tArray = new Array(tester_obj);
 }
