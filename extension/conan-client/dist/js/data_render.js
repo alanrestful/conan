@@ -7,6 +7,8 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
     var storageChange = changes[key];
 
     if(storageChange.oldValue.tester_arrays != storageChange.newValue.tester_arrays){
+      $("#local_t_arrays").text(storageChange.newValue.tester_arrays.length);
+      $("#local_t_objs").text(count_t_objs(storageChange.newValue.tester_arrays));
       // 测试数据改动
       __diff_t_arrays(storageChange.oldValue.tester_arrays , storageChange.newValue.tester_arrays);
     }
@@ -90,6 +92,9 @@ $(document).ready(function() {
 
       conanConfig.tester_arrays = [];
       chrome.storage.local.set(result);
+
+      //清空页面数据
+      $(".panel-body").html("");
     });
   });
 });
@@ -102,23 +107,24 @@ function count_t_objs(tArrays){
   return count;
 }
 
-/*
-<a class="accordion-toggle" data-toggle="collapse" href="#collapse2">
-    点击我扩展。 再次点击我折叠。 Part I。
-</a>
-<div id="collapse2" class="accordion-body collapse">
-    <div>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-    </div>
-</div>
- */
-
 /**
  * 构建一个测试组的timeLine
  */
 function time_line_layout(tArray, line_index){
-  $(".panel-body").append($('<a class="accordion-toggle" data-toggle="collapse" href="#test_line'+line_index+'">'+tArray["url"]+'</a>'+
-    '<ul class="timeline accordion-body collapse" id="test_line'+line_index+'"></ul><br>'));
+  $(".panel-body").append($('<a class="accordion-toggle" style="line-height:35px;" data-toggle="collapse" href="#test_line'+line_index+'">'+tArray["url"]+'</a>'));
+
+  var jsonBut = $('<button type="button" style="float:right" data-toggle="modal" data-t-index="'+line_index+'" data-target="#myModal" class="btn btn-success">JSON</button>');
+  jsonBut.click(function(e){
+    var index = $(this).attr("data-t-index");
+    chrome.storage.local.get('conan', function(result){
+      var conanConfig = result.conan;
+
+      var tArrays = conanConfig.tester_arrays;
+      $("#t_array_json").val(JSON.stringify(tArrays[index], null, "\t"));
+    });
+  });
+  $(".panel-body").append(jsonBut);
+  $(".panel-body").append($('<ul class="timeline accordion-body collapse" id="test_line'+line_index+'"></ul><hr>'));
 }
 
 /**

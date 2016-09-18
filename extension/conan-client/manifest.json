@@ -14,7 +14,7 @@
   // 页面监听对象
   "content_scripts": [
     {
-      "matches": ["http://*/*"],
+      "matches": ["http://*/*", "https://*/*"],
       "all_frames": true,
       "css": ["content.css"],
       "js": ["./vendor/jquery/jquery.min.js", "content.js"]
