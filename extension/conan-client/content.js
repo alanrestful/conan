@@ -115,6 +115,33 @@ jQuery(document).ready(function($) {
 // tagName为input&select的需要做特殊处理，设置Value其余的都作为click对象
 var property = ["tagName" , "type", "id", "className", "name", "value", "placeholder", "baseURI", "innerText", "href"];
 
+var form_element = [{"INPUT" : ["text", "password"]}, {"SELECT": []}];
+
+/**
+ * 判断元素是否是form输入元素(非事件元素)
+ */
+function is_form_element(test_obj){
+  for(var i in form_element){
+    var element = form_element[i];
+
+    for(var tagName in element){
+      if(test_obj.tagName == tagName){
+        if(element[tagName].length == 0){
+          return true;
+        }
+
+        for(var n in element[tagName]){
+          if(test_obj.type == element[tagName][n]){
+            return true;
+          }
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
 /**
  * 构建测试对象
  */
@@ -128,6 +155,9 @@ function create_t_obj(event_obj){
   }
   // 元素xPath定位数据
   obj_val["xPath"] = event_obj.localXpath().xpath;
+
+  // 元素是否是form输入元素({"INPUT" : ["text", "password"]}, {"SELECT": []})
+  obj_val["isFormEl"] = is_form_element(obj_val);
 
   __save_content(obj_val);
 }

@@ -137,9 +137,9 @@ function time_line_view(tArrayObj , line_index){
   var tArray = tArrayObj.tArray;
   for(var n in tArray){
     timeLine.append(
-    '<li class="'+(is_form_element(tArray[n]) ? "" : "timeline-inverted")+'">'+
-      '<div class="timeline-badge '+(is_form_element(tArray[n]) ? "info" : "danger")+'">'+
-          '<i class="fa '+(is_form_element(tArray[n]) ? "fa-save" : "fa-bomb")+'"></i>'+
+    '<li class="'+(tArray[n]["isFormEl"] ? "" : "timeline-inverted")+'">'+
+      '<div class="timeline-badge '+(tArray[n]["isFormEl"] ? "info" : "danger")+'">'+
+          '<i class="fa '+(tArray[n]["isFormEl"] ? "fa-save" : "fa-bomb")+'"></i>'+
       '</div>'+
       '<div class="timeline-panel">'+
           '<div class="timeline-heading">'+
@@ -162,9 +162,9 @@ function append_time_line(tObj , line_index){
   var timeLine = $(line_index ? "#test_line"+line_index : "#test_line0");
 
   timeLine.append(
-  '<li class="'+(is_form_element(tObj) ? "" : "timeline-inverted")+'">'+
-    '<div class="timeline-badge '+(is_form_element(tObj) ? "info" : "danger")+'">'+
-        '<i class="fa '+(is_form_element(tObj) ? "fa-save" : "fa-bomb")+'"></i>'+
+  '<li class="'+(tObj["isFormEl"] ? "" : "timeline-inverted")+'">'+
+    '<div class="timeline-badge '+(tObj["isFormEl"] ? "info" : "danger")+'">'+
+        '<i class="fa '+(tObj["isFormEl"] ? "fa-save" : "fa-bomb")+'"></i>'+
     '</div>'+
     '<div class="timeline-panel">'+
         '<div class="timeline-heading">'+
@@ -197,43 +197,6 @@ var display_p = [{"id": "fa fa-comments fa-1x"}, {"className": "fa fa-tasks fa-1
                   {"name": "fa fa-shopping-cart fa-1x"}, {"placeholder": "fa fa-support fa-1x"},
                    {"innerText": "fa fa-arrow-circle-right fa-1x"}, {"href": "fa fa-credit-card fa-1x"},
                    {"xPath": "fa fa-clock-o fa-1x"}];
-
-var form_element = [{"INPUT" : ["text", "password"]}, {"SELECT": []}];
-
-// function is_form_element(test_obj){
-//   for(var i in form_element){
-//     if(test_obj.tagName == form_element[i]){
-//       return true;
-//     }
-//   }
-
-//   return false;
-// }
-
-/**
- * 判断元素是否是form输入元素(非事件元素)
- */
-function is_form_element(test_obj){
-  for(var i in form_element){
-    var element = form_element[i];
-
-    for(var tagName in element){
-      if(test_obj.tagName == tagName){
-        if(element[tagName].length == 0){
-          return true;
-        }
-
-        for(var n in element[tagName]){
-          if(test_obj.type == element[tagName][n]){
-            return true;
-          }
-        }
-      }
-    }
-  }
-
-  return false;
-}
 
 /**
  *  渲染测试用例数据
