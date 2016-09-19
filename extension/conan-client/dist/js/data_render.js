@@ -120,6 +120,7 @@ function time_line_layout(tArray, line_index){
       var conanConfig = result.conan;
 
       var tArrays = conanConfig.tester_arrays;
+      // $("#t_array_json").val(JSON.stringify(tArrays[index]));
       $("#t_array_json").val(JSON.stringify(tArrays[index], null, "\t"));
     });
   });
@@ -197,12 +198,37 @@ var display_p = [{"id": "fa fa-comments fa-1x"}, {"className": "fa fa-tasks fa-1
                    {"innerText": "fa fa-arrow-circle-right fa-1x"}, {"href": "fa fa-credit-card fa-1x"},
                    {"xPath": "fa fa-clock-o fa-1x"}];
 
-var form_element = ["INPUT", "SELECT"];
+var form_element = [{"INPUT" : ["text", "password"]}, {"SELECT": []}];
 
+// function is_form_element(test_obj){
+//   for(var i in form_element){
+//     if(test_obj.tagName == form_element[i]){
+//       return true;
+//     }
+//   }
+
+//   return false;
+// }
+
+/**
+ * 判断元素是否是form输入元素(非事件元素)
+ */
 function is_form_element(test_obj){
   for(var i in form_element){
-    if(test_obj.tagName == form_element[i]){
-      return true;
+    var element = form_element[i];
+
+    for(var tagName in element){
+      if(test_obj.tagName == tagName){
+        if(element[tagName].length == 0){
+          return true;
+        }
+
+        for(var n in element[tagName]){
+          if(test_obj.type == element[tagName][n]){
+            return true;
+          }
+        }
+      }
     }
   }
 
@@ -215,6 +241,9 @@ function is_form_element(test_obj){
 function render_obj(test_obj){
   switch(test_obj.tagName){
     case "INPUT":
+      if(test_obj.type && (test_obj.type == "text" || test_obj.type == "password")){
+
+      }
       return __input_render(test_obj);
     default :
       return __default_render(test_obj);

@@ -81,14 +81,13 @@ jQuery(document).ready(function($) {
   // 监听元素事件
   $(document).mousedown(function(e){
     //show detail element info in window（alt|option + 鼠标左击）
+    var event_obj = $(e.target);
     if(e.altKey && 1 == e.which){
       //left click
-      obj = $(e.target);
-
-      $("#tester_element_tagName").text(obj[0].tagName);
+      $("#tester_element_tagName").text(event_obj[0].tagName);
       $(".tester_contact_form").empty();
 
-      $(create_view(obj)).appendTo($(".tester_contact_form"));
+      $(create_view(event_obj)).appendTo($(".tester_contact_form"));
 
       $('.tester_theme_popover_mask').fadeIn(100);
       $('#tester_show_element_view').slideDown(200);
@@ -96,8 +95,7 @@ jQuery(document).ready(function($) {
 
     //save element event for click（command + 鼠标左击）
     if(e.metaKey && 1 == e.which){
-      obj = $(e.target);
-      create_view(obj);
+      create_t_obj(event_obj);
     }
   });
 
@@ -109,7 +107,7 @@ jQuery(document).ready(function($) {
 
     //select的数据要做特殊处理用于选择特定value
     if(event_obj[0].tagName == "SELECT"){
-      create_view(event_obj);
+      create_t_obj(event_obj);
     }
   });
 });
@@ -117,9 +115,10 @@ jQuery(document).ready(function($) {
 // tagName为input&select的需要做特殊处理，设置Value其余的都作为click对象
 var property = ["tagName" , "type", "id", "className", "name", "value", "placeholder", "baseURI", "innerText", "href"];
 
-function create_view(event_obj){
-  var ul = $("<ul></ul>");
-
+/**
+ * 构建测试对象
+ */
+function create_t_obj(event_obj){
   // 元素信息
   var obj_val = {};
   for (var pro in property){
@@ -129,6 +128,15 @@ function create_view(event_obj){
   }
   // 元素xPath定位数据
   obj_val["xPath"] = event_obj.localXpath().xpath;
+
+  __save_content(obj_val);
+}
+
+/**
+ * 展示元素属性信息
+ */
+function create_view(event_obj){
+  var ul = $("<ul></ul>");
 
   switch(event_obj[0].tagName){
     case "A":
@@ -155,8 +163,6 @@ function create_view(event_obj){
     default:
       form_obj = __init_back_obj(basic_view(ul, event_obj));
   }
-
-  __save_content(obj_val);
   return ul;
 }
 
@@ -244,9 +250,15 @@ function __li_view(attr_v, event_obj){
 
 function __attr_obj(attr_v, event_obj){
     if(attr_v == "class"){
-        return event_obj.attr(attr_v).replace(/\s/g, ".");
+      var formatClass = '';
+      var elementClass = event_obj.attr(attr_v);
+      if(typeof elementClass != 'undefined' && elementClass != ''){
+          formatClass = '.' + elementClass.replace(/^\s+|\s+$/g, "").split(/[\s\n]+/).join('.');
+      }
+
+      return formatClass;
     }else{
-        return event_obj.attr(attr_v);
+      return event_obj.attr(attr_v);
     }
 }
 
@@ -259,7 +271,7 @@ function __obj_index(attr_v, event_obj){
       break;
 
     case "class":
-      obj_list = $("."+__attr_obj(attr_v , event_obj));
+      obj_list = $(__attr_obj(attr_v, event_obj));
       break;
 
     case "name":
