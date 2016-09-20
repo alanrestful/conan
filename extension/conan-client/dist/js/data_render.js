@@ -120,8 +120,8 @@ function time_line_layout(tArray, line_index){
       var conanConfig = result.conan;
 
       var tArrays = conanConfig.tester_arrays;
-      // $("#t_array_json").val(JSON.stringify(tArrays[index]));
-      $("#t_array_json").val(JSON.stringify(tArrays[index], null, "\t"));
+      $("#t_array_json").val(JSON.stringify(tArrays[index]));
+      // $("#t_array_json").val(JSON.stringify(tArrays[index], null, "\t"));
     });
   });
   $(".panel-body").append(jsonBut);
