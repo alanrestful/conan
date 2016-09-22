@@ -1,0 +1,59 @@
+@import "../../static/styles/theme";
+
+body {
+  font-weight: 200;
+  padding: 0 60px;
+  background-color: $color-secondary;
+}
+
+.header {
+  padding: 0 60px;
+  margin: 0 -60px;
+  height: 60px;
+  line-height: 60px;
+  background-color: $color-primary;
+  .logo {
+    color: #fff;
+    font-size: 18px;
+    height: 60px;
+    text-decoration: none;
+    display: inline-block;
+    vertical-align: top;
+    img {
+      height: 30px;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    span {
+      vertical-align: sub;
+    }
+  }
+
+  nav {
+    li {
+      float: left;
+      a {
+        display: inline-block;
+        width: 80px;
+        text-align: center;
+        color: #fff;
+        &:hover {
+          color: $color-text;
+          background-color: $color-secondary;
+        }
+      }
+    }
+  }
+
+  .user-menu {
+    margin-left: 10px;
+    color: #fff;
+    .avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+  }
+}
