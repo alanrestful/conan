@@ -28,6 +28,36 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   focusOrCreateTab(manager_url);
 });
 
+var port = null;
+//监听chrome发送的message信息
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        connectToNative(request);
+        return true;
+    }
+);
+
+//onNativeDisconnect
+function onDisconnected() {
+    console.log(chrome.runtime.lastError);
+    console.log('disconnected from native app.');
+    port = null;
+}
+
+function onNativeMessage(message) {
+    console.log('recieved message from native app: ' + JSON.stringify(message));
+}
+
+//connect to native host and get the communicatetion port
+function connectToNative(msg) {
+    var nativeHostName = "com.conan.client";
+    port = chrome.runtime.connectNative(nativeHostName);
+    port.onMessage.addListener(onNativeMessage);
+    port.onDisconnect.addListener(onDisconnected);
+
+    port.postMessage(msg);
+}
+
 /**
  * content数据本地化
  */

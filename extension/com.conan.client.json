@@ -1,5 +1,5 @@
 {
-  "name": "conan.tester.client",
+  "name": "com.conan.client",
   "description": "My Application",
   "path": "/usr/local/bin/conanClient",
   "type": "stdio",

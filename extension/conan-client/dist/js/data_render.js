@@ -1,6 +1,3 @@
-// alert(localStorage.tester_arrays);
-var back_env = chrome.extension.getBackgroundPage();
-
 // 对storage做监听，实时刷新TimeLine数据
 chrome.storage.onChanged.addListener(function(changes, namespace) {
   for (key in changes) {
@@ -113,8 +110,8 @@ function count_t_objs(tArrays){
 function time_line_layout(tArray, line_index){
   $(".panel-body").append($('<a class="accordion-toggle" style="line-height:35px;" data-toggle="collapse" href="#test_line'+line_index+'">'+tArray["url"]+'</a>'));
 
-  var jsonBut = $('<button type="button" style="float:right" data-toggle="modal" data-t-index="'+line_index+'" data-target="#myModal" class="btn btn-success">JSON</button>');
-  jsonBut.click(function(e){
+  var jsonBtn = $('<button type="button" style="float:right" data-toggle="modal" data-t-index="'+line_index+'" data-target="#myModal" class="btn btn-success">JSON</button>');
+  jsonBtn.click(function(e){
     var index = $(this).attr("data-t-index");
     chrome.storage.local.get('conan', function(result){
       var conanConfig = result.conan;
@@ -124,7 +121,22 @@ function time_line_layout(tArray, line_index){
       // $("#t_array_json").val(JSON.stringify(tArrays[index], null, "\t"));
     });
   });
-  $(".panel-body").append(jsonBut);
+  $(".panel-body").append(jsonBtn);
+
+  var reviewBtn = $('<button type="button" style="float:right;margin-right:20px;" data-t-index="'+line_index+'" class="btn btn-success">测试</button>');
+  reviewBtn.click(function(e){
+    var index = $(this).attr("data-t-index");
+    chrome.storage.local.get('conan', function(result){
+      var conanConfig = result.conan;
+
+      var tArrays = conanConfig.tester_arrays;
+      chrome.runtime.sendMessage(tArrays[index] , function(response) {
+        console.log(response)
+      });
+    });
+  });
+  $(".panel-body").append(reviewBtn);
+
   $(".panel-body").append($('<ul class="timeline accordion-body collapse" id="test_line'+line_index+'"></ul><hr>'));
 }
 
