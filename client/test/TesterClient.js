@@ -7,6 +7,12 @@ var driver = new webdriver.Builder().
 withCapabilities(webdriver.Capabilities.chrome()).
 build();
 
+process.env["webdriver.chrome.driver"] = "/usr/local/bin/chromedriver";
+
+driver.getCapabilities().then(function(value){
+    console.log(value);
+});
+
 var tArray = JSON.parse('{"domain":"http://mallt.jidd.com.cn:8888","path":"/login","tArray":[{"baseURI":"http://mallt.jidd.com.cn:8888/login","className":"form-control","id":"loginId","name":"loginBy","placeholder":"请输入昵称、手机或者邮箱","tagName":"INPUT","type":"text","value":"滦县鹏大商贸有限公司","xPath":"//*[@id=\'loginId\']"},{"baseURI":"http://mallt.jidd.com.cn:8888/login","className":"form-control","id":"password","name":"password","placeholder":"请输入密码","tagName":"INPUT","type":"password","value":"123456","xPath":"//*[@id=\'password\']"},{"baseURI":"http://mallt.jidd.com.cn:8888/login","className":"form-control btn","tagName":"INPUT","type":"submit","value":"登    录","xPath":"//*[@class=\'form-control btn\']"}],"url":"http://mallt.jidd.com.cn:8888/login"}');
 
 driver.get('http://mallt.jidd.com.cn:8888');
