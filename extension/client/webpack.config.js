@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-var path = require('path');
-var webpack = require('webpack');
+var path = require("path");
+var webpack = require("webpack");
 var ROOT_PATH = path.resolve(__dirname);
-var APP_PATH = path.resolve(ROOT_PATH, 'app');
-var BUILD_PATH = path.resolve(ROOT_PATH, 'build');
-// var htmlWebpackPlugin =  require('html-webpack-plugin');
+var APP_PATH = path.resolve(ROOT_PATH, "app");
+var BUILD_PATH = path.resolve(ROOT_PATH, "build");
+// var htmlWebpackPlugin =  require("html-webpack-plugin");
 //
 var CopyWebpackPlugin = require("copy-webpack-plugin");
 
@@ -15,12 +15,13 @@ var dashboard = new Dashboard();
 
 module.exports = {
   entry: [
-    'webpack/hot/only-dev-server',
+    "webpack/hot/only-dev-server",
     "./app/index.js"
   ],
   output: {
-    path: BUILD_PATH,
-    filename: "bundle.js"
+    path: BUILD_PATH + "/assest/",
+    filename: "bundle.js",
+    publicPath: "/assest/"
   },
   module: {
     loaders: [{
@@ -28,19 +29,23 @@ module.exports = {
       exclude: /node_modules/,
       loader: "babel-loader",
       query: {
-        presets:['react','es2015']
+        presets: ["react","es2015"],
+        plugins: [["import", {
+          style: "css",
+          libraryName: "antd"
+        }]]
       }
     }, {
-      test: /\.scss$/,
-      loaders: ['style', 'css', 'sass'],
-      include: APP_PATH
+      test: /\.(scss|css)$/,
+      loaders: ["style", "css", "sass"]
     }, {
       test: /\.(png|jpg)$/,
-      loader: 'url?limit=40000'
+      loader: "url?limit=40000"
     }]
   },
-  resolve:{
-    extensions:['','.js','.json']
+  resolve: {
+    root: APP_PATH,
+    extensions: ["",".js",".json"]
   },
   devServer: {
     hot: true,
@@ -48,10 +53,11 @@ module.exports = {
   },
   plugins: [
     new CopyWebpackPlugin([
-      {from: ROOT_PATH + "/app/static"},
-      {from: ROOT_PATH + "/manifest.json"},
-      {from: ROOT_PATH + "/index.html"}
-    ], ROOT_PATH + "/build"),
+      {from: APP_PATH + "/static/scripts/", to: BUILD_PATH + "/assest/scripts/"},
+      {from: APP_PATH + "/static/images/", to: BUILD_PATH + "/assest/images/"},
+      {from: ROOT_PATH + "/manifest.json", to: BUILD_PATH},
+      {from: ROOT_PATH + "/index.html", to: BUILD_PATH}
+    ]),
     new webpack.NoErrorsPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new DashboardPlugin(dashboard.setData)

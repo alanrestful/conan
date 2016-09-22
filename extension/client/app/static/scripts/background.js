@@ -24,7 +24,7 @@ function focusOrCreateTab(url) {
 
 // 为extension的点击监听
 chrome.browserAction.onClicked.addListener(function(tab) {
-  var manager_url = chrome.extension.getURL("manager.html");
+  var manager_url = chrome.extension.getURL("index.html");
   focusOrCreateTab(manager_url);
 });
 
