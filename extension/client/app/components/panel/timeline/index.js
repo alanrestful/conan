@@ -66,7 +66,16 @@ export default class extends React.Component {
   render() {
     return (
       <div>
-        <Card title="Title" extra={ <span><a href="#" onClick={ this.showModal.bind(this) }><Icon type="plus-circle-o" /> 创建</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a href="#"><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
+        <Card title="Title" extra={ <span><a href="#" onClick={ this.showModal.bind(this) }><Icon type="play-circle-o" /> 回放</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick={ this.showModal.bind(this) }><Icon type="plus-circle-o" /> 创建</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a href="#"><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel timeline">
+          <div className="group-result clearfix">
+            <span className="group-result-info">预期结果：以下报错均出现</span>
+            <span className="group-result-control">
+              <a href="#" onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
+              <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
+                <a href="#"><Icon type="cross-circle-o" /> 删除</a>
+              </Popconfirm>
+            </span>
+          </div>
           <Timeline>
             <TimelineItem key={1} dot={ <Checkbox onChange={ this.updateSelected.bind(this) } /> }>初步排除网络异常 2015-09-01</TimelineItem>
             <TimelineItem key={2} dot={ <Checkbox onChange={ this.updateSelected.bind(this) } /> }>技术测试异常 2015-09-01</TimelineItem>

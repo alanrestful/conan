@@ -30,28 +30,6 @@
         float: right;
       }
     }
-    .group-result {
-      background-color: $color-ghost;
-      padding: 10px;
-      margin: 10px 0;
-      &.small {
-        padding: 5px;
-        margin: 5px 0;
-      }
-      &.error {
-        background-color: $color-error;
-        color: #fff;
-        a {
-          color: #fff;
-        }
-      }
-      .group-result-info {
-        float: left;
-      }
-      .group-result-control {
-        float: right;
-      }
-    }
     .action-line {
       li {
         margin-bottom: 20px;

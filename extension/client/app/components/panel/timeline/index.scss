@@ -1,6 +1,12 @@
-.ant-timeline {
-  .ant-timeline-item-head-custom {
-    z-index: 1;
-    background-color: transparent;
+.timeline {
+  .ant-card-body {
+    padding: 10px 24px;
+  }
+  .ant-timeline {
+    margin-top: 20px;
+    .ant-timeline-item-head-custom {
+      z-index: 1;
+      background-color: transparent;
+    }
   }
 }
