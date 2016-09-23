@@ -1,0 +1,9 @@
+{
+  "name": "com.conan.client",
+  "description": "My Application",
+  "path": "/usr/local/bin/conanClient",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://ogmpbogagadlgacfnneajplfinocnnam/"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  // 通过设置环境变量NODE_ENV=dev来设置项目读取的环境变量参数
+  // 在client插件做环境配置，如果没有配置则依据default.json配置的为准
+  "webDriver": {
+    // driver的路径配置
+    "drivers": [{"chromedriver":"/usr/local/bin"}],
+    // 默认的driver
+    "default_driver": "chromedriver",
+    // 默认调用时打开的窗口数量
+    "default_windows": 1,
+    // 默认窗口大小
+    "default_size": [1280, 1024]
+  },
+  "log": {
+    // 默认log路径
+    "path": "/var/log/conan/conan.log",
+    // 默认10MB
+    "maxLogSize": 10485760
+  }
+}
