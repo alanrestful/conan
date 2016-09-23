@@ -1,0 +1,45 @@
+@import "../../../static/styles/theme";
+
+.ant-tabs {
+  background-color: #fff;
+  .ant-tabs-bar {
+    color: $color-dark;
+    background-color: $color-primary;
+    border-bottom: none;
+    margin-bottom: 0;
+    .ant-tabs-tab-inner {
+      &:hover {
+        color: #fff;
+      }
+    }
+    .ant-tabs-tab-active {
+      .ant-tabs-tab-inner {
+        color: #fff;
+      }
+    }
+  }
+  .ant-tabs-ink-bar {
+    background-color: #fff;
+    height: 3px;
+  }
+}
+
+.group-tab {
+  .ant-tabs-nav {
+    width: 100%;
+    .ant-tabs-tab {
+      width: 50%;
+      margin-right: 0;
+      .ant-tabs-tab-inner {
+        height: 48px;
+        line-height: 30px;
+        text-align: center;
+      }
+    }
+  }
+  .ant-tabs-content {
+    .ant-tabs-tabpane {
+      padding: 24px;
+    }
+  }
+}
