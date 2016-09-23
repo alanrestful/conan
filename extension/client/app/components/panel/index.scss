@@ -1,0 +1,23 @@
+@import "../../static/styles/theme";
+
+.ant-card {
+  border: none;
+  border-radius: 0;
+  .ant-card-head {
+    background-color: $color-primary;
+    border-bottom: none;
+    color: #fff;
+    .ant-card-head-title {
+      font-weight: normal;
+    }
+  }
+  .ant-card-extra {
+    a {
+      color: #fff;
+    }
+  }
+}
+
+.panel {
+  margin-top: 24px;
+}
