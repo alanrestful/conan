@@ -52,8 +52,9 @@ event.on('playback', function(driver, tCase, callBack) {
         }
     }
 
-    callBack();
-    driver.quit();
+    driver.quit().then(function(){
+        callBack();
+    });
 });
 
 function messageHandler(msg, push, done) {
@@ -64,6 +65,8 @@ function messageHandler(msg, push, done) {
         event.emit('playback', driver, msg, function(){
             push(msg);
             done();
+            //先做回归结束后直接结束,防止driver无法关闭问题(后期更改)
+            process.exit();
         });
     }catch (e){
         logger.error(e.stack);
