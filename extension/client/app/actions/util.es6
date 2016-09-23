@@ -105,3 +105,69 @@ export function actionCreator(type, obj) {
   obj.type = type
   return obj
 }
+
+export function listenerTarrayStorage(arrayFun, objFun){
+  chrome.storage.onChanged.addListener(function(changes, namespace){
+    for(key in changes){
+      let storageChange = changes[key];
+
+      if(storageChange.oldValue.tester_arrays != storageChange.newValue.tester_arrays) {
+        // 数据是否有改动
+        __diff_t_arrays(storageChange.oldValue.tester_arrays , storageChange.newValue.tester_arrays, arrayFun, objFun);
+      }
+    }
+  });
+}
+
+/**
+ * 判断两个对象是否相同
+ */
+function __is_diff(old_obj, new_obj){
+  for(var p in old_obj) {
+      if(typeof(new_obj[p])=='undefined') {return true;}
+  }
+
+  for(var n in old_obj) {
+    if (old_obj[n]) {
+      switch(typeof(old_obj[n])) {
+        case 'object':
+          if (__is_diff(old_obj[n], new_obj[n])) { return true;} break;
+        case 'function':
+          break;
+        default:
+          if (old_obj[n] != new_obj[n]) { return true;}
+      }
+    } else {
+      if (new_obj[p]){
+        return true;
+      }
+    }
+  }
+  for(var m in new_obj) {
+    if(typeof(old_obj[m]) == 'undefined') {return true;}
+  }
+  return false;
+}
+
+/**
+ * 获取数据是否有改动
+ */
+function __diff_t_arrays(old_arrays , new_arrays, arrayFun, objFun){
+  for(var newI in new_arrays){
+    if(!old_arrays[newI]){
+      //新增的测试组
+      // time_line_layout(new_arrays[newI] , newI);
+      // time_line_view(new_arrays[newI], newI);
+      arrayFun(new_arrays[newI] , newI);
+    }else if(__is_diff(old_arrays[newI], new_arrays[newI])){
+      var oldArray = old_arrays[newI]["tArray"];
+      var newArray = new_arrays[newI]["tArray"];
+      for(var diffI in newArray){
+        if(!oldArray[diffI]){
+          // append_time_line(newArray[diffI] , newI);
+          objFun(newArray[diffI] , newI);
+        }
+      }
+    }
+  }
+}
