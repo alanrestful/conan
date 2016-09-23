@@ -1,17 +1,10 @@
 #!/usr/local/bin/node
-
 var nativeMessage = require('./lib/nativeIO.js');
 var webdriver = require('selenium-webdriver');
 var events = require('events');
-var log4js = require("log4js");
 var path = require("path");
 
-log4js.configure({
-    appenders: [
-        { type: "file", filename: "/var/log/conan/conan.log", "maxLogSize": 2048000, "backups":3}
-    ]
-});
-var logger = log4js.getLogger(path.basename(__filename));
+var logger = require("./lib/config.js").logger;
 
 var input = new nativeMessage.Input();
 var transform = new nativeMessage.Transform(messageHandler);
@@ -93,7 +86,7 @@ var fromElement = (function sendValue(){
             logger.info(tObj);
             logger.error(err);
         });
-    }
+    };
 })();
 
 /**
@@ -116,5 +109,5 @@ var actionElement = (function actionV(){
             logger.info(tObj);
             logger.error(err);
         });
-    }
+    };
 })();

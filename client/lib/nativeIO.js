@@ -1,7 +1,6 @@
 // - Input - 针对native message的(object)数据转换成object
 // - Output - 将object数据转换成native message数据
 // - Transform - 提供的数据转换入口
-
 var stream = require('stream');
 var util = require('util');
 
