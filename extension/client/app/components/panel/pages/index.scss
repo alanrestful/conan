@@ -1,0 +1,24 @@
+@import "../../../static/styles/theme";
+
+.pages {
+  margin: -24px;
+  li {
+    padding: 12px 24px;
+    line-height: 24px;
+    cursor: default;
+    border-bottom: $color-border-default solid 1px;
+    &:last-child {
+      border-bottom: none;
+    }
+    &.active {
+      border-left: $color-primary solid 5px;
+    }
+    .link {
+      font-size: 14px;
+      color: $color-primary;
+    }
+    .time {
+      color: $color-dark;
+    }
+  }
+}
