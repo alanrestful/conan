@@ -31,10 +31,10 @@ export default class extends React.Component {
           <Col span={9} offset={10}>
             <nav>
               <ul>
-                <li><a href="/">录制</a></li>
-                <li><a href="/playback">回放</a></li>
-                <li><a href="/dashboard">统计</a></li>
-                <li><a href="/setting">设置</a></li>
+                <li><a href="#/">录制</a></li>
+                <li><a href="#/playback">回放</a></li>
+                <li><a href="#/dashboard">统计</a></li>
+                <li><a href="#/setting">设置</a></li>
               </ul>
             </nav>
             <Dropdown overlay={this.dropdown()}>

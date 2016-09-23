@@ -15,9 +15,8 @@ import reducers from "./reducers/reducers";
 
 const AppRouter = () => {
   return (
-    <Router history={ browserHistory }>
+    <Router history={ hashHistory }>
       <Route path="/" component={ Index } />
-      <Route path="/index.html" component={ Index } />
       <Route path="/playback" component={ Playback } />
       <Route path="*" component={ NoMatch } />
     </Router>
