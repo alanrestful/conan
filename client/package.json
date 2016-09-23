@@ -1,0 +1,16 @@
+{
+  "name": "conanClient",
+  "bin": {
+    "conanClient": "./conanClient.js"
+  },
+  "scripts": {
+    "conan": "npm install && cp ../extension/com.conan.client.json /Library/Google/Chrome/NativeMessagingHosts && npm link"
+  },
+  "main": "./conanClient.js",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "selenium-webdriver": "2.53.3",
+    "log4js": "0.6.38"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name" : "Parana Conan",
+  "version" : "0.0.1",
+  "description" : "大家好，我叫巴拉那柯南，是个测试！",
+  "permissions": [ "cookies", "storage", "tabs", "http://*/*", "https://*/*" ],
+  "icons": { "16": "images/logo.png", "48": "images/logo.png", "128": "images/logo.png" },
+  "browser_action": {
+    "default_icon": "images/logo.png"
+  },
+  // 插件处理后台
+  "background": {
+    "scripts": ["assest/scripts/background.js"]
+  },
+  // 页面监听对象
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "all_frames": true,
+      // "css": ["content.css"],
+      "js": ["assest/scripts/content.js"]
+    }
+  ],
+  "manifest_version": 2
+}
