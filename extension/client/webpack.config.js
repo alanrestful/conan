@@ -52,6 +52,7 @@ module.exports = {
     new CopyWebpackPlugin([
       {from: APP_PATH + "/static/scripts/", to: BUILD_PATH + "/assest/scripts/"},
       {from: APP_PATH + "/static/images/", to: BUILD_PATH + "/assest/images/"},
+      {from: APP_PATH + "/static/styles/", to: BUILD_PATH + "/assest/styles/"},
       {from: ROOT_PATH + "/manifest.json", to: BUILD_PATH},
       {from: ROOT_PATH + "/index.html", to: BUILD_PATH}
     ]),
