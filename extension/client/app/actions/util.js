@@ -111,7 +111,7 @@ export function actionCreator(type, obj) {
  * index: 需要清空的数据索引，在整个测试用例组中
  * callback: 清空数据后回调
  */
-export function cleanAllTArray(index, callback){
+export function clearAllTArray(index, callback){
   chrome.storage.local.get('conan', function(result){
     var conanConfig = result.conan;
 
