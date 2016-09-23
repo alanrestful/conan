@@ -106,6 +106,47 @@ export function actionCreator(type, obj) {
   return obj
 }
 
+/**
+ * 清空conan的测试数据
+ * index: 需要清空的数据索引，在整个测试用例组中
+ * callback: 清空数据后回调
+ */
+export function cleanAllTArray(index, callback){
+  chrome.storage.local.get('conan', function(result){
+    var conanConfig = result.conan;
+
+    if(index){
+      conanConfig.tester_arrays.splice(index , 1);
+    }else{
+      conanConfig.tester_arrays = [];
+    }
+
+    chrome.storage.local.set(result);
+    callback();
+  });
+}
+
+/**
+ * 获取所有的测试数据信息
+ * @param callback获取数据后回调
+ * 传入全部数据信息
+ */
+export function allTArrays(callback){
+  chrome.storage.local.get('conan', function(result){
+    var conanConfig = result.conan;
+
+    var tArrays = conanConfig.tester_arrays;
+    callback(tArrays);
+  });
+}
+
+/**
+ * 监听Chrome localStorage信息更变(测试数据)
+ * @param arrayFun(tArray , index)
+ * tArray:测试用例数据, index:在整个测试组中的位置
+ * @param objFun(tObj , index)
+ * tObj:测试元素, index:在测试用例中的位置
+ */
 export function listenerTarrayStorage(arrayFun, objFun){
   chrome.storage.onChanged.addListener(function(changes, namespace){
     for(var key in changes){
