@@ -108,7 +108,7 @@ export function actionCreator(type, obj) {
 
 export function listenerTarrayStorage(arrayFun, objFun){
   chrome.storage.onChanged.addListener(function(changes, namespace){
-    for(key in changes){
+    for(var key in changes){
       let storageChange = changes[key];
 
       if(storageChange.oldValue.tester_arrays != storageChange.newValue.tester_arrays) {

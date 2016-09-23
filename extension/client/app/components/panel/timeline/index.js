@@ -17,6 +17,10 @@ export default class extends React.Component {
     }
   }
 
+  componentWillMount() {
+    this.props.getData();
+  }
+
   showModal() {
     this.setState({ visible: true });
   }

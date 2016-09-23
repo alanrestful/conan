@@ -9,10 +9,6 @@ var BUILD_PATH = path.resolve(ROOT_PATH, "build");
 //
 var CopyWebpackPlugin = require("copy-webpack-plugin");
 
-var Dashboard = require("webpack-dashboard");
-var DashboardPlugin = require("webpack-dashboard/plugin");
-var dashboard = new Dashboard();
-
 module.exports = {
   entry: [
     "webpack/hot/only-dev-server",
@@ -60,7 +56,6 @@ module.exports = {
       {from: ROOT_PATH + "/index.html", to: BUILD_PATH}
     ]),
     new webpack.NoErrorsPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-    new DashboardPlugin(dashboard.setData)
+    new webpack.HotModuleReplacementPlugin()
   ]
 };

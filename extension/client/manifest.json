@@ -17,7 +17,7 @@
       "matches": ["http://*/*", "https://*/*"],
       "all_frames": true,
       // "css": ["content.css"],
-      "js": ["assest/scripts/content.js"]
+      "js": ["assest/scripts/jquery.min.js", "assest/scripts/content.js"]
     }
   ],
   "manifest_version": 2
