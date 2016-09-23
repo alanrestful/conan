@@ -14,5 +14,7 @@ log/
 *.log
 *.perm
 *.bak
+com.conan.client.json
 node_modules/
 build/
+client/config/default.json
