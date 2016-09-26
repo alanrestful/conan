@@ -36,10 +36,17 @@
         .index {
           color: $color-primary;
           margin-right: 5px;
-        }
-        .action-layout {
           float: left;
+          width: 15px;
+        }
+        .action-content-wrap {
+          float: left;
+          width: 100%;
+          margin-left: -20px;
+        }
+        .action-content {
           display: block;
+          padding-left: 20px;
           div {
             margin-bottom: 5px;
           }

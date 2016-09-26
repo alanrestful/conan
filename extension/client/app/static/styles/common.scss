@@ -1,0 +1,11 @@
+@mixin word-wrap($width: 150px) {
+  width: $width;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+@mixin text-overflow() {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
