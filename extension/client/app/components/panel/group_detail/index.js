@@ -68,7 +68,7 @@ export default class extends React.Component {
   render() {
     return (
       <div>
-        <Card title="商品模块 125个模板" extra={ <span><a href="#" onClick={ this.showModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a href="#"><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
+        <Card title="商品模块 125个模板" extra={ <span><a onClick={ this.showModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
           <Row className="group-detail">
             <Col span={10} className="group-list-wrapper">
               <div className="group-search"><Search /></div>
@@ -89,30 +89,30 @@ export default class extends React.Component {
               <div className="group-result clearfix">
                 <span className="group-result-info">预期结果：以下报错均出现</span>
                 <span className="group-result-control">
-                  <a href="#" onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                  <a onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
                   <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
-                    <a href="#"><Icon type="cross-circle-o" /> 删除</a>
+                    <a><Icon type="cross-circle-o" /> 删除</a>
                   </Popconfirm>
                 </span>
               </div>
               <ul className="action-line">
-                <li>
+                <li className="clearfix">
                   <span className="action-layout index">1.</span>
                   <span className="action-layout">
                     <div><span className="address"><Icon type="environment-o" /> //*[@id='button']</span> &nbsp;&nbsp;&nbsp;&nbsp; <span className="action"><Icon type="setting" /> click</span></div>
                     <div><Button size="small">Comment</Button></div>
                   </span>
                 </li>
-                <li>
-                  <span className="index">2.</span>
+                <li className="clearfix">
+                  <span className="action-layout index">2.</span>
                   <span className="action-layout">
                     <div><span className="address"><Icon type="environment-o" /> //*[@id='button']</span> &nbsp;&nbsp;&nbsp;&nbsp; <span className="action"><Icon type="setting" /> click</span></div>
                     <div className="group-result small error clearfix">
                       <span className="group-result-info">预期结果：以下报错均出现</span>
                       <span className="group-result-control">
-                        <a href="#" onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
                         <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
-                          <a href="#"><Icon type="cross-circle-o" /> 删除</a>
+                          <a><Icon type="cross-circle-o" /> 删除</a>
                         </Popconfirm>
                       </span>
                     </div>

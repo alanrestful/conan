@@ -6,6 +6,10 @@ body {
   background-color: $color-secondary;
 }
 
+a {
+  cursor: pointer;
+}
+
 .header {
   padding: 0 60px;
   margin: 0 -60px;

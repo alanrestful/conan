@@ -75,7 +75,7 @@ export default class extends React.Component {
   render() {
     return (
       <div>
-        <Card title="设置" extra={ <a href="#" onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a> } className="panel">
+        <Card title="设置" extra={ <a onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a> } className="panel">
         </Card>
         <Modal title="设置" visible={ this.state.visible } onOk={ this.handleOk.bind(this) } confirmLoading={ this.state.confirmLoading } onCancel={ this.handleCancel.bind(this) }>
             { this.modalContext.call(this) }

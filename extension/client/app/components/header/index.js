@@ -17,7 +17,7 @@ export default class extends React.Component {
     return (
       <Menu>
         <Menu.Item>
-          <a href="#">退出</a>
+          <a>退出</a>
         </Menu.Item>
       </Menu>
     )
@@ -27,7 +27,7 @@ export default class extends React.Component {
     return (
       <div className="header">
         <Row>
-          <Col span={5}><a href="/" className="logo"><img src={ require("../../static/images/parana.png") } alt="Parana" /><span>Conan</span></a></Col>
+          <Col span={5}><a href="#/" className="logo"><img src={ require("../../static/images/parana.png") } alt="Parana" /><span>Conan</span></a></Col>
           <Col span={9} offset={10}>
             <nav>
               <ul>
@@ -38,7 +38,7 @@ export default class extends React.Component {
               </ul>
             </nav>
             <Dropdown overlay={this.dropdown()}>
-              <a className="ant-dropdown-link user-menu" href="#"><img className="avatar" src={ this.state.avatar } alt="JSANN" /> JSANN <Icon type="down" /></a>
+              <a className="ant-dropdown-link user-menu"><img className="avatar" src={ this.state.avatar } alt="JSANN" /> JSANN <Icon type="down" /></a>
             </Dropdown>
           </Col>
         </Row>
