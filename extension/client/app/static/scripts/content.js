@@ -159,6 +159,9 @@ function create_t_obj(event_obj){
   // 元素是否是form输入元素({"INPUT" : ["text", "password"]}, {"SELECT": []})
   obj_val["isFormEl"] = is_form_element(obj_val);
 
+  // 元素记录时间
+  obj_val["inDate"] = new Date();
+
   __save_content(obj_val);
 }
 
