@@ -1,4 +1,3 @@
-
 export const form = { 'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8', 'x-requested-with': 'XMLHttpRequest', "Accept": "application/json" };
 export const xhr = { 'x-requested-with': 'XMLHttpRequest', "Accept": "application/json" };
 export const json = { 'Content-Type' : 'application/json', 'x-requested-with': 'XMLHttpRequest', "Accept": "application/json" };

@@ -1,6 +1,9 @@
 @import "../../../static/styles/theme";
 
 .timeline {
+  .ant-card-head-title {
+    width: 600px;
+  }
   .ant-card-body {
     padding: 10px 24px;
   }
