@@ -1,6 +1,6 @@
 import Timeline from "./index";
 import { connect } from "react-redux";
-// import { GET_ADDRESS_SUCCESS } from 'actionTypes';
+import moment from "moment";
 import { initConnect, listenerTarrayStorage, initNativeMessage, clientInit, clientPlay, fetchUtil, actionCreator } from "../../../actions/util";
 
 const confirmAddressId = (addressList) => {
@@ -17,18 +17,26 @@ const confirmAddressId = (addressList) => {
 
 export default connect((state) => {
   return {
-    result: state
+    selectedPage: state.actions.selectedPage
   };
 }, (dispatch) => {
   return {
-    getData: (history) => {
+
+    /**
+     * 获取页面或者动作
+     * @param  {Object} history history对象
+     * @return {[type]}         [description]
+     */
+    getActionData: (history) => {
       // 这个需要在页面加载时候就调用
       initConnect();
 
-      listenerTarrayStorage((a) => {
-        console.log(a);
-      }, (a) => {
-        console.log(a);
+      listenerTarrayStorage(result => {
+        console.log(111, result);
+        dispatch(actionCreator("PRODUCE_NEW_PAGE", { result: { ...result, createAt: moment().format("YYYY-MM-DD HH:mm:ss") } }));
+      }, result => {
+        console.log(222, result);
+        dispatch(actionCreator("PRODUCE_NEW_ACTION", { result: { ...result, createAt: moment().format("YYYY-MM-DD HH:mm:ss") } }));
       });
 
       //数据回调
@@ -54,5 +62,5 @@ export default connect((state) => {
       //   dispatch(actionCreator("GET_ADDRESS_SUCCESS", { result: data, selectedAddressId: selectedAddressId }))
       // })
     }
-  };
+  }
 })(Timeline);

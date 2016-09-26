@@ -15,14 +15,17 @@ export default class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      page: {},
       actions: [],
+      selectedActions: [],
       visible: false
     }
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      actions: [ ...this.state.actions, nextProps.actions ]
+      page: nextProps.selectedPage,
+      actions: nextProps.selectedPage.tArray
     });
   }
 
@@ -70,13 +73,48 @@ export default class extends React.Component {
     // message.success('点击了确定');
   }
 
-  updateSelected() {}
+  timelineItem(actions) {
+    return actions.map((v, i) => {
+      return (
+        <TimelineItem key={i} dot={ <Checkbox onChange={ this.selectedAction.bind(this, i) } /> }>
+          <div className="time"><Icon type="clock-circle-o" /> { v.createAt }</div>
+          <div className="action"><span className="address"><Icon type="environment-o" /> { v.xPath }</span>&nbsp;&nbsp;&nbsp;&nbsp;<span className="tagname"><Icon type="setting" /> { v.tagName }</span>&nbsp;&nbsp;&nbsp;&nbsp;{ v.value ? <span className="value"><Icon type="book" /> { v.value }</span> : null }</div>
+          {
+            v.isFormEl ? (
+              <div className="group-result small error clearfix">
+                <span className="group-result-info">预期结果：以下报错均出现</span>
+                <span className="group-result-control">
+                  <a onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                  <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
+                    <a><Icon type="cross-circle-o" /> 删除</a>
+                  </Popconfirm>
+                </span>
+              </div>
+            ) : <div className="control"><Button size="small">JSON</Button></div>
+          }
+
+        </TimelineItem>
+      )
+    })
+  }
+
+  selectedAction(index) {
+    let actions = this.state.selectedActions;
+    if(actions.includes(index)) {
+      actions.splice(actions.indexOf(index), 1);
+    } else {
+      actions = [ ...actions, index ]
+    }
+    this.setState({
+      selectedActions: actions
+    });
+  }
 
   render() {
     let actions = this.state.actions;
     return (
       <div>
-        <Card title="Title" extra={ <span><a onClick={ this.showModal.bind(this) }><Icon type="play-circle-o" /> 回放</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showModal.bind(this) }><Icon type="plus-circle-o" /> 创建</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel timeline">
+        <Card title={this.state.page.url || "动作"} extra={ <span>{ this.state.selectedActions.length ? <span><a onClick={ this.showModal.bind(this) }><Icon type="play-circle-o" /> 回放</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showModal.bind(this) }><Icon type="plus-circle-o" /> 创建</a>&nbsp;&nbsp;&nbsp;&nbsp;</span> : null }<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel timeline">
           <div className="group-result clearfix">
             <span className="group-result-info">预期结果：以下报错均出现</span>
             <span className="group-result-control">
@@ -88,15 +126,7 @@ export default class extends React.Component {
           </div>
           <Timeline>
           {
-            actions.length ? actions.map((v, i) => {
-              return (
-                <TimelineItem key={i} dot={ <Checkbox onChange={ this.updateSelected.bind(this) } /> }>
-                  <div className="time"><Icon type="clock-circle-o" /> { v.createAt }</div>
-                  <div className="action"><span className="address"><Icon type="environment-o" /> { v.xPath }</span>&nbsp;&nbsp;&nbsp;&nbsp;<span className="tagname"><Icon type="setting" /> { v.tagName }</span>&nbsp;&nbsp;&nbsp;&nbsp;{ v.value ? <span className="value"><Icon type="book" /> { v.value }</span> : null }</div>
-                  <div className="control"><Button size="small">JSON</Button></div>
-                </TimelineItem>
-              )
-            }) : <Spin done />
+            actions.length ? this.timelineItem(actions) : <Spin done text="您还没有选择一个页面，或者当前页面暂无数据~" />
           }
           </Timeline>
         </Card>

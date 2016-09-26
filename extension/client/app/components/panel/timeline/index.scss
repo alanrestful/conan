@@ -1,3 +1,5 @@
+@import "../../../static/styles/theme";
+
 .timeline {
   .ant-card-body {
     padding: 10px 24px;
@@ -7,6 +9,19 @@
     .ant-timeline-item-head-custom {
       z-index: 1;
       background-color: transparent;
+    }
+    .time {
+      color: $color-dark;
+      margin-bottom: 5px;
+    }
+    .action, .control {
+      margin-bottom: 5px;
+    }
+    .address, .value {
+      color: $color-primary;
+    }
+    .tagname {
+      color: $color-success;
     }
   }
 }

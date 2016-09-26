@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 
-import user from './user';
+import actions from './actions';
 
 export default combineReducers({
-  user
+  actions
 });
