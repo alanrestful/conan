@@ -8,13 +8,15 @@
     "url": "https://github.com/alanrestful/conan"
   },
   "scripts": {
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "watch": "webpack --watch --progress --display-error-details --colors"
   },
   "author": "JSANN（zenwink@gmail.com）",
   "license": "ISC",
   "dependencies": {
     "antd": "^1.11.1",
     "identicon.js": "^1.2.1",
+    "moment": "^2.15.1",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-redux": "^4.4.5",
@@ -29,6 +31,7 @@
     "babel-plugin-react-transform": "^2.0.2",
     "babel-preset-es2015": "^6.14.0",
     "babel-preset-react": "^6.11.1",
+    "babel-preset-stage-2": "^6.13.0",
     "copy-webpack-plugin": "^3.0.1",
     "css-loader": "^0.25.0",
     "file-loader": "^0.9.0",

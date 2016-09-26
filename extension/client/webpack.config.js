@@ -25,7 +25,7 @@ module.exports = {
       exclude: /node_modules/,
       loader: "babel-loader",
       query: {
-        presets: ["react","es2015"],
+        presets: ["react", "es2015", "stage-2"],
         plugins: [["import", {
           style: "css",
           libraryName: "antd"
@@ -41,7 +41,7 @@ module.exports = {
   },
   resolve: {
     root: APP_PATH,
-    extensions: ["",".js",".json"]
+    extensions: ["", ".js", ".json"]
   },
   devServer: {
     hot: true,
