@@ -12,6 +12,17 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
   }
 });
 
+chrome.tabs.getCurrent(function(tab) {
+    console.log(tab.id);
+    chrome.runtime.sendMessage(tab.id , function(response) {
+      console.log(response);
+    });
+});
+
+chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+  console.log("Request comes from extention ");
+  console.log(request);
+});
 
 /**
  * 判断两个对象是否相同

@@ -32,8 +32,14 @@ var port = null;
 //监听chrome发送的message信息
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
+      if(typeof(request) === 'object'){
         connectToNative(request);
         return true;
+      }else{
+        chrome.tabs.sendMessage(request, "My name's alan!", function(response) {
+            console.log(response.farewell);
+        });
+      }
     }
 );
 

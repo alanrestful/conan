@@ -108,6 +108,64 @@ export function actionCreator(type, action) {
 }
 
 /**
+ * 初始化通信链接
+ */
+export function initConnect(){
+  chrome.tabs.getCurrent(function(tab) {
+    chrome.runtime.sendMessage({"method": "connectInit", "tabId" : tab.id});
+  });
+}
+
+/**
+ * 初始化native通信设置
+ */
+export function clientInit(){
+  chrome.runtime.sendMessage({"method": "clientInit"});
+}
+
+/**
+ * case的回归测试
+ * tDeal:测试数据内容（传递到native message的）
+ */
+export function clientPlay(tDeal){
+  chrome.runtime.sendMessage({"method": "clientPlay", "tDeal": tDeal});
+}
+
+/**
+ * 与background的基本信息监听
+ * initSuccess
+ * 成功初始化本地node处理程序(由clientInit | clientPlay引起的回调)
+ * initFailed
+ * 初始化本地node程序失败(入参：初始化失败原因)(由clientInit | clientPlay引起的回调)
+ * discounect
+ * 断开与nativemessage时调用(入参：调用失败原因)(由clientInit | clientPlay引起的回调)
+ * playRes
+ * 调用本地处理程序的处理结果(入参：native调用结果)(由clientPlay引起的回调)
+ */
+export function initNativeMessage(initSuccess, initFailed, disconnect, playRes){
+  chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+    switch(request.event){
+      case "clientInitSuccess":
+        // 成功初始化native message监听
+        initSuccess();
+        break;
+      case "clientInitFailed":
+        // 初始化native message失败监听
+        initFailed(request.error);
+        break;
+      case "clientDisconnected":
+        // 断开native message时间
+        disconnect(request.error);
+        break;
+      case "clientPlayRes":
+        // 测试用例回归结果监听
+        playRes(request.data);
+        break;
+    }
+  });
+}
+
+/**
  * 清空conan的测试数据
  * index: 需要清空的数据索引，在整个测试用例组中
  * callback: 清空数据后回调

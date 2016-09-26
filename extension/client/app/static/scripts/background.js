@@ -28,6 +28,84 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   focusOrCreateTab(manager_url);
 });
 
+// 设置native message传输
+var __conan_client = null;
+// 设置extesion的页面id
+var __tab_id = null;
+//监听chrome发送的message信息
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    console.log(request.method);
+    switch(request.method){
+      case "connectInit":
+        // 连接初始化
+        __tab_id = request.tabId;
+        break;
+      case "clientInit":
+        // 初始化native message
+        __initNative();
+        break;
+      case "clientPlay":
+        // 测试用例回归
+        __on_sendToNative(request.tDeal);
+        break;
+      default:
+        // 错误请求类型
+        console.log("Undefined request method "+request.method);
+    }
+  }
+);
+
+/**
+ * 消息传递到管理页面
+ * 存在异步IO问题
+ */
+function __send_to_page(message){
+  if(__tab_id){
+    chrome.tabs.sendMessage(__tab_id, message);
+  }else{
+    setTimeout(function(){__send_to_page(message)}, 100);
+  }
+}
+
+// 先单例跑，后期切换成多线程
+function __initNative(){
+  try{
+    if(__conan_client === null){  
+      var nativeHostName = "com.conan.client";
+      __conan_client = chrome.runtime.connectNative(nativeHostName);
+      __conan_client.onMessage.addListener(onNativeMessage);
+      __conan_client.onDisconnect.addListener(onDisconnected);
+    }
+    __send_to_page({"event": "clientInitSuccess"});
+  }catch(e){
+    __send_to_page({"event": "clientInitFailed", "error": e});
+  }
+}
+
+// 与native message失去连接
+function __on_disconnected() {
+  __send_to_page({"event": "clientDisconnected", "error": chrome.runtime.lastError});
+  __conan_client = null;
+}
+
+// 获取native返回的处理结果数据
+function __on_nativeMessage(message) {
+  __send_to_page({"event": "clientPlayRes", "data": message});
+}
+
+// 调用native处理case
+function __on_sendToNative(message) {
+  if(__conan_client === null){  
+    var nativeHostName = "com.conan.client";
+    __conan_client = chrome.runtime.connectNative(nativeHostName);
+    __conan_client.onMessage.addListener(onNativeMessage);
+    __conan_client.onDisconnect.addListener(onDisconnected);
+  }
+
+  __conan_client.postMessage(message);
+}
+
 /**
  * content数据本地化
  */
@@ -41,7 +119,7 @@ chrome.extension.onRequest.addListener(
       var req_obj = typeof(request.data) == "object" ? request.data : JSON.parse(request.data);
 
       var obj = __tester_array(testers, sender.tab.url);
-      if(obj == null){
+      if(obj === null){
         testers.push(new TesterArray(sender.tab.url, req_obj));
       }else{
         obj.tArray.push(req_obj);
@@ -120,6 +198,6 @@ function TesterArray(url , tester_obj){
 
   this.url = url;
   this.domain = domainPath[0];
-  this.path = domainPath[1]
+  this.path = domainPath[1];
   this.tArray = new Array(tester_obj);
 }
