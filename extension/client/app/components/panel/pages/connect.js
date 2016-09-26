@@ -27,10 +27,10 @@ export default connect(state => {
       });
 
       listenerTarrayStorage(result => {
-        console.log(111, result);
+        console.log(result);
         dispatch(actionCreator("PRODUCE_NEW_PAGE", { result: { ...result, createAt: moment().format("YYYY-MM-DD HH:mm:ss") } }));
       }, result => {
-        console.log(222, result);
+        console.log(result);
         dispatch(actionCreator("PRODUCE_NEW_ACTION", { result: { ...result, createAt: moment().format("YYYY-MM-DD HH:mm:ss") } }));
       });
 
@@ -58,7 +58,7 @@ export default connect(state => {
      * @return {[type]}         [description]
      */
     clearAllPages: history => {
-      // clearAllTArray();
+      clearAllTArray();
     },
 
     pageActived: selectedPage => {

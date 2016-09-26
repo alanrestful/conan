@@ -122,7 +122,7 @@ chrome.extension.onRequest.addListener(
       if(obj === null){
         testers.push(new TesterArray(sender.tab.url, req_obj));
       }else{
-        obj.tArray.push(req_obj);
+        obj.tArray[0].push(req_obj);
       }
 
       chrome.storage.local.set(result);
@@ -199,5 +199,5 @@ function TesterArray(url , tester_obj){
   this.url = url;
   this.domain = domainPath[0];
   this.path = domainPath[1];
-  this.tArray = new Array(tester_obj);
+  this.tArray = new Array(new Array(tester_obj));
 }

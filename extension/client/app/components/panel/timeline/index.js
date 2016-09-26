@@ -74,7 +74,7 @@ export default class extends React.Component {
   }
 
   timelineItem(actions) {
-    return actions.map((v, i) => {
+    return actions.map((actionArray, index) => { return actionArray.map((v, i) => {
       return (
         <TimelineItem key={i} dot={ <Checkbox onChange={ this.selectedAction.bind(this, i) } /> }>
           <div className="time"><Icon type="clock-circle-o" /> { v.createAt }</div>
@@ -96,6 +96,7 @@ export default class extends React.Component {
         </TimelineItem>
       )
     })
+  })
   }
 
   selectedAction(index) {

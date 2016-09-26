@@ -227,21 +227,16 @@ function __is_diff(old_obj, new_obj){
   }
 
   for(var n in old_obj) {
-    if (old_obj[n]) {
-      switch(typeof(old_obj[n])) {
-        case 'object':
-          if (__is_diff(old_obj[n], new_obj[n])) { return true;} break;
-        case 'function':
-          break;
-        default:
-          if (old_obj[n] != new_obj[n]) { return true;}
-      }
-    } else {
-      if (new_obj[p]){
-        return true;
-      }
+    switch(typeof(old_obj[n])) {
+      case 'object':
+        if (__is_diff(old_obj[n], new_obj[n])) { return true;} break;
+      case 'function':
+        break;
+      default:
+        if (old_obj[n] != new_obj[n]) { return true;}
     }
   }
+
   for(var m in new_obj) {
     if(typeof(old_obj[m]) == 'undefined') {return true;}
   }
@@ -259,8 +254,8 @@ function __diff_t_arrays(old_arrays , new_arrays, arrayFun, objFun){
       // time_line_view(new_arrays[newI], newI);
       arrayFun(new_arrays[newI] , newI);
     }else if(__is_diff(old_arrays[newI], new_arrays[newI])){
-      var oldArray = old_arrays[newI]["tArray"];
-      var newArray = new_arrays[newI]["tArray"];
+      var oldArray = old_arrays[newI]["tArray"][0];
+      var newArray = new_arrays[newI]["tArray"][0];
       for(var diffI in newArray){
         if(!oldArray[diffI]){
           // append_time_line(newArray[diffI] , newI);
