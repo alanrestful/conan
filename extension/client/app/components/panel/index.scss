@@ -27,8 +27,12 @@
   padding: 10px;
   margin: 10px 0;
   &.small {
-    padding: 5px;
+    padding: 5px 8px;
     margin: 5px 0;
+    display: inline-block;
+    .group-result-info {
+      margin-right: 24px;
+    }
   }
   &.error {
     background-color: $color-error;

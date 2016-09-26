@@ -1,3 +1,4 @@
+@import "../../../static/styles/common";
 @import "../../../static/styles/theme";
 
 .pages {
@@ -10,12 +11,14 @@
     &:last-child {
       border-bottom: none;
     }
-    &.active {
+    &.actived {
+      padding-left: 19px;
       border-left: $color-primary solid 5px;
     }
     .link {
       font-size: 14px;
       color: $color-primary;
+      @include text-overflow();
     }
     .time {
       color: $color-dark;

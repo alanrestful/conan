@@ -2,50 +2,76 @@ require("../index.scss");
 require("./index.scss");
 
 import React from "react";
-import { Card, Icon } from "antd";
+import moment from "moment";
+import { Card, Icon, Popconfirm } from "antd";
 
 import Spin from "../../common/spin/index";
 
 export default class extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      pages: []
+    };
+  }
+
+  componentWillMount() {
+    this.props.getActionData();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    let pages = [ ...this.state.pages, ...nextProps.pages ],
+        action = nextProps.action;
+    if(action) {
+      pages.map(v => {
+        if(action.baseURI == v.url) {
+          v.tArray = [ ...v.tArray, action ];
+        }
+      });
+    }
+    this.setState({
+      pages: [ ...pages, nextProps.page ]
+    });
+  }
 
   pageItem(pages) {
     return (
       <ul className="pages">
       {
         pages.map((v, i) => {
-          <li onClick={ this.pageSelected.bind(this) }>
-            <p className="link">{ v.link }</p>
-            <p className="time"><Icon type="clock-circle-o" /> { v.time }</p>
-          </li>
+          if(v) {
+            return (
+              <li key={i} onClick={ this.pageActived.bind(this, v, i) } className={ this.state.actived == i ? "actived" : null }>
+                <p className="link" title={ v.url }>{ v.url }</p>
+                <p className="time"><Icon type="clock-circle-o" /> { moment().format("YYYY-MM-DD HH:mm:ss") }</p>
+              </li>
+            )
+          }
         })
       }
       </ul>
     )
   }
 
-  pageSelected() {}
+  pageActived(selectedPage, index) {
+    this.setState({
+      actived: index
+    });
+    this.props.pageActived(selectedPage);
+  }
+
+  clearAllPages() {
+    this.props.clearAllPages();
+  }
 
   render() {
-    let pages = this.props.pages || [];
+    let pages = this.state.pages;
     return (
-      <Card title="页面" extra={ pages ? pages.length ? <a href="#"><Icon type="delete" /> 清空</a> : null : null } className="panel">
+      <Card title="页面" extra={ pages.length ? <Popconfirm title="此操作将不可恢复，您确定要清空？" placement="bottom" onConfirm={ this.clearAllPages.bind(this) }><a><Icon type="delete" /> 清空</a></Popconfirm> : null } className="panel">
       {
-        pages ? pages.length ? this.pageItem.bind(this, pages) : <Spin done /> : <Spin />
+        pages.length ? this.pageItem(pages) : <Spin done />
       }
-      <ul className="pages">
-        <li>
-          <p className="link">http://www.baidu.com/</p>
-          <p className="time"><Icon type="clock-circle-o" /> 2016-09-21 10:12:22</p>
-        </li>
-        <li>
-          <p className="link">http://www.baidu.com/</p>
-          <p className="time"><Icon type="clock-circle-o" /> 2016-09-21 10:12:22</p>
-        </li>
-        <li>
-          <p className="link">http://www.baidu.com/</p>
-          <p className="time"><Icon type="clock-circle-o" /> 2016-09-21 10:12:22</p>
-        </li>
-      </ul>
       </Card>
     )
   }
