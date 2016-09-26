@@ -36,12 +36,10 @@
         .index {
           color: $color-primary;
           margin-right: 5px;
-          float: left;
         }
         .action-layout {
+          float: left;
           display: block;
-          overflow: hidden;
-          zoom: 1;
           div {
             margin-bottom: 5px;
           }

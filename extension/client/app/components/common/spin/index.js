@@ -9,7 +9,7 @@ export default class extends React.Component {
     return (
       <div className="spin">
       {
-        this.props.done ? <span><Icon type="frown" /> 暂时还没有数据哦~</span> : <Spin />
+        this.props.done ? <span><Icon type="frown" /> { this.props.text || "暂时还没有数据哦~" }</span> : <Spin />
       }
       </div>
     )

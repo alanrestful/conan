@@ -100,10 +100,11 @@ export function fetchUtil(options) {
   })
 }
 
-export function actionCreator(type, obj) {
-  obj = obj ? obj : {};
-  obj.type = type
-  return obj
+export function actionCreator(type, action) {
+  return {
+    type,
+    ...action
+  }
 }
 
 /**
