@@ -24,6 +24,7 @@ export default class extends React.Component {
     let pages = [ ...this.state.pages, ...nextProps.pages ],
         action = nextProps.action;
     if(action) {
+      debugger
       pages.map((v, i) => {
         if(v && action.baseURI == v.url) {
           v.tArray = [ ...v.tArray, action ];

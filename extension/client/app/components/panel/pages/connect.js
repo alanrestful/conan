@@ -27,10 +27,10 @@ export default connect(state => {
       });
 
       listenerTarrayStorage(result => {
-        console.log(result);
+        console.log(111, result);
         dispatch(actionCreator("PRODUCE_NEW_PAGE", { result: { ...result, createAt: moment().format("YYYY-MM-DD HH:mm:ss") } }));
       }, result => {
-        console.log(result);
+        console.log(222, result);
         dispatch(actionCreator("PRODUCE_NEW_ACTION", { result: { ...result, createAt: moment().format("YYYY-MM-DD HH:mm:ss") } }));
       });
 
