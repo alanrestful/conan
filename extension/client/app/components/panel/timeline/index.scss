@@ -1,3 +1,4 @@
+@import "../../../static/styles/common";
 @import "../../../static/styles/theme";
 
 .timeline {
@@ -13,12 +14,23 @@
       z-index: 1;
       background-color: transparent;
     }
+    .ant-timeline-item-content {
+      &:hover {
+        box-shadow: $color-ghost 5px 0;
+      }
+    }
     .time {
       color: $color-dark;
       margin-bottom: 5px;
     }
     .action, .control {
       margin-bottom: 5px;
+    }
+    .address, .value, .tagname {
+      display: inline-block;
+      max-width: 200px;
+      margin-right: 10px;
+      @include text-overflow();
     }
     .address, .value {
       color: $color-primary;

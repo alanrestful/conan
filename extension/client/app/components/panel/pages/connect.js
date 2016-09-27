@@ -58,11 +58,13 @@ export default connect(state => {
      * @return {[type]}         [description]
      */
     clearAllPages: history => {
-      clearAllTArray();
+      clearAllTArray(null, () => {
+        dispatch(actionCreator("DELETE_ALL_PAGES", { result: [] }));
+      });
     },
 
     pageActived: selectedPage => {
-      dispatch(actionCreator("SET_ACTIVED_ACTIONS", { result: selectedPage }));
+      dispatch(actionCreator("SET_ACTIVED_PAGE", { result: selectedPage }));
     }
 
   }

@@ -24,14 +24,14 @@ export default class extends React.Component {
     let pages = [ ...this.state.pages, ...nextProps.pages ],
         action = nextProps.action;
     if(action) {
-      pages.map(v => {
-        if(action.baseURI == v.url) {
+      pages.map((v, i) => {
+        if(v && action.baseURI == v.url) {
           v.tArray = [ ...v.tArray, action ];
         }
       });
     }
     this.setState({
-      pages: [ ...pages, nextProps.page ]
+      pages: nextProps.page ? [ ...pages, nextProps.page ] : pages
     });
   }
 

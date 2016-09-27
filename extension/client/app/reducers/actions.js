@@ -5,7 +5,7 @@ export default (state={}, action) => {
         ...state,
         pages: action.result
       }
-    case "SET_ACTIVED_ACTIONS":
+    case "SET_ACTIVED_PAGE":
       return {
         ...state,
         selectedPage: action.result
@@ -19,6 +19,16 @@ export default (state={}, action) => {
       return {
         ...state,
         action: action.result
+      }
+    case "DELETE_PAGE_BY_INDEX":
+      return {
+        ...state,
+        action: action.result
+      }
+    case "DELETE_ALL_PAGES":
+      return {
+        ...state,
+        pages: action.result
       }
     default:
       return state
