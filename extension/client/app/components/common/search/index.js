@@ -16,13 +16,13 @@ export default class extends React.Component {
 
   handleInputChange(event) {
     this.setState({
-      value: event.target.value,
+      value: event.target.value
     });
   }
 
   handleFocusBlur(event) {
     this.setState({
-      focus: event.target === document.activeElement,
+      focus: event.target === document.activeElement
     });
   }
 

@@ -1,4 +1,4 @@
-export default (state={}, action) => {
+export default (state = {}, action) => {
   switch (action.type) {
     case "SUCCESS_LOAD_PAGES":
       return {
@@ -13,12 +13,14 @@ export default (state={}, action) => {
     case "PRODUCE_NEW_PAGE":
       return {
         ...state,
-        page: action.result
+        page: action.result,
+        action: null
       }
     case "PRODUCE_NEW_ACTION":
       return {
         ...state,
-        action: action.result
+        action: action.result,
+        page: null
       }
     case "DELETE_PAGE_BY_INDEX":
       return {
@@ -31,6 +33,6 @@ export default (state={}, action) => {
         pages: action.result
       }
     default:
-      return state
+      return state;
   }
 }

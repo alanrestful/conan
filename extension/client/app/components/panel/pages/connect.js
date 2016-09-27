@@ -63,6 +63,11 @@ export default connect(state => {
       });
     },
 
+    /**
+     * 选择页面
+     * @param  {Int} index 索引
+     * @return {[type]}       [description]
+     */
     pageActived: index => {
       dispatch(actionCreator("SET_ACTIVED_PAGE_INDEX", { result: index }));
     }

@@ -129,7 +129,7 @@ export default class extends React.Component {
   modalContext() {
     const formItemLayout = {
       labelCol: { span: 6 },
-      wrapperCol: { span: 14 },
+      wrapperCol: { span: 14 }
     };
     return (
       <Form horizontal onSubmit={ this.handleSubmit.bind(this) }>
@@ -170,7 +170,7 @@ export default class extends React.Component {
             { v.name ? <span className="tagname" title={ `Name: ${ v.name }` }><Icon type="eye-o" /> { v.name }</span> : null }
             { v.type ? <span className="tagname" title={ `Type: ${ v.type }` }><Icon type="file-unknown" /> { v.type }</span> : null }
             { v.tagName ? <span className="tagname" title={ `Tag Name: ${ v.tagName }` }><Icon type="setting" /> { v.tagName }</span> : null }
-            { v.value ? <span className="value" title={ `Value: ${ v.value }` }><Icon type="book" /> { v.value }</span> : null }
+            { v.value ? <span className="value" title={ `Value: ${ v.type == "password" ? v.value.replace(/./g, "*") : v.value }` }><Icon type="book" /> { v.type == "password" ? v.value.replace(/./g, "*") : v.value }</span> : null }
           </div>
           {
             v.expectEditing ? <EditInSitu value={ v.expect } onEnter={ this.editOnEnter.bind(this, i) } onCancel={ this.editOnCancel.bind(this, i) } /> : v.expect ? (

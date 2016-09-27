@@ -5,6 +5,8 @@ import React from "react";
 import moment from "moment";
 import { Card, Icon, Popconfirm } from "antd";
 
+import { isEmpty } from "../../../static/scripts/helpers";
+
 import Spin from "../../common/spin/index";
 
 export default class extends React.Component {
@@ -21,17 +23,18 @@ export default class extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    let pages = [ ...this.state.pages, ...nextProps.pages ],
+    let _pages = isEmpty(this.state.pages) ? nextProps.pages : this.state.pages,
+        pages = nextProps.page ? [ ..._pages, nextProps.page ] : _pages,
         action = nextProps.action;
     if(action) {
       pages.map((v, i) => {
         if(v && action.baseURI == v.url) {
-          v.tArray = [ ...v.tArray, action ];
+          v.tArray[0] = [ ...v.tArray[0], action ];
         }
       });
     }
     this.setState({
-      pages: nextProps.page ? [ ...pages, nextProps.page ] : pages
+      pages
     });
   }
 
@@ -67,6 +70,7 @@ export default class extends React.Component {
 
   render() {
     let pages = this.state.pages;
+    console.log(pages)
     return (
       <Card title="页面" extra={ pages.length ? <Popconfirm title="此操作将不可恢复，您确定要清空所有用例？" placement="bottom" onConfirm={ this.clearAllPages.bind(this) }><a><Icon type="delete" /> 清空</a></Popconfirm> : null } className="panel">
       {
