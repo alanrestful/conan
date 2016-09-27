@@ -63,8 +63,8 @@ export default connect(state => {
       });
     },
 
-    pageActived: selectedPage => {
-      dispatch(actionCreator("SET_ACTIVED_PAGE", { result: selectedPage }));
+    pageActived: index => {
+      dispatch(actionCreator("SET_ACTIVED_PAGE_INDEX", { result: index }));
     }
 
   }

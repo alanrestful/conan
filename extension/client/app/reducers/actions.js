@@ -5,10 +5,10 @@ export default (state={}, action) => {
         ...state,
         pages: action.result
       }
-    case "SET_ACTIVED_PAGE":
+    case "SET_ACTIVED_PAGE_INDEX":
       return {
         ...state,
-        selectedPage: action.result
+        selectedPageIndex: action.result
       }
     case "PRODUCE_NEW_PAGE":
       return {

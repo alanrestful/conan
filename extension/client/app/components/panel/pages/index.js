@@ -42,7 +42,7 @@ export default class extends React.Component {
         pages.map((v, i) => {
           if(v) {
             return (
-              <li key={i} onClick={ this.pageActived.bind(this, v, i) } className={ this.state.actived == i ? "actived" : null }>
+              <li key={i} onClick={ this.pageActived.bind(this, i) } className={ this.state.actived == i ? "actived" : null }>
                 <p className="link" title={ v.url }>{ v.url }</p>
                 <p className="time"><Icon type="clock-circle-o" /> { moment().format("YYYY-MM-DD HH:mm:ss") }</p>
               </li>
@@ -54,11 +54,11 @@ export default class extends React.Component {
     )
   }
 
-  pageActived(selectedPage, index) {
+  pageActived(index) {
     this.setState({
       actived: index
     });
-    this.props.pageActived(selectedPage);
+    this.props.pageActived(index);
   }
 
   clearAllPages() {
