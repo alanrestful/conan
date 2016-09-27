@@ -1,0 +1,28 @@
+.chart-list {}
+.chart-list .chart-item {
+  border-right: #f4f4f4 solid 1px;
+}
+.chart-list .chart-item:last-child {
+  border-right: none;
+}
+.chart-list .total {
+  font-size: 24px;
+  font-weight: 100;
+}
+.chart-list .total span {
+  font-size: 12px;
+  display: block;
+}
+.chart-list .chart {
+  width: 220px;
+  height: 95px;
+}
+.chart-list .control {
+  overflow: hidden;
+  zoom: 1;
+}
+.chart-list .control .total {
+  float: left;
+  width: 50%;
+  font-size: 18px;
+}
