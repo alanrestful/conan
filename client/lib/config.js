@@ -1,6 +1,7 @@
 var log4js = require("log4js");
 var path = require("path");
 
+// 设置log管理
 // 重置config的默认路径
 process.env["NODE_CONFIG_DIR"] = path.resolve(__dirname, '..')+"/config";
 
@@ -11,5 +12,7 @@ log4js.configure({
     ]
 });
 var logger = log4js.getLogger(path.basename(__filename));
+
+process.env["PATH"] = process.env["PATH"] + ":" + config.get("webDriver.default_driver");
 
 exports.logger = logger;

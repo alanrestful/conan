@@ -123,6 +123,53 @@ export function clientInit(){
 }
 
 /**
+ * 设置webDriver
+ * driver: web引擎(chrome|firefox|ie|opera|safari|android|MicrosoftEdge|iPad|iPhone|phantomjs|htmlunit)
+ * path: webDriver地址
+ */
+export function configWebDriver(driver, path){
+  chrome.storage.local.get('conan', function(result){
+    var conanConfig = result.conan;
+
+    conanConfig.webDrivers[driver] = path;
+
+    chrome.storage.local.set(result);
+  });
+}
+
+/**
+ * 设置Client配置(默认)
+ *{
+ *   "testerServer": "http://localhost:9024",
+ *   "logLevel" : "log",
+ *   "syncTester" : "true"
+ *}
+ *
+ */
+export function configClientDefault(config){
+  chrome.storage.local.get('conan', function(result){
+    var conanConfig = result.conan;
+
+    // 测试server的
+    if(!config.testerServer){
+      conanConfig.testerServer = config.testerServer;
+    }
+
+    // log日志级别
+    if(!config.logLevel){
+      conanConfig.logLevel = config.logLevel;
+    }
+
+    //默认是否同步数据
+    if(!config.syncTester){
+      conanConfig.syncTester = config.syncTester;
+    }
+
+    chrome.storage.local.set(result);
+  });
+}
+
+/**
  * case的回归测试
  * tDeal:测试数据内容（传递到native message的）
  */

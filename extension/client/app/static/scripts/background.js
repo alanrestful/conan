@@ -166,6 +166,11 @@ function init_localStorage() {
         result.conan.log_result = [];
       }
 
+      // 测试的webDriver设置
+      if(!result.conan.webDrivers){
+        result.conan.webDrivers = [];
+      }
+
       chrome.storage.local.set(result);
   });
 }
