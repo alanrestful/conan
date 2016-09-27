@@ -219,6 +219,25 @@ export function listenerTarrayStorage(arrayFun, objFun){
 }
 
 /**
+ * 设置预设结果
+ * tIndex: case在队列索引
+ * arrayIndex: 在case中tArray的索引
+ * objIndex: 在tArray中的索引
+ * expect: 预设结果
+ */
+export function setElExpect(tIndex, arrayIndex, objIndex, expect){
+  chrome.storage.local.get('conan', function(result){
+    var conanConfig = result.conan;
+
+    // 设置预期结果
+    var tObj = conanConfig.tester_arrays[tIndex][arrayIndex][objIndex];
+    tObj["expect"] = expect
+
+    chrome.storage.local.set(result);
+  });
+}
+
+/**
  * 判断两个对象是否相同
  */
 function __is_diff(old_obj, new_obj){
@@ -250,15 +269,12 @@ function __diff_t_arrays(old_arrays , new_arrays, arrayFun, objFun){
   for(var newI in new_arrays){
     if(!old_arrays[newI]){
       //新增的测试组
-      // time_line_layout(new_arrays[newI] , newI);
-      // time_line_view(new_arrays[newI], newI);
       arrayFun(new_arrays[newI] , newI);
     }else if(__is_diff(old_arrays[newI], new_arrays[newI])){
       var oldArray = old_arrays[newI]["tArray"][0];
       var newArray = new_arrays[newI]["tArray"][0];
       for(var diffI in newArray){
         if(!oldArray[diffI]){
-          // append_time_line(newArray[diffI] , newI);
           objFun(newArray[diffI] , newI);
         }
       }

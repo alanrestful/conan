@@ -33,15 +33,18 @@ var event = new events.EventEmitter();
 // 测试回归(貌似event.on会冲突)
 event.on('playback', function(driver, tCase, callBack) {
     driver.get(tCase.url);
-    for(var i in tCase.tArray){
-        // 解决node异步io处理速度太快
-        var tObj = tCase.tArray[i];
-        if(tObj.isFormEl){
-            fromElement(driver , tObj);
-            driver.sleep(1000);
-        }else{
-            actionElement(driver , tObj);
-            driver.sleep(1000);
+    var tArrays = tCase.tArray;
+    for(var n in tArrays) {
+        for (var i in tArrays[n]) {
+            // 解决node异步io处理速度太快
+            var tObj = tArrays[n][i];
+            if (tObj.isFormEl) {
+                fromElement(driver, tObj);
+                driver.sleep(1000);
+            } else {
+                actionElement(driver, tObj);
+                driver.sleep(1000);
+            }
         }
     }
 
