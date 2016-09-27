@@ -5,13 +5,11 @@ var webpack = require("webpack");
 var ROOT_PATH = path.resolve(__dirname);
 var APP_PATH = path.resolve(ROOT_PATH, "app");
 var BUILD_PATH = path.resolve(ROOT_PATH, "build");
-// var htmlWebpackPlugin =  require("html-webpack-plugin");
-//
+var htmlWebpackPlugin =  require("html-webpack-plugin");
 var CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: [
-    "webpack/hot/only-dev-server",
     "./app/index.js"
   ],
   output: {
@@ -43,11 +41,6 @@ module.exports = {
     root: APP_PATH,
     extensions: ["", ".js", ".json"]
   },
-  devServer: {
-    hot: true,
-    inline: true,
-    historyApiFallback: true
-  },
   plugins: [
     new CopyWebpackPlugin([
       {from: APP_PATH + "/static/scripts/", to: BUILD_PATH + "/assest/scripts/"},
@@ -60,7 +53,8 @@ module.exports = {
         "helpers.js"
       ]}
     ),
+    new webpack.optimize.UglifyJsPlugin({minimize: true}),
     new webpack.NoErrorsPlugin(),
-    new webpack.HotModuleReplacementPlugin()
+    new htmlWebpackPlugin()
   ]
 };

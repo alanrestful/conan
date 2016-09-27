@@ -9,7 +9,9 @@
   },
   "scripts": {
     "start": "webpack-dev-server",
-    "watch": "webpack --watch --progress --display-error-details --colors"
+    "watch": "webpack --watch --progress --display-error-details --colors",
+    "build": "webpack --progress --profile --colors --config webpack.production.config.js"
+
   },
   "author": "JSANN（zenwink@gmail.com）",
   "license": "ISC",
