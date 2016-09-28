@@ -8,7 +8,8 @@ function focusOrCreateTab(url) {
       var tabs = windows[i].tabs;
       for (var j in tabs) {
         var tab = tabs[j];
-        if (tab.url == url) {
+        var index = tab.url.indexOf("index.html");
+        if ((index != -1 ? tab.url.slice(0, index+10) : tab.url) == url) {
           existing_tab = tab;
           break;
         }
