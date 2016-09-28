@@ -7,14 +7,14 @@
     background-color: $color-primary;
     border-bottom: none;
     margin-bottom: 0;
-    .ant-tabs-tab-inner {
+    .ant-tabs-tab {
+      height: 48px;
+      line-height: 30px;
       &:hover {
         color: #fff;
       }
-    }
-    .ant-tabs-tab-active {
-      .ant-tabs-tab-inner {
-        color: #fff;
+      &.ant-tabs-tab-active {
+          color: #fff;
       }
     }
   }
@@ -30,11 +30,7 @@
     .ant-tabs-tab {
       width: 50%;
       margin-right: 0;
-      .ant-tabs-tab-inner {
-        height: 48px;
-        line-height: 30px;
-        text-align: center;
-      }
+      text-align: center;
     }
   }
   .ant-tabs-content {
