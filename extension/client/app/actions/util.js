@@ -79,7 +79,7 @@ export function fetchUtil(options) {
   if(fetchOptions.method != "GET") {
     fetchOptions.body = options.body
   }
-  return fetch(url, fetchOptions)
+  return fetch(`http://localhost:9010${url}`, fetchOptions)
   .then(fetchCheckStatus)
   .then(parseText)
   .then((data)=>{
