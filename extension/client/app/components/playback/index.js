@@ -3,7 +3,7 @@ import { Row, Col } from "antd";
 
 import Header from "../header/index";
 import GroupDetail from "../panel/group_detail/index";
-import Setting from "../panel/setting/index";
+import Setting from "../panel/setting/connect";
 import Group from "../panel/group/index";
 
 export default class extends React.Component {
