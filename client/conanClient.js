@@ -10,6 +10,8 @@ var input = new nativeMessage.Input();
 var transform = new nativeMessage.Transform(messageHandler);
 var output = new nativeMessage.Output();
 
+//黑魔法将chromeDriver的bin path加入到环境变量中
+process.env["PATH"] = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin";
 process.stdin
     .pipe(input)
     .pipe(transform)

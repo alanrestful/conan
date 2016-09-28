@@ -48,6 +48,7 @@ chrome.runtime.onMessage.addListener(
         break;
       case "clientPlay":
         // 测试用例回归
+        console.log(request.tDeal);
         __on_sendToNative(request.tDeal);
         break;
       default:
@@ -72,11 +73,11 @@ function __send_to_page(message){
 // 先单例跑，后期切换成多线程
 function __initNative(){
   try{
-    if(__conan_client === null){  
+    if(__conan_client === null){
       var nativeHostName = "com.conan.client";
       __conan_client = chrome.runtime.connectNative(nativeHostName);
-      __conan_client.onMessage.addListener(onNativeMessage);
-      __conan_client.onDisconnect.addListener(onDisconnected);
+      __conan_client.onMessage.addListener(__on_nativeMessage);
+      __conan_client.onDisconnect.addListener(__on_disconnected);
     }
     __send_to_page({"event": "clientInitSuccess"});
   }catch(e){
@@ -97,12 +98,10 @@ function __on_nativeMessage(message) {
 
 // 调用native处理case
 function __on_sendToNative(message) {
-  if(__conan_client === null){  
-    var nativeHostName = "com.conan.client";
-    __conan_client = chrome.runtime.connectNative(nativeHostName);
-    __conan_client.onMessage.addListener(onNativeMessage);
-    __conan_client.onDisconnect.addListener(onDisconnected);
-  }
+  var nativeHostName = "com.conan.client";
+  __conan_client = chrome.runtime.connectNative(nativeHostName);
+  __conan_client.onMessage.addListener(__on_nativeMessage);
+  __conan_client.onDisconnect.addListener(__on_disconnected);
 
   __conan_client.postMessage(message);
 }
