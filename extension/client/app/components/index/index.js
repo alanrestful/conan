@@ -4,7 +4,7 @@ import { Row, Col } from "antd";
 
 import Header from "../header/index";
 import Timeline from "../panel/timeline/connect";
-import Setting from "../panel/setting/index";
+import Setting from "../panel/setting/connect";
 import Pages from "../panel/pages/connect";
 
 export default class extends React.Component {
