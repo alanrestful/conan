@@ -56,14 +56,21 @@ event.on('playback', function(driver, tCase, callBack) {
 function messageHandler(msg, push, done) {
     try{
         logger.info(msg);
-        var driver = new webdriver.Builder().forBrowser("chrome").build();
+        switch(msg.method){
+            case "play":
+                var driver = new webdriver.Builder().forBrowser("chrome").build();
 
-        event.emit('playback', driver, msg, function(){
-            push(msg);
-            done();
-            //先做回归结束后直接结束,防止driver无法关闭问题(后期更改)
-            process.exit();
-        });
+                event.emit('playback', driver, msg.data, function(){
+                    push(msg.data);
+                    done();
+                    //先做回归结束后直接结束,防止driver无法关闭问题(后期更改)
+                    process.exit();
+                });
+                break;
+            default:
+                logger.error("Undefined with method "+msg.method);
+        }
+
     }catch (e){
         logger.error(e.stack);
     }
