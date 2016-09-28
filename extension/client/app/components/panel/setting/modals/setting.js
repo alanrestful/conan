@@ -22,7 +22,7 @@ export default Form.create()(class extends React.Component {
         projects: nextProps.projects.result
       })
     }
-    if(nextProps.visible != this.props.visible) {
+    if(nextProps.visible != this.state.visible) {
       this.setState({
         visible: nextProps.visible
       })
