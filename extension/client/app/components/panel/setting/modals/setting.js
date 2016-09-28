@@ -19,10 +19,10 @@ export default Form.create()(class extends React.Component {
   componentWillReceiveProps(nextProps) {
     if(nextProps.projects) {
       this.setState({
-        visible: nextProps.visible,
         projects: nextProps.projects.result
       })
-    } else {
+    }
+    if(nextProps.visible != this.props.visible) {
       this.setState({
         visible: nextProps.visible
       })

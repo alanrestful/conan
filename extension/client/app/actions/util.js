@@ -2,18 +2,6 @@ export const form = { 'Content-Type' : 'application/x-www-form-urlencoded; chars
 export const xhr = { 'x-requested-with': 'XMLHttpRequest', "Accept": "application/json" };
 export const json = { 'Content-Type' : 'application/json', 'x-requested-with': 'XMLHttpRequest', "Accept": "application/json" };
 
-
-export function noAuthToLogin(url, replace) {
-  url = url || window.location.pathname + window.location.search
-  if(!replace){
-    window.location.href = "/login?target=" + url;
-  }else if(/terminus/i.test(navigator.userAgent)) {
-    window.location.href = "/login?target=" + url;
-  }else {
-    replace("/login?target=" + url);
-  }
-}
-
 export function fetchCheckStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response
@@ -77,7 +65,9 @@ export function fetchUtil(options) {
     headers: headers ? headers : "xhr",
   }
   if(fetchOptions.method != "GET") {
-    fetchOptions.body = options.body
+    fetchOptions.body = { ...options.body, pid: "57ea331df526562e1553c7db" }
+  } else {
+    url += "?pid=57ea331df526562e1553c7db";
   }
   return fetch(`http://localhost:9010${url}`, fetchOptions)
   .then(fetchCheckStatus)

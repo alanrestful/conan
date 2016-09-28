@@ -1,7 +1,7 @@
 import Timeline from "./index";
 import { connect } from "react-redux";
 import moment from "moment";
-import { fetchUtil, actionCreator } from "../../../actions/util";
+import { fetchUtil, json, actionCreator } from "../../../actions/util";
 
 export default connect(state => {
   return {
@@ -22,6 +22,21 @@ export default connect(state => {
       clearAllTArray(index, () => {
         dispatch(actionCreator("DELETE_PAGE_BY_INDEX", { result: [] }));
       });
+    },
+
+    /**
+     * 创建组
+     * @param  {Object} data    组数据
+     * @param  {[type]} history [description]
+     * @return {[type]}         [description]
+     */
+    createGroups: (data, history) => {
+      fetchUtil({
+        url: "/api/cases/group",
+        method: "POST",
+        headers: json,
+        body: JSON.stringify(data)
+      }).then(result => dispatch(actionCreator("CREATE_GROUPS", { result })));
     }
 
   };

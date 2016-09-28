@@ -3,16 +3,16 @@ require("./index.scss");
 
 import React from "react";
 import moment from "moment";
-import { Card, Timeline, Icon, Modal, Form, Input, Select, Checkbox, Button, Alert, Popconfirm } from "antd";
+import { Card, Timeline, Icon, Popconfirm, Checkbox, Button } from "antd";
 
 import { isEmpty } from "../../../static/scripts/helpers";
 
 import Spin from "../../common/spin/index";
 import EditInSitu from "../../common/edit_in_situ/index";
 
-const FormItem = Form.Item,
-      Option = Select.Option,
-      TimelineItem = Timeline.Item;
+import CreatesModal from "./modals/creates";
+
+const TimelineItem = Timeline.Item;
 
 export default class extends React.Component {
 
@@ -32,6 +32,12 @@ export default class extends React.Component {
         action = nextProps.action;
     if(index == undefined) {
       return false;
+    }
+    if(index != this.props.selectedPageIndex) {
+      this.setState({
+        selectedActions: [],
+        visible: false
+      });
     }
     let page = pages[index];
     this.setState({
@@ -115,44 +121,17 @@ export default class extends React.Component {
   }
 
   showModal() {
-    this.setState({ visible: true });
+    this.setState({
+      visible: true
+    });
   }
 
-  handleOk() {
-    this.setState({ confirmLoading: true });
+  createsModalSubmit(data) {
+    this.props.createGroups({
+      ...data,
+      fragment: JSON.stringify(this.state.selectedActions)
+    });
   }
-
-  handleCancel() {
-    this.setState({ visible: false });
-  }
-
-  modalContext() {
-    const formItemLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 14 }
-    };
-    return (
-      <Form horizontal onSubmit={ this.handleSubmit.bind(this) }>
-        <FormItem labelCol={{ span: 0 }} wrapperCol={{ span: 14, offset: 6 }} help=" ">
-          <Alert message={ `当前有${ this.state.selectedActions.length }个选项被选中！` } type="info" showIcon />
-        </FormItem>
-        <FormItem { ...formItemLayout } label="模板组">
-          <Input placeholder="查询模板组" />
-        </FormItem>
-        <FormItem { ...formItemLayout } label="模板名称">
-          <Input placeholder="模板名称" />
-        </FormItem>
-        <FormItem { ...formItemLayout } label="用例组">
-          <Input placeholder="查询用例组" />
-        </FormItem>
-        <FormItem { ...formItemLayout } label="用例名称">
-          <Input placeholder="用例名称" />
-        </FormItem>
-      </Form>
-    )
-  }
-
-  handleSubmit() {}
 
   confirm() {
     // message.success('点击了确定');
@@ -161,7 +140,7 @@ export default class extends React.Component {
   timelineItem(actions) {
     return actions.map((v, i) => {
       return (
-        <TimelineItem key={i} dot={ <Checkbox key={v.baseURI + i} onChange={ this.selectedAction.bind(this, i) } /> }>
+        <TimelineItem key={i} dot={ <Checkbox key={v.baseURI + i} onChange={ this.selectedAction.bind(this, v, i) } /> }>
           <div className="time"><Icon type="clock-circle-o" /> { moment(v.inDate).format("YYYY-MM-DD HH:mm:ss") }</div>
           <div className="action">
             <span className="address" title={ `xPath: ${ v.xPath }` }><Icon type="environment-o" /> { v.xPath }</span>
@@ -190,7 +169,7 @@ export default class extends React.Component {
     })
   }
 
-  selectedAction(index) {
+  selectedAction(action, index) {
     let actions = this.state.selectedActions;
     if(actions.includes(index)) {
       actions.splice(actions.indexOf(index), 1);
@@ -227,9 +206,7 @@ export default class extends React.Component {
           }
           </Timeline>
         </Card>
-        <Modal title="创建用例或模板" visible={ this.state.visible } onOk={ this.handleOk.bind(this) } confirmLoading={ this.state.confirmLoading } onCancel={ this.handleCancel.bind(this) }>
-            { this.modalContext.call(this) }
-        </Modal>
+        <CreatesModal selectedActions={ this.state.selectedActions } visible={ this.state.visible } onSubmit={ this.createsModalSubmit.bind(this) } />
       </div>
     )
   }
