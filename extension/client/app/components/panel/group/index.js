@@ -13,17 +13,31 @@ const TabPane = Tabs.TabPane;
 
 export default class extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedGroup: {}
+    }
+  }
+
   componentWillMount() {
-    this.props.getGroup(`pid=${this.props.project.id}`);
+    this.props.getGroup(this.props.project.id);
   }
 
   changeTab() {}
+
+  selectedGroup(group) {
+    this.setState({
+      selectedGroup: group
+    });
+    this.props.getModels(group._id);
+  }
 
   getGroupsItem() {
     let groups = this.props.groups;
     return groups ? isEmpty(groups) ? <Spin done /> : groups.map((v, i) => {
       return (
-        <li key={ i }>
+        <li key={ i } onClick={ this.selectedGroup.bind(this, v) } className={ v._id == this.state.selectedGroup._id ? "actived" : "" }>
           <p className="link">{ v.name }</p>
           <p className="time"><Icon type="clock-circle-o" /> 最后修改：{ moment(v.created_at).format("YYYY-MM-DD HH-mm:ss") }</p>
         </li>

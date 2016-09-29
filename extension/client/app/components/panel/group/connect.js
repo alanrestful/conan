@@ -10,10 +10,16 @@ export default connect(state => {
 }, dispatch => {
   return {
 
-    getGroup: (data, history) => {
+    getGroup: (id, history) => {
       fetchUtil({
-        url: `/api/cases/groups?${data}`
+        url: `/api/cases/groups?pid=${id}`
       }).then(result => dispatch(actionCreator("SUCCESS_LOAD_GROUPS", { result: result.result })))
+    },
+
+    getModels: (id, history) => {
+      fetchUtil({
+        url: `/api/cases/models?gid=${id}`
+      }).then(result => dispatch(actionCreator("SUCCESS_LOAD_MODELS", { result: result.result })))
     }
   }
 })(Group);
