@@ -3,7 +3,7 @@ require("./index.scss");
 
 import React from "react";
 import moment from "moment";
-import { Card, Timeline, Icon, Popconfirm, Checkbox, Button } from "antd";
+import { Card, Timeline, Icon, Popconfirm, Checkbox, Button, notification } from "antd";
 
 import { isEmpty } from "../../../static/scripts/helpers";
 
@@ -21,7 +21,7 @@ export default class extends React.Component {
     this.state = {
       page: {},
       actions: [],
-      selectedActions: [],
+      selectedActions: {},
       createsModalVisible: false
     }
   }
@@ -57,6 +57,10 @@ export default class extends React.Component {
       }
     }
     this.props.playback({ ...page, tArray: actions });
+    notification.success({
+      message: "提示",
+      description: "所选用例已经开始尝试执行，请耐心等待执行结果！（大误）"
+    });
   }
 
   /**
@@ -141,7 +145,8 @@ export default class extends React.Component {
   createsModalSubmit(data) {
     this.props.createGroups({
       ...data,
-      fragment: JSON.stringify(this.state.selectedActions)
+      fragment: JSON.stringify(this.state.selectedActions),
+      pid: this.props.project.id
     });
   }
 
@@ -195,9 +200,11 @@ export default class extends React.Component {
     } else {
       selectedActions[ selectedPageIndex ] = actions;
     }
-    this.setState({
-      selectedActions
-    });
+    // this.setState({
+    //   selectedActions
+    // });
+
+    this.props.changeSelectedActions(selectedActions);
   }
 
   render() {

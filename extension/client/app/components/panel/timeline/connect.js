@@ -7,11 +7,19 @@ export default connect(state => {
   return {
     pages: state.actions.pages,
     selectedPageIndex: state.actions.selectedPageIndex,
-    action: state.actions.action
+    action: state.actions.action,
+    selectedActions: state.actions.selectedActions,
+    project: state.projects.project
   };
 }, dispatch => {
   return {
 
+    /**
+     * 回放
+     * @param  {Object} data    回放数据
+     * @param  {[type]} history [description]
+     * @return {[type]}         [description]
+     */
     playback: (data, history) => {
       clientPlay({
         method: "play",
@@ -44,6 +52,16 @@ export default connect(state => {
       clearAllTArray(index, () => {
         dispatch(actionCreator("DELETE_PAGE_BY_INDEX", { result: [] }));
       });
+    },
+
+    /**
+     * 更改所选的动作
+     * @param  {Object} data    所选的动作数据
+     * @param  {[type]} history [description]
+     * @return {[type]}         [description]
+     */
+    changeSelectedActions: (data, history) => {
+      dispatch(actionCreator("CHANGE_SELECTED_ACTIONS", { result: data }));
     }
 
   };
