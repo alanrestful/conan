@@ -16,13 +16,9 @@ export default Form.create()(class extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
+      visible: nextProps.visible,
       selectedActions: nextProps.selectedActions
     });
-    if(nextProps.visible != this.state.visible) {
-      this.setState({
-        visible: nextProps.visible
-      });
-    }
   }
 
   handleOk() {
@@ -44,9 +40,9 @@ export default Form.create()(class extends React.Component {
 
   handleCancel() {
     this.setState({
-      visible: false,
       confirmLoading: false
     });
+    this.props.onClose();
   }
 
   render() {
@@ -54,12 +50,19 @@ export default Form.create()(class extends React.Component {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 }
     };
+    let selectedActions = this.state.selectedActions || {},
+        actions = [];
+    for(let k of Object.keys(selectedActions)) {
+      selectedActions[k].map(v => {
+        actions.push(v);
+      })
+    }
     let getFieldDecorator = this.props.form.getFieldDecorator;
     return (
       <Modal title="创建模板和用例" visible={ this.state.visible } onOk={ this.handleOk.bind(this) } confirmLoading={ this.state.confirmLoading } onCancel={ this.handleCancel.bind(this) }>
         <Form horizontal>
           <FormItem labelCol={{ span: 0 }} wrapperCol={{ span: 14, offset: 6 }} help=" ">
-            <Alert message={ `当前有${ this.state.selectedActions.length }个选项被选中！` } type="info" showIcon />
+            <Alert message={ `当前有${ actions.length }个选项被选中！` } type="info" showIcon />
           </FormItem>
           <FormItem { ...formItemLayout } label="模板组">
             { getFieldDecorator("tempGroup", {

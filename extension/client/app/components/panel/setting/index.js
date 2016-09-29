@@ -26,6 +26,12 @@ export default class extends React.Component {
     });
   }
 
+  closeModal() {
+    this.setState({
+      visible: false
+    });
+  }
+
   settingModalSubmit(data) {
     console.log("PROJECT:", data);
     this.props.setProjectInfo(data);
@@ -37,7 +43,7 @@ export default class extends React.Component {
         <Card title="设置" extra={ <a onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a> } className="panel">
           <Spin done text="待配置" />
         </Card>
-        <SettingModal projects={ this.props.projects } visible={ this.state.visible } onSubmit={ this.settingModalSubmit.bind(this) } />
+        <SettingModal projects={ this.props.projects } visible={ this.state.visible } onSubmit={ this.settingModalSubmit.bind(this) } onClose={ this.closeModal.bind(this) } />
       </div>
     )
   }

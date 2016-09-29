@@ -1,7 +1,7 @@
 import Timeline from "./index";
 import { connect } from "react-redux";
 import moment from "moment";
-import { fetchUtil, json, actionCreator } from "../../../actions/util";
+import { fetchUtil, json, actionCreator, clientPlay } from "../../../actions/util";
 
 export default connect(state => {
   return {
@@ -12,16 +12,11 @@ export default connect(state => {
 }, dispatch => {
   return {
 
-    /**
-     * 删除指定页面
-     * @param  {Int} index   索引
-     * @param  {[type]} history [description]
-     * @return {[type]}         [description]
-     */
-    deletePageByIndex: (index, history) => {
-      clearAllTArray(index, () => {
-        dispatch(actionCreator("DELETE_PAGE_BY_INDEX", { result: [] }));
-      });
+    playback: (data, history) => {
+      clientPlay({
+        method: "play",
+        data
+      })
     },
 
     /**
@@ -37,6 +32,18 @@ export default connect(state => {
         headers: json,
         body: JSON.stringify(data)
       }).then(result => dispatch(actionCreator("CREATE_GROUPS", { result })));
+    },
+
+    /**
+     * 删除指定页面
+     * @param  {Int} index   索引
+     * @param  {[type]} history [description]
+     * @return {[type]}         [description]
+     */
+    deletePageByIndex: (index, history) => {
+      clearAllTArray(index, () => {
+        dispatch(actionCreator("DELETE_PAGE_BY_INDEX", { result: [] }));
+      });
     }
 
   };

@@ -22,7 +22,7 @@ export default class extends React.Component {
       page: {},
       actions: [],
       selectedActions: [],
-      visible: false
+      createsModalVisible: false
     }
   }
 
@@ -32,12 +32,6 @@ export default class extends React.Component {
         action = nextProps.action;
     if(index == undefined) {
       return false;
-    }
-    if(index != this.props.selectedPageIndex) {
-      this.setState({
-        selectedActions: [],
-        visible: false
-      });
     }
     let page = pages[index];
     this.setState({
@@ -51,7 +45,19 @@ export default class extends React.Component {
    * 回放
    * @return {[type]} [description]
    */
-  playIt() {}
+  playIt() {
+    let pages = this.state.pages,
+        selectedActions = this.state.selectedActions,
+        page = {},
+        actions = [];
+    for(let k of Object.keys(selectedActions)) {
+      page = pages[k];
+      for(let key of Object.keys(selectedActions[k])) {
+        actions.push(pages[k].tArray[0][key]);
+      }
+    }
+    this.props.playback({ ...page, tArray: actions });
+  }
 
   /**
    * 显示编辑 预期 的文本框
@@ -120,9 +126,15 @@ export default class extends React.Component {
     }
   }
 
-  showModal() {
+  showCreatesModal() {
     this.setState({
-      visible: true
+      createsModalVisible: true
+    });
+  }
+
+  closeCreatesModal() {
+    this.setState({
+      createsModalVisible: false
     });
   }
 
@@ -170,14 +182,21 @@ export default class extends React.Component {
   }
 
   selectedAction(action, index) {
-    let actions = this.state.selectedActions;
+    let selectedPageIndex = this.props.selectedPageIndex,
+        selectedActions = this.state.selectedActions,
+        actions = selectedActions[ selectedPageIndex ] || [];
     if(actions.includes(index)) {
       actions.splice(actions.indexOf(index), 1);
     } else {
       actions = [ ...actions, index ]
     }
+    if(isEmpty(actions)) {
+      delete selectedActions[ selectedPageIndex ];
+    } else {
+      selectedActions[ selectedPageIndex ] = actions;
+    }
     this.setState({
-      selectedActions: actions
+      selectedActions
     });
   }
 
@@ -186,7 +205,7 @@ export default class extends React.Component {
         actions = this.state.actions;
     return (
       <div>
-        <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(this.state.selectedActions) ? null : <span><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /> 回放</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showModal.bind(this) }><Icon type="plus-circle-o" /> 创建</a>&nbsp;&nbsp;&nbsp;&nbsp;</span> }<a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /> 预期</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel timeline">
+        <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(this.state.selectedActions) ? null : <span><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /> 回放</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreatesModal.bind(this) }><Icon type="plus-circle-o" /> 创建</a>&nbsp;&nbsp;&nbsp;&nbsp;</span> }<a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /> 预期</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel timeline">
           {
             page.expectEditing ? <EditInSitu value={ page.expect } onEnter={ this.editOnEnter.bind(this, undefined) } onCancel={ this.editOnCancel.bind(this, undefined) } /> : page.expect ? (
               <div className="group-result clearfix">
@@ -206,7 +225,7 @@ export default class extends React.Component {
           }
           </Timeline>
         </Card>
-        <CreatesModal selectedActions={ this.state.selectedActions } visible={ this.state.visible } onSubmit={ this.createsModalSubmit.bind(this) } />
+        <CreatesModal visible={ this.state.createsModalVisible } onSubmit={ this.createsModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
       </div>
     )
   }

@@ -22,11 +22,9 @@ export default Form.create()(class extends React.Component {
         projects: nextProps.projects.result
       })
     }
-    if(nextProps.visible != this.state.visible) {
-      this.setState({
-        visible: nextProps.visible
-      })
-    }
+    this.setState({
+      visible: nextProps.visible
+    })
   }
 
   /**
@@ -56,9 +54,9 @@ export default Form.create()(class extends React.Component {
    */
   handleCancel() {
     this.setState({
-      visible: false,
       confirmLoading: false
     });
+    this.props.onClose();
   }
 
   /**
@@ -87,7 +85,6 @@ export default Form.create()(class extends React.Component {
     let getFieldDecorator = this.props.form.getFieldDecorator,
         projects = this.state.projects,
         env = this.state.env || [];
-    console.log(this.state.visible)
     return (
       <Modal title="设置" visible={ this.state.visible } onOk={ this.handleOk.bind(this) } confirmLoading={ this.state.confirmLoading } onCancel={ this.handleCancel.bind(this) }>
         <Form horizontal>
