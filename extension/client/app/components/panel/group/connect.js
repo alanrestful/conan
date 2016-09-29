@@ -10,12 +10,24 @@ export default connect(state => {
 }, dispatch => {
   return {
 
+    /**
+     * 获取分组
+     * @param  {String} id      项目ID
+     * @param  {[type]} history [description]
+     * @return {[type]}         [description]
+     */
     getGroup: (id, history) => {
       fetchUtil({
         url: `/api/cases/groups?pid=${id}`
       }).then(result => dispatch(actionCreator("SUCCESS_LOAD_GROUPS", { result: result.result })))
     },
 
+    /**
+     * 获取模板
+     * @param  {String} id      分组ID
+     * @param  {[type]} history [description]
+     * @return {[type]}         [description]
+     */
     getModels: (id, history) => {
       fetchUtil({
         url: `/api/cases/models?gid=${id}`

@@ -5,6 +5,11 @@ export default (state = {}, action) => {
         ...state,
         groups: action.result
       }
+    case "SUCCESS_LOAD_MODELS":
+      return {
+        ...state,
+        models: action.result
+      }
     default:
       return state;
   }

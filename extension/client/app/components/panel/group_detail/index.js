@@ -1,65 +1,37 @@
 require("./index.scss");
 
 import React from "react";
-import { Card, Modal, Icon, Form, Input, Popconfirm, Alert, Button, Row, Col, Checkbox } from "antd";
+import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox } from "antd";
+
+import { isEmpty } from "../../../static/scripts/helpers";
 
 import Search from "../../common/search/index";
-
-const FormItem = Form.Item;
+import Spin from "../../common/spin/index";
+import EditInSitu from "../../common/edit_in_situ/index";
+import CreateCaseModal from "./modals/create_case";
 
 export default class extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      visible: false
+      createCaseModalVisible: false
     }
   }
 
-  showModal() {
-    this.setState({ visible: true });
-  }
-
-  handleContinue() {
-    this.setState({ continueLoading: true });
-  }
-
-  handleOk() {
-    this.setState({ confirmLoading: true });
-  }
-
-  handleCancel() {
+  showCreateCaseModal() {
     this.setState({
-      continueLoading: false,
-      confirmLoading: false,
-      visible: false
+      createCaseModalVisible: true
     });
   }
 
-  modalContext() {
-    const formItemLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 14 },
-    };
-    return (
-      <Form horizontal onSubmit={this.handleSubmit.bind(this)}>
-        <FormItem labelCol={{ span: 0 }} wrapperCol={{ span: 14, offset: 6 }} help=" ">
-          <Alert message="当前有4个选项被选中！" type="info" showIcon />
-        </FormItem>
-        <FormItem { ...formItemLayout } label="用例组">
-          <Input placeholder="查询用例组" />
-        </FormItem>
-        <FormItem { ...formItemLayout } label="用例名称">
-          <Input placeholder="用例名称" />
-        </FormItem>
-        <FormItem { ...formItemLayout } label="数据">
-          <Input type="textarea" placeholder="数据" />
-        </FormItem>
-      </Form>
-    )
+  closeCreatesModal() {
+    this.setState({
+      createCaseModalVisible: false
+    });
   }
 
-  handleSubmit() {}
+  createCaseModalSubmit() {}
 
   confirm() {}
 
@@ -68,7 +40,7 @@ export default class extends React.Component {
   render() {
     return (
       <div>
-        <Card title="商品模块 125个模板" extra={ <span><a onClick={ this.showModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
+        <Card title="商品模块 125个模板" extra={ <span><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
           <Row className="group-detail">
             <Col span={10} className="group-list-wrapper">
               <div className="group-search"><Search /></div>
@@ -89,7 +61,7 @@ export default class extends React.Component {
               <div className="group-result clearfix">
                 <span className="group-result-info">预期结果：以下报错均出现</span>
                 <span className="group-result-control">
-                  <a onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                  <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
                   <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
                     <a><Icon type="cross-circle-o" /> 删除</a>
                   </Popconfirm>
@@ -113,7 +85,7 @@ export default class extends React.Component {
                       <div className="group-result small error clearfix">
                         <span className="group-result-info">预期结果：以下报错均出现</span>
                         <span className="group-result-control">
-                          <a onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                          <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
                           <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
                             <a><Icon type="cross-circle-o" /> 删除</a>
                           </Popconfirm>
@@ -126,9 +98,7 @@ export default class extends React.Component {
             </Col>
           </Row>
         </Card>
-        <Modal title="设置" visible={ this.state.visible } onCancel={ this.handleCancel.bind(this) } footer={ [<Button key="back" type="ghost" size="large" onClick={ this.handleCancel.bind(this) }>返 回</Button>, <Button key="submit" type="primary" size="large" loading={ this.state.confirmLoading } onClick={ this.handleOk.bind(this) }>创 建</Button>, <Button key="continue" type="primary" size="large" loading={ this.state.continueLoading } onClick={ this.handleContinue.bind(this) }>创建并执行</Button>] }>
-            { this.modalContext.call(this) }
-        </Modal>
+        <CreateCaseModal visible={ this.state.createCaseModalVisible } onSubmit={ this.createCaseModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
       </div>
     )
   }
