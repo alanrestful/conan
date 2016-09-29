@@ -22,7 +22,9 @@ export default class extends React.Component {
   }
 
   componentWillMount() {
-    if(!this.state.project) {
+    if(this.state.project) {
+      this.props.setProjectInfo(this.state.project);
+    } else {
       this.props.getAllProjects();
     }
   }
