@@ -10,7 +10,7 @@
   "scripts": {
     "start": "webpack-dev-server",
     "watch": "webpack --watch --progress --display-error-details --colors",
-    "build": "webpack --progress --profile --colors --config webpack.production.config.js"
+    "build": "webpack --progress --profile --colors --config webpack.production.config.js --define process.env.NODE_ENV='\"production\"'"
   },
   "author": "JSANN（zenwink@gmail.com）",
   "license": "ISC",
