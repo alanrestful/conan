@@ -65,9 +65,7 @@ export function fetchUtil(options) {
     headers: headers ? headers : "xhr",
   }
   if(fetchOptions.method != "GET") {
-    fetchOptions.body = { ...options.body, pid: "57ea331df526562e1553c7db" }
-  } else {
-    url += "?pid=57ea331df526562e1553c7db";
+    fetchOptions.body = options.body;
   }
   return fetch(`http://localhost:9010${url}`, fetchOptions)
   .then(fetchCheckStatus)

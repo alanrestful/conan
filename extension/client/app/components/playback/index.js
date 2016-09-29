@@ -4,7 +4,7 @@ import { Row, Col } from "antd";
 import Header from "../header/index";
 import GroupDetail from "../panel/group_detail/index";
 import Setting from "../panel/setting/connect";
-import Group from "../panel/group/index";
+import Group from "../panel/group/connect";
 
 export default class extends React.Component {
 
