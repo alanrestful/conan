@@ -225,7 +225,7 @@ export default class extends React.Component {
           }
           </Timeline>
         </Card>
-        <CreatesModal visible={ this.state.createsModalVisible } onSubmit={ this.createsModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
+        <CreatesModal selectedActions={ this.state.selectedActions } visible={ this.state.createsModalVisible } onSubmit={ this.createsModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
       </div>
     )
   }

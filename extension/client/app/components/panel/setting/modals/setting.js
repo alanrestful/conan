@@ -43,7 +43,7 @@ export default Form.create()(class extends React.Component {
         return false;
       }
       let onSubmit = this.props.onSubmit;
-      onSubmit instanceof Function && onSubmit(values);
+      onSubmit instanceof Function && onSubmit({ ...values, name: this.state.selectedProjectName });
       this.handleCancel();
     });
   }
@@ -65,14 +65,16 @@ export default Form.create()(class extends React.Component {
    * @return {[type]}    [description]
    */
   changeProjectName(id) {
-    let env;
+    let env, name;
     this.state.projects.map(v => {
       if(v._id == id) {
         env = v.env_json;
+        name = v.name;
       }
     });
     this.setState({
       selectedProjectId: id,
+      selectedProjectName: name,
       env
     })
   }

@@ -70,7 +70,6 @@ export default class extends React.Component {
 
   render() {
     let pages = this.state.pages;
-    console.log(pages)
     return (
       <Card title="页面" extra={ pages.length ? <Popconfirm title="此操作将不可恢复，您确定要清空所有用例？" placement="bottom" onConfirm={ this.clearAllPages.bind(this) }><a><Icon type="delete" /> 清空</a></Popconfirm> : null } className="panel">
       {

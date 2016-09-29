@@ -4,7 +4,8 @@ import { fetchUtil, actionCreator } from "../../../actions/util";
 
 export default connect(state => {
   return {
-    projects: state.projects.projects
+    projects: state.projects.projects,
+    project: state.projects.project
   }
 }, dispatch => {
   return {
@@ -23,7 +24,7 @@ export default connect(state => {
     },
 
     setProjectInfo: (data, history) => {
-      dispatch(actionCreator(""))
+      dispatch(actionCreator("SET_PROJECT_INFO", { result: data }));
     }
   }
 })(Setting);
