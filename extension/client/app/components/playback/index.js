@@ -2,7 +2,7 @@ import React from "react";
 import { Row, Col } from "antd";
 
 import Header from "../header/index";
-import GroupDetail from "../panel/group_detail/index";
+import GroupDetail from "../panel/group_detail/connect";
 import Setting from "../panel/setting/connect";
 import Group from "../panel/group/connect";
 

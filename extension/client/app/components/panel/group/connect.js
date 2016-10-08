@@ -5,6 +5,7 @@ import { fetchUtil, actionCreator } from "../../../actions/util";
 export default connect(state => {
   return {
     groups: state.groups.groups,
+    selectedGroup: state.groups.selectedGroup,
     project: state.projects.project
   }
 }, dispatch => {
@@ -24,14 +25,14 @@ export default connect(state => {
 
     /**
      * 获取模板
-     * @param  {String} id      分组ID
+     * @param  {Object} group      分组信息
      * @param  {[type]} history [description]
      * @return {[type]}         [description]
      */
-    getModels: (id, history) => {
+    getModels: (group, history) => {
       fetchUtil({
-        url: `/api/cases/models?gid=${id}`
-      }).then(result => dispatch(actionCreator("SUCCESS_LOAD_MODELS", { result: result.result })))
+        url: `/api/cases/models?gid=${group._id}`
+      }).then(result => dispatch(actionCreator("SUCCESS_LOAD_MODELS", { result: { models: result.result, selectedGroup: group } })))
     }
   }
 })(Group);

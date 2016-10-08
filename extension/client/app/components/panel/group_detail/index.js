@@ -1,6 +1,7 @@
 require("./index.scss");
 
 import React from "react";
+import moment from "moment";
 import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox } from "antd";
 
 import { isEmpty } from "../../../static/scripts/helpers";
@@ -15,16 +16,33 @@ export default class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      models: [],
+      selectedGroup: {},
       createCaseModalVisible: false
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      models: nextProps.models,
+      selectedGroup: nextProps.selectedGroup
+    });
+  }
+
+  /**
+   * 显示创建用例对话框
+   * @return {[type]} [description]
+   */
   showCreateCaseModal() {
     this.setState({
       createCaseModalVisible: true
     });
   }
 
+  /**
+   * 关闭创建用例对话框
+   * @return {[type]} [description]
+   */
   closeCreatesModal() {
     this.setState({
       createCaseModalVisible: false
@@ -33,24 +51,34 @@ export default class extends React.Component {
 
   createCaseModalSubmit() {}
 
-  confirm() {}
+  deleteGroup() {}
 
   changeGroupSelected() {}
 
+  confirm() {}
+
   render() {
+    let models = this.state.models,
+        group = this.state.selectedGroup;
     return (
       <div>
-        <Card title="商品模块 125个模板" extra={ <span><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
+        <Card title={ `${ group.name || "组名称" } ${ isEmpty(models) ? null : `${ models.length }个模板` }` } extra={ <span><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteGroup.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
           <Row className="group-detail">
             <Col span={10} className="group-list-wrapper">
               <div className="group-search"><Search /></div>
               <ul className="group-list">
-                <li>
-                  <Checkbox onChange={ this.changeGroupSelected.bind(this) }>
-                    <p className="link">http://www.baidu.com/</p>
-                    <p className="time"><Icon type="clock-circle-o" /> 2016-09-21 10:12:22 &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
-                  </Checkbox>
-                </li>
+              {
+                isEmpty(models) ? <Spin done text="您还没有选择组，或者所选组暂无数据~" /> : models.map((v, i) => {
+                  return (
+                    <li key={ i }>
+                      <Checkbox onChange={ this.changeGroupSelected.bind(this) }>
+                        <p className="link">{ v.name }</p>
+                        <p className="time"><Icon type="clock-circle-o" /> { moment(v.updated_at).format("YYYY-MM-DD HH:mm:ss") } &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
+                      </Checkbox>
+                    </li>
+                  )
+                })
+              }
               </ul>
             </Col>
             <Col span={14} className="group-item">
