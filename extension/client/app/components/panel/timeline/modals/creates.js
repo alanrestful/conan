@@ -50,16 +50,17 @@ export default Form.create()(class extends React.Component {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 }
     };
-    let selectedActions = this.state.selectedActions || {},
+    let selectedActions = this.state.selectedActions || [],
         actions = [];
-    for(let k of Object.keys(selectedActions)) {
-      selectedActions[k].map(v => {
+    console.log(selectedActions)
+    selectedActions.map(v => {
+      v.tArray.map(v => {
         actions.push(v);
-      })
-    }
+      });
+    });
     let getFieldDecorator = this.props.form.getFieldDecorator;
     return (
-      <Modal title="创建模板和用例" visible={ this.state.visible } onOk={ this.handleOk.bind(this) } confirmLoading={ this.state.confirmLoading } onCancel={ this.handleCancel.bind(this) }>
+      <Modal title="创建模板" visible={ this.state.visible } onOk={ this.handleOk.bind(this) } confirmLoading={ this.state.confirmLoading } onCancel={ this.handleCancel.bind(this) }>
         <Form horizontal>
           <FormItem labelCol={{ span: 0 }} wrapperCol={{ span: 14, offset: 6 }} help=" ">
             <Alert message={ `当前有${ actions.length }个选项被选中！` } type="info" showIcon />

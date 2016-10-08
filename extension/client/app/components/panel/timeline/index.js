@@ -21,7 +21,7 @@ export default class extends React.Component {
     this.state = {
       page: {},
       actions: [],
-      selectedActions: {},
+      selectedActionIndexs: {},
       createsModalVisible: false
     }
   }
@@ -37,6 +37,7 @@ export default class extends React.Component {
     this.setState({
       pages,
       page,
+      selectedActions: nextProps.selectedActions,
       actions: action ? [ ...page.tArray[0], action ] : page.tArray ? page.tArray[0] : []
     });
   }
@@ -46,17 +47,16 @@ export default class extends React.Component {
    * @return {[type]} [description]
    */
   playIt() {
-    let pages = this.state.pages,
-        selectedActions = this.state.selectedActions,
-        page = {},
-        actions = [];
-    for(let k of Object.keys(selectedActions)) {
-      page = pages[k];
-      for(let key of Object.keys(selectedActions[k])) {
-        actions.push(pages[k].tArray[0][key]);
+    let selectedActions = this.state.selectedActions,
+        actions;
+    selectedActions.map((v, i) => {
+      if(i) {
+        actions.tArray = [ ...actions.tArray, ...v.tArray ];
+      } else {
+        actions = v;
       }
-    }
-    this.props.playback({ ...page, tArray: actions });
+    });
+    this.props.playback(actions);
     notification.success({
       message: "提示",
       description: "所选用例已经开始尝试执行，请耐心等待执行结果！（大误）"
@@ -130,18 +130,31 @@ export default class extends React.Component {
     }
   }
 
+  /**
+   * 显示创建模板的对话框
+   * @return {[type]} [description]
+   */
   showCreatesModal() {
     this.setState({
       createsModalVisible: true
     });
   }
 
+  /**
+   * 关闭创建模板的对话框
+   * @return {[type]} [description]
+   */
   closeCreatesModal() {
     this.setState({
       createsModalVisible: false
     });
   }
 
+  /**
+   * 提交创建模板的数据
+   * @param  {Object} data 模板数据
+   * @return {[type]}      [description]
+   */
   createsModalSubmit(data) {
     this.props.createGroups({
       ...data,
@@ -186,25 +199,49 @@ export default class extends React.Component {
     })
   }
 
+  /**
+   * 选择动作
+   * @param  {Object} action 动作数据（暂时无用）
+   * @param  {Int} index  动作所在的索引
+   * @return {[type]}        [description]
+   */
   selectedAction(action, index) {
     let selectedPageIndex = this.props.selectedPageIndex,
-        selectedActions = this.state.selectedActions,
-        actions = selectedActions[ selectedPageIndex ] || [];
+        selectedActionIndexs = this.state.selectedActionIndexs,
+        actions = selectedActionIndexs[ selectedPageIndex ] || [];
     if(actions.includes(index)) {
       actions.splice(actions.indexOf(index), 1);
     } else {
       actions = [ ...actions, index ]
     }
     if(isEmpty(actions)) {
-      delete selectedActions[ selectedPageIndex ];
+      delete selectedActionIndexs[ selectedPageIndex ];
     } else {
-      selectedActions[ selectedPageIndex ] = actions;
+      selectedActionIndexs[ selectedPageIndex ] = actions;
     }
     // this.setState({
-    //   selectedActions
+    //   selectedActionIndexs
     // });
+    console.log(555, selectedActionIndexs)
+    this.changeSelectedActions(selectedActionIndexs);
+  }
 
-    this.props.changeSelectedActions(selectedActions);
+  /**
+   * 将索引数据转成动作数据
+   * @param  {Object} selectedActionIndexs 索引数据
+   * @return {[type]}                       [description]
+   */
+  changeSelectedActions(selectedActionIndexs) {
+    let pages = this.state.pages,
+        page = {},
+        actions = [];
+    for(let k of Object.keys(selectedActionIndexs)) {
+      page = pages[k];
+      for(let key of selectedActionIndexs[k]) {
+        actions.push(page.tArray[0][key]);
+      }
+    }
+    this.props.changeSelectedActions([{ ...page, tArray: actions }]);
   }
 
   render() {
@@ -212,7 +249,7 @@ export default class extends React.Component {
         actions = this.state.actions;
     return (
       <div>
-        <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(this.state.selectedActions) ? null : <span><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /> 回放</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreatesModal.bind(this) }><Icon type="plus-circle-o" /> 创建</a>&nbsp;&nbsp;&nbsp;&nbsp;</span> }<a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /> 预期</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel timeline">
+        <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(this.state.selectedActionIndexs) ? null : <span><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /> 回放</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreatesModal.bind(this) }><Icon type="plus-circle-o" /> 创建</a>&nbsp;&nbsp;&nbsp;&nbsp;</span> }<a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /> 预期</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel timeline">
           {
             page.expectEditing ? <EditInSitu value={ page.expect } onEnter={ this.editOnEnter.bind(this, undefined) } onCancel={ this.editOnCancel.bind(this, undefined) } /> : page.expect ? (
               <div className="group-result clearfix">

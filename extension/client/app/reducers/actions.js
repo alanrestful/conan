@@ -32,6 +32,11 @@ export default (state = {}, action) => {
         ...state,
         pages: action.result
       }
+    case "CHANGE_SELECTED_ACTIONS":
+      return {
+        ...state,
+        selectedActions: action.result
+      }
     default:
       return state;
   }
