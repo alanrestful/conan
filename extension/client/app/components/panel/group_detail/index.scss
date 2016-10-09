@@ -1,3 +1,4 @@
+@import "../../../static/styles/common";
 @import "../../../static/styles/theme";
 @import "../pages/index.scss";
 
@@ -50,6 +51,12 @@
           div {
             margin-bottom: 5px;
           }
+        }
+        .address, .action {
+          margin-right: 10px;
+          display: inline-block;
+          max-width: 200px;
+          @include text-overflow();
         }
         .address {
           color: $color-primary;
