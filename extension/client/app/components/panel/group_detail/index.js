@@ -25,9 +25,76 @@ export default class extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      models: nextProps.models,
-      selectedGroup: nextProps.selectedGroup
+      models: nextProps.models || [],
+      selectedGroup: nextProps.selectedGroup || {}
     });
+  }
+
+  /**
+   * 显示编辑 预期 的文本框
+   * @param  {Int} index 索引
+   * @return {[type]}       [description]
+   */
+  showEditInSitu(index) {
+    this.expectCommon(index, {
+      expectEditing: true
+    });
+  }
+
+  /**
+   * 编辑 预期 完成
+   * @param  {Int} index 索引
+   * @param  {String} value 值
+   * @return {[type]}       [description]
+   */
+  editOnEnter(index, value) {
+    this.expectCommon(index, {
+      expect: value,
+      expectEditing: false
+    });
+  }
+
+  /**
+   * 取消编辑 预期
+   * @param  {Int} index 索引
+   * @return {[type]}       [description]
+   */
+  editOnCancel(index) {
+    this.expectCommon(index, {
+      expectEditing: false
+    });
+  }
+
+  /**
+   * 删除 预期
+   * @param  {Int} index 索引
+   * @return {[type]}       [description]
+   */
+  deleteExpect(index) {
+    this.expectCommon(index, {
+      expect: undefined,
+      expectEditing: false
+    });
+  }
+
+  /**
+   * 对 预期 操作的通用方法
+   * @param  {Int} index  索引
+   * @param  {String} expect 值
+   * @return {[type]}        [description]
+   */
+  expectCommon(index, expect) {
+    if(index === undefined) {
+      this.setState({
+        page: { ...this.state.page, ...expect }
+      });
+    } else {
+      this.setState({
+        actions: this.state.actions.map((v, i) => {
+          return i == index ? { ...v, ...expect } : v;
+        })
+      });
+    }
   }
 
   /**
@@ -52,7 +119,9 @@ export default class extends React.Component {
 
   createCaseModalSubmit() {}
 
-  deleteGroup() {}
+  deleteGroup(group) {
+    this.props.deleteGroup(group, this.props.groups);
+  }
 
   selectedModel(model) {
     this.setState({
@@ -69,10 +138,10 @@ export default class extends React.Component {
         model = this.state.selectedModel,
         fragment = isEmpty(model) ? [] : JSON.parse(model.fragment),
         group = this.state.selectedGroup;
-    console.log(555, fragment)
+    console.log(555, models)
     return (
       <div>
-        <Card title={ `${ group.name || "组名称" } ${ isEmpty(models) ? null : `${ models.length }个模板` }` } extra={ <span><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteGroup.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
+        <Card title={ `${ group.name || "组名称" } ${ isEmpty(models) ? "" : `${ models.length }个模板` }` } extra={ isEmpty(group) ? null : <span><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteGroup.bind(this, group) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
           <Row className="group-detail">
             <Col span={10} className="group-list-wrapper">
               <div className="group-search"><Search /></div>
@@ -125,15 +194,23 @@ export default class extends React.Component {
                                   { v.tagName ? <span className="action" title={ `Tag Name: ${ v.tagName }` }><Icon type="setting" /> { v.tagName }</span> : null }
                                   { v.value ? <span className="address" title={ `Value: ${ v.type == "password" ? v.value.replace(/./g, "*") : v.value }` }><Icon type="book" /> { v.type == "password" ? v.value.replace(/./g, "*") : v.value }</span> : null }
                                 </div>
-                                <div><Button size="small">Comment</Button></div>
-                                <div className="group-result small error clearfix">
-                                  <span className="group-result-info">预期结果：以下报错均出现</span>
-                                  <span className="group-result-control">
-                                    <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a><Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
-                                      <a><Icon type="cross-circle-o" /> 删除</a>
-                                    </Popconfirm>
-                                  </span>
-                                </div>
+                                {
+                                  v.expectEditing ? <EditInSitu value={ v.expect } onEnter={ this.editOnEnter.bind(this, i) } onCancel={ this.editOnCancel.bind(this, i) } /> : v.expect ? (
+                                    <div className="group-result small error clearfix">
+                                      <span className="group-result-info">预期结果：{ v.expect }</span>
+                                      <span className="group-result-control">
+                                        <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>
+                                        <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
+                                          <a><Icon type="cross-circle-o" /> 删除</a>
+                                        </Popconfirm>
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <div>
+                                      <Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small">代码</Button> }
+                                    </div>
+                                  )
+                                }
                               </span>
                             </span>
                           </li>

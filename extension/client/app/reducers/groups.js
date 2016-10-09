@@ -5,6 +5,11 @@ export default (state = {}, action) => {
         ...state,
         groups: action.result
       }
+    case "SUCCESS_DELETE_GROUP":
+      return {
+        ...state,
+        groups: action.result
+      }
     case "SUCCESS_LOAD_MODELS":
       return {
         ...state,
