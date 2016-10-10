@@ -19,6 +19,7 @@ export default class extends React.Component {
       models: [],
       selectedGroup: {},
       selectedModel: {},
+      checkedModelIndexs: {},
       createCaseModalVisible: false
     }
   }
@@ -129,7 +130,26 @@ export default class extends React.Component {
     });
   }
 
-  checkedModel() {}
+  checkedModel(id) {
+    let checkedModelIndexs = this.state.checkedModelIndexs,
+        groupId = this.state.selectedGroup._id,
+        current = checkedModelIndexs[groupId];
+    if(current) {
+      if(current.includes(id)) {
+        current.splice(current.indexOf(id), 1);
+        if(isEmpty(current)) {
+          delete checkedModelIndexs[groupId];
+        }
+      } else {
+        current.push(id);
+      }
+    } else {
+      checkedModelIndexs[groupId] = [id];
+    }
+    this.setState({
+      checkedModelIndexs
+    });
+  }
 
   confirm() {}
 
@@ -137,11 +157,12 @@ export default class extends React.Component {
     let models = this.state.models,
         model = this.state.selectedModel,
         fragment = isEmpty(model) ? [] : JSON.parse(model.fragment),
-        group = this.state.selectedGroup;
-    console.log(555, models)
+        group = this.state.selectedGroup,
+        checkedModelIndexs = this.state.checkedModelIndexs;
+    console.log(555, this.state.checkedModelIndexs)
     return (
       <div>
-        <Card title={ `${ group.name || "组名称" } ${ isEmpty(models) ? "" : `${ models.length }个模板` }` } extra={ isEmpty(group) ? null : <span><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteGroup.bind(this, group) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
+        <Card title={ `${ group.name || "组名称" } ${ isEmpty(models) ? "" : `${ models.length }个模板` }` } extra={ isEmpty(group) ? null : <span>{ isEmpty(checkedModelIndexs) ? null : <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a> }&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteGroup.bind(this, group) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
           <Row className="group-detail">
             <Col span={10} className="group-list-wrapper">
               <div className="group-search"><Search /></div>
@@ -150,7 +171,7 @@ export default class extends React.Component {
                 isEmpty(models) ? <Spin done text="您还没有选择组，或者所选组暂无数据~" /> : models.map((v, i) => {
                   return (
                     <li key={ i } onClick={ this.selectedModel.bind(this, v) }>
-                      <Checkbox onChange={ this.checkedModel.bind(this) }>
+                      <Checkbox onChange={ this.checkedModel.bind(this, v._id) }>
                         <p className="link">{ v.name }</p>
                         <p className="time"><Icon type="clock-circle-o" /> { moment(v.updated_at).format("YYYY-MM-DD HH:mm:ss") } &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
                       </Checkbox>

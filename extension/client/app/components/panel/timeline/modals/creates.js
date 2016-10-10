@@ -52,7 +52,6 @@ export default Form.create()(class extends React.Component {
     };
     let selectedActions = this.state.selectedActions || [],
         actions = [];
-    console.log(selectedActions)
     selectedActions.map(v => {
       v.tArray.map(v => {
         actions.push(v);

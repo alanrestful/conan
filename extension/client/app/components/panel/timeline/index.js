@@ -33,12 +33,12 @@ export default class extends React.Component {
     if(index == undefined) {
       return false;
     }
-    let page = pages[index];
+    let page = pages[index] || {};
     this.setState({
       pages,
       page,
       selectedActions: nextProps.selectedActions,
-      actions: action ? [ ...page.tArray[0], action ] : page.tArray ? page.tArray[0] : []
+      actions: action ? [ ...page.tArray[0], action ] : (page && page.tArray) ? page.tArray[0] : []
     });
   }
 
@@ -222,7 +222,6 @@ export default class extends React.Component {
     // this.setState({
     //   selectedActionIndexs
     // });
-    console.log(555, selectedActionIndexs)
     this.changeSelectedActions(selectedActionIndexs);
   }
 
