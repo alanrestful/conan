@@ -119,7 +119,11 @@ export default class extends React.Component {
     });
   }
 
-  createCaseModalSubmit() {}
+  createCaseModalSubmit(data, tag) {
+    console.log(data, tag)
+    this.props.createGroups({ ...data, pid: this.props.project.id });
+    tag && this.props.playback(data.fragment);
+  }
 
   deleteGroup(group) {
     this.props.deleteGroup(group, this.props.groups);
@@ -139,6 +143,11 @@ export default class extends React.Component {
     if(current) {
       if(current.includes(model._id)) {
         current.splice(current.indexOf(model._id), 1);
+        checkedModels.map((v, i) => {
+          if(v._id == model._id) {
+            checkedModels.splice(i, 1);
+          }
+        })
         if(isEmpty(current)) {
           delete checkedModelIndexs[groupId];
         }
@@ -148,10 +157,11 @@ export default class extends React.Component {
       }
     } else {
       checkedModelIndexs[groupId] = [model._id];
+      checkedModels.push(model);
     }
     this.setState({
-      checkedModels,
-      checkedModelIndexs
+      checkedModelIndexs,
+      checkedModels
     });
   }
 
@@ -163,7 +173,7 @@ export default class extends React.Component {
         fragment = isEmpty(model) ? [] : JSON.parse(model.fragment),
         group = this.state.selectedGroup,
         checkedModelIndexs = this.state.checkedModelIndexs;
-    console.log(555, this.state.checkedModelIndexs)
+    console.log(555, this.state.checkedModels, this.state.checkedModels.length)
     return (
       <div>
         <Card title={ `${ group.name || "组名称" } ${ isEmpty(models) ? "" : `${ models.length }个模板` }` } extra={ isEmpty(group) ? null : <span>{ isEmpty(checkedModelIndexs) ? null : <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a> }&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteGroup.bind(this, group) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
@@ -249,7 +259,7 @@ export default class extends React.Component {
             }
           </Row>
         </Card>
-        <CreateCaseModal visible={ this.state.createCaseModalVisible } onSubmit={ this.createCaseModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
+        <CreateCaseModal visible={ this.state.createCaseModalVisible } checkedModels={ this.state.checkedModels } onSubmit={ this.createCaseModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
       </div>
     )
   }

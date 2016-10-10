@@ -1,15 +1,44 @@
 import GroupDetail from "./index";
 import { connect } from "react-redux";
-import { fetchUtil, actionCreator } from "scripts/util";
+import { fetchUtil, json, actionCreator, clientPlay } from "scripts/util";
 
 export default connect(state => {
   return {
     groups: state.groups.groups,
     selectedGroup: state.groups.selectedGroup,
-    models: state.groups.models
+    models: state.groups.models,
+    project: state.projects.project
   }
 }, dispatch => {
   return {
+
+    /**
+     * 回放
+     * @param  {Object} data    回放数据
+     * @param  {[type]} history [description]
+     * @return {[type]}         [description]
+     */
+    playback: (data, history) => {
+      clientPlay({
+        method: "play",
+        data
+      })
+    },
+
+    /**
+     * 创建组
+     * @param  {Object} data    组数据
+     * @param  {[type]} history [description]
+     * @return {[type]}         [description]
+     */
+    createGroups: (data, history) => {
+      fetchUtil({
+        url: "/api/cases/group",
+        method: "POST",
+        headers: json,
+        body: JSON.stringify(data)
+      }).then(result => dispatch(actionCreator("CREATE_GROUPS", { result })));
+    },
 
     deleteGroup: (group, groups) => {
       fetchUtil({
