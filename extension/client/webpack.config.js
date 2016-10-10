@@ -45,7 +45,7 @@ module.exports = {
       path.resolve(APP_PATH + "/reducers/"),
       path.resolve(APP_PATH + "/static/")
     ],
-    extensions: ["", ".js", ".json"]
+    extensions: ["", ".js", "/index.js"]
   },
   devServer: {
     hot: true,
