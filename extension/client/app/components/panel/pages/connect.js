@@ -1,13 +1,14 @@
 import Pages from "./index";
 import { connect } from "react-redux";
 import moment from "moment";
-import { initConnect, allTArrays, listenerTarrayStorage, initNativeMessage, clientInit, clientPlay, clearAllTArray, fetchUtil, actionCreator } from "../../../actions/util";
+import { initConnect, allTArrays, listenerTarrayStorage, initNativeMessage, clientInit, clientPlay, clearAllTArray, fetchUtil, actionCreator } from "scripts/util";
 
 export default connect(state => {
   return {
     pages: state.actions.pages,
     page: state.actions.page,
-    action: state.actions.action
+    action: state.actions.action,
+    selectedActions: state.actions.selectedActions
   };
 }, dispatch => {
   return {

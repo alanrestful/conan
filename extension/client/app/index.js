@@ -1,17 +1,15 @@
 import React from "react";
-import ReactThunk from "redux-thunk";
 import ReactDOM from "react-dom";
+import ReactThunk from "redux-thunk";
 import { createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
-import { Router, Route, browserHistory, hashHistory } from "react-router";
+import { Router, Route, hashHistory } from "react-router";
 
-import { noAuthToLogin, fetchUtil, actionCreator } from 'util';
+import Index from "index/index";
+import Playback from "playback/index";
+import NoMatch from "no_match/index";
 
-import Index from "./components/index/index";
-import Playback from "./components/playback/index";
-import NoMatch from "./components/no_match/index";
-
-import reducers from "./reducers/reducers";
+import reducers from "reducers";
 
 const AppRouter = () => {
   return (

@@ -1,6 +1,6 @@
 import Setting from "./index";
 import { connect } from "react-redux";
-import { fetchUtil, actionCreator } from "../../../actions/util";
+import { fetchUtil, actionCreator } from "scripts/util";
 
 export default connect(state => {
   return {

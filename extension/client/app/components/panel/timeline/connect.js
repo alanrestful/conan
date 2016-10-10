@@ -1,7 +1,7 @@
 import Timeline from "./index";
 import { connect } from "react-redux";
 import moment from "moment";
-import { fetchUtil, json, actionCreator, clientPlay } from "../../../actions/util";
+import { fetchUtil, json, actionCreator, clientPlay } from "scripts/util";
 
 export default connect(state => {
   return {
