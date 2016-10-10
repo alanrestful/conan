@@ -40,7 +40,11 @@ module.exports = {
     }]
   },
   resolve: {
-    root: APP_PATH,
+    root: [
+      path.resolve(APP_PATH + "/components/"),
+      path.resolve(APP_PATH + "/reducers/"),
+      path.resolve(APP_PATH + "/static/")
+    ],
     extensions: ["", ".js", ".json"]
   },
   devServer: {
@@ -50,14 +54,13 @@ module.exports = {
   },
   plugins: [
     new CopyWebpackPlugin([
-      {from: APP_PATH + "/static/scripts/", to: BUILD_PATH + "/assest/scripts/"},
-      {from: APP_PATH + "/static/images/", to: BUILD_PATH + "/assest/images/"},
-      {from: APP_PATH + "/static/styles/", to: BUILD_PATH + "/assest/styles/"},
+      {from: APP_PATH + "/static/", to: BUILD_PATH + "/assest/"},
       {from: ROOT_PATH + "/manifest.json", to: BUILD_PATH},
       {from: ROOT_PATH + "/index.html", to: BUILD_PATH}
     ], {
       ignore: [
-        "helpers.js"
+        "helpers.js",
+        "*.scss"
       ]}
     ),
     new webpack.NoErrorsPlugin(),
