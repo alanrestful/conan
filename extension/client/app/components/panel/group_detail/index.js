@@ -4,11 +4,11 @@ import React from "react";
 import moment from "moment";
 import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox } from "antd";
 
-import { isEmpty } from "../../../static/scripts/helpers";
+import { isEmpty } from "scripts/helpers";
 
-import Search from "../../common/search/index";
-import Spin from "../../common/spin/index";
-import EditInSitu from "../../common/edit_in_situ/index";
+import Search from "common/search";
+import Spin from "common/spin";
+import EditInSitu from "common/edit_in_situ";
 import CreateCaseModal from "./modals/create_case";
 
 export default class extends React.Component {
@@ -19,6 +19,7 @@ export default class extends React.Component {
       models: [],
       selectedGroup: {},
       selectedModel: {},
+      checkedModels: [],
       checkedModelIndexs: {},
       createCaseModalVisible: false
     }
@@ -130,23 +131,26 @@ export default class extends React.Component {
     });
   }
 
-  checkedModel(id) {
-    let checkedModelIndexs = this.state.checkedModelIndexs,
+  checkedModel(model) {
+    let checkedModels = this.state.checkedModels,
+        checkedModelIndexs = this.state.checkedModelIndexs,
         groupId = this.state.selectedGroup._id,
         current = checkedModelIndexs[groupId];
     if(current) {
-      if(current.includes(id)) {
-        current.splice(current.indexOf(id), 1);
+      if(current.includes(model._id)) {
+        current.splice(current.indexOf(model._id), 1);
         if(isEmpty(current)) {
           delete checkedModelIndexs[groupId];
         }
       } else {
-        current.push(id);
+        current.push(model._id);
+        checkedModels.push(model);
       }
     } else {
-      checkedModelIndexs[groupId] = [id];
+      checkedModelIndexs[groupId] = [model._id];
     }
     this.setState({
+      checkedModels,
       checkedModelIndexs
     });
   }
@@ -171,7 +175,7 @@ export default class extends React.Component {
                 isEmpty(models) ? <Spin done text="您还没有选择组，或者所选组暂无数据~" /> : models.map((v, i) => {
                   return (
                     <li key={ i } onClick={ this.selectedModel.bind(this, v) }>
-                      <Checkbox onChange={ this.checkedModel.bind(this, v._id) }>
+                      <Checkbox onChange={ this.checkedModel.bind(this, v) }>
                         <p className="link">{ v.name }</p>
                         <p className="time"><Icon type="clock-circle-o" /> { moment(v.updated_at).format("YYYY-MM-DD HH:mm:ss") } &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
                       </Checkbox>

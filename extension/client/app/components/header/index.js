@@ -9,7 +9,7 @@ export default class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      avatar: require("../../static/images/avatar.png") || `data:image/png;base64, ${new Identicon("JSANN").toString()}`
+      avatar: require("images/avatar.png") || `data:image/png;base64, ${new Identicon("JSANN").toString()}`
     }
   }
 
@@ -27,7 +27,7 @@ export default class extends React.Component {
     return (
       <div className="header">
         <Row>
-          <Col span={5}><a href="#/" className="logo"><img src={ require("../../static/images/parana.png") } alt="Parana" /><span>Conan</span></a></Col>
+          <Col span={5}><a href="#/" className="logo"><img src={ require("images/parana.png") } alt="Parana" /><span>Conan</span></a></Col>
           <Col span={9} offset={10}>
             <nav>
               <ul>

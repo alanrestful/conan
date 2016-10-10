@@ -5,9 +5,9 @@ import React from "react";
 import moment from "moment";
 import { Tabs, Icon } from 'antd';
 
-import Spin from "../../common/spin/index";
+import Spin from "common/spin";
 
-import { isEmpty } from "../../../static/scripts/helpers";
+import { isEmpty } from "scripts/helpers";
 
 const TabPane = Tabs.TabPane;
 

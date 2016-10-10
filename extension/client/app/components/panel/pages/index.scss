@@ -7,6 +7,7 @@
     padding: 12px 24px;
     line-height: 24px;
     cursor: default;
+    position: relative;
     border-bottom: $color-border-default solid 1px;
     &:last-child {
       border-bottom: none;
@@ -22,6 +23,12 @@
     }
     .time {
       color: $color-dark;
+    }
+    .checkbox {
+      position: absolute;
+      top: 50%;
+      margin-top: -12px;
+      right: 8px;
     }
   }
 }

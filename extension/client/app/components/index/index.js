@@ -2,10 +2,10 @@ import React from "react";
 import { Link } from "react-router";
 import { Row, Col } from "antd";
 
-import Header from "../header/index";
-import Timeline from "../panel/timeline/connect";
-import Setting from "../panel/setting/connect";
-import Pages from "../panel/pages/connect";
+import Header from "header";
+import Timeline from "panel/timeline/connect";
+import Setting from "panel/setting/connect";
+import Pages from "panel/pages/connect";
 
 export default class extends React.Component {
 

@@ -3,7 +3,7 @@ require("../index.scss");
 import React from "react";
 import { Card, Icon, Tag } from "antd";
 
-import Spin from "../../common/spin/index";
+import Spin from "common/spin";
 
 import SettingModal from "./modals/setting";
 

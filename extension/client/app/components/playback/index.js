@@ -1,10 +1,10 @@
 import React from "react";
 import { Row, Col } from "antd";
 
-import Header from "../header/index";
-import GroupDetail from "../panel/group_detail/connect";
-import Setting from "../panel/setting/connect";
-import Group from "../panel/group/connect";
+import Header from "header";
+import GroupDetail from "panel/group_detail/connect";
+import Setting from "panel/setting/connect";
+import Group from "panel/group/connect";
 
 export default class extends React.Component {
 

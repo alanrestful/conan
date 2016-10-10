@@ -5,10 +5,10 @@ import React from "react";
 import moment from "moment";
 import { Card, Timeline, Icon, Popconfirm, Checkbox, Button, notification } from "antd";
 
-import { isEmpty } from "../../../static/scripts/helpers";
+import { isEmpty } from "scripts/helpers";
 
-import Spin from "../../common/spin/index";
-import EditInSitu from "../../common/edit_in_situ/index";
+import Spin from "common/spin";
+import EditInSitu from "common/edit_in_situ";
 
 import CreatesModal from "./modals/creates";
 
