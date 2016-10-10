@@ -5,7 +5,7 @@ var webpack = require("webpack");
 var ROOT_PATH = path.resolve(__dirname);
 var APP_PATH = path.resolve(ROOT_PATH, "app");
 var BUILD_PATH = path.resolve(ROOT_PATH, "build");
-var htmlWebpackPlugin =  require("html-webpack-plugin");
+
 var CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
@@ -56,8 +56,12 @@ module.exports = {
         "*.scss"
       ]}
     ),
-    new webpack.optimize.UglifyJsPlugin({minimize: true}),
-    new webpack.NoErrorsPlugin(),
-    new htmlWebpackPlugin()
+    new webpack.optimize.UglifyJsPlugin({
+      minimize: true,
+      compress: {
+        warnings: false
+      }
+    }),
+    new webpack.optimize.DedupePlugin()
   ]
 };
