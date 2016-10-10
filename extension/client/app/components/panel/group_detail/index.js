@@ -121,7 +121,7 @@ export default class extends React.Component {
 
   createCaseModalSubmit(data, tag) {
     console.log(data, tag)
-    this.props.createGroups({ ...data, pid: this.props.project.id });
+    this.props.createGroups({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id });
     tag && this.props.playback(data.fragment);
   }
 
