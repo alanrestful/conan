@@ -7,6 +7,7 @@ export default connect(state => {
     groups: state.groups.groups,
     selectedGroup: state.groups.selectedGroup,
     models: state.groups.models,
+    checkedModelIndexs: state.groups.checkedModelIndexs,
     project: state.projects.project
   }
 }, dispatch => {
@@ -38,6 +39,10 @@ export default connect(state => {
         headers: json,
         body: JSON.stringify(data)
       }).then(result => dispatch(actionCreator("CREATE_GROUPS", { result })));
+    },
+
+    checkedModel: (data, history) => {
+      dispatch(actionCreator("SUCCESS_CHECKED_MODELS", { result: data }));
     },
 
     deleteGroup: (group, groups) => {

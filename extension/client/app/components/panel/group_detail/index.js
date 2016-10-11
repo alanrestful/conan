@@ -26,9 +26,15 @@ export default class extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    let selectedModel = this.state.selectedModel;
+    if(this.props.selectedGroup && nextProps.selectedGroup._id != this.props.selectedGroup._id) {
+      selectedModel = {};
+    }
     this.setState({
       models: nextProps.models || [],
-      selectedGroup: nextProps.selectedGroup || {}
+      selectedGroup: nextProps.selectedGroup || {},
+      checkedModelIndexs: nextProps.checkedModelIndexs || {},
+      selectedModel
     });
   }
 
@@ -120,21 +126,35 @@ export default class extends React.Component {
   }
 
   createCaseModalSubmit(data, tag) {
-    console.log(data, tag)
     this.props.createGroups({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id });
     tag && this.props.playback(data.fragment);
   }
 
+  /**
+   * 删除当前组
+   * @param  {Object} group 组信息
+   * @return {[type]}       [description]
+   */
   deleteGroup(group) {
     this.props.deleteGroup(group, this.props.groups);
   }
 
+  /**
+   * 选择模板
+   * @param  {Object} model 模板数据
+   * @return {[type]}       [description]
+   */
   selectedModel(model) {
     this.setState({
       selectedModel: model
     });
   }
 
+  /**
+   * 选择模板
+   * @param  {Object} model 模板数据
+   * @return {[type]}       [description]
+   */
   checkedModel(model) {
     let checkedModels = this.state.checkedModels,
         checkedModelIndexs = this.state.checkedModelIndexs,
@@ -160,9 +180,9 @@ export default class extends React.Component {
       checkedModels.push(model);
     }
     this.setState({
-      checkedModelIndexs,
       checkedModels
     });
+    this.props.checkedModel(checkedModelIndexs);
   }
 
   confirm() {}
@@ -172,8 +192,9 @@ export default class extends React.Component {
         model = this.state.selectedModel,
         fragment = isEmpty(model) ? [] : JSON.parse(model.fragment),
         group = this.state.selectedGroup,
-        checkedModelIndexs = this.state.checkedModelIndexs;
-    console.log(555, this.state.checkedModels, this.state.checkedModels.length)
+        checkedModelIndexs = this.state.checkedModelIndexs,
+        checkedCurrentModel = checkedModelIndexs[group._id];
+    console.log(1, this.props.checkedModelIndexs);
     return (
       <div>
         <Card title={ `${ group.name || "组名称" } ${ isEmpty(models) ? "" : `${ models.length }个模板` }` } extra={ isEmpty(group) ? null : <span>{ isEmpty(checkedModelIndexs) ? null : <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a> }&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteGroup.bind(this, group) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
@@ -185,7 +206,7 @@ export default class extends React.Component {
                 isEmpty(models) ? <Spin done text="您还没有选择组，或者所选组暂无数据~" /> : models.map((v, i) => {
                   return (
                     <li key={ i } onClick={ this.selectedModel.bind(this, v) }>
-                      <Checkbox onChange={ this.checkedModel.bind(this, v) }>
+                      <Checkbox onChange={ this.checkedModel.bind(this, v) } checked={ checkedCurrentModel && checkedCurrentModel.includes(v._id) }>
                         <p className="link">{ v.name }</p>
                         <p className="time"><Icon type="clock-circle-o" /> { moment(v.updated_at).format("YYYY-MM-DD HH:mm:ss") } &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
                       </Checkbox>

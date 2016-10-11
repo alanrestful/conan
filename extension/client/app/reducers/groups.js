@@ -15,6 +15,11 @@ export default (state = {}, action) => {
         ...state,
         ...action.result
       }
+    case "SUCCESS_CHECKED_MODELS":
+      return {
+        ...state,
+        checkedModelIndexs: action.result
+      }
     default:
       return state;
   }

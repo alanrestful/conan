@@ -3,7 +3,7 @@ require("./index.scss");
 
 import React from "react";
 import moment from "moment";
-import { Tabs, Icon } from 'antd';
+import { Tabs, Icon, Checkbox } from 'antd';
 
 import Spin from "common/spin";
 
@@ -16,7 +16,8 @@ export default class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedGroup: {}
+      selectedGroup: {},
+      checkedModelIndexs: {}
     }
   }
 
@@ -26,7 +27,8 @@ export default class extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      selectedGroup: nextProps.selectedGroup || {}
+      selectedGroup: nextProps.selectedGroup || {},
+      checkedModelIndexs: nextProps.checkedModelIndexs || {}
     });
   }
 
@@ -41,6 +43,8 @@ export default class extends React.Component {
     this.props.getModels(group);
   }
 
+  changeSelectedActions() {}
+
   getGroupsItem() {
     let groups = this.props.groups,
         group = this.state.selectedGroup;
@@ -49,6 +53,7 @@ export default class extends React.Component {
         <li key={ i } onClick={ this.selectedGroup.bind(this, v) } className={ v._id == group._id ? "actived" : "" }>
           <p className="link">{ v.name }</p>
           <p className="time"><Icon type="clock-circle-o" /> 最后修改：{ moment(v.created_at).format("YYYY-MM-DD HH-mm:ss") }</p>
+          <Checkbox className="checkbox" onChange={ this.changeSelectedActions.bind(this) } checked={ !isEmpty(this.state.checkedModelIndexs[v._id]) } />
         </li>
       )
     }) : <Spin />

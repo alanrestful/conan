@@ -6,6 +6,7 @@ export default connect(state => {
   return {
     groups: state.groups.groups,
     selectedGroup: state.groups.selectedGroup,
+    checkedModelIndexs: state.groups.checkedModelIndexs,
     project: state.projects.project
   }
 }, dispatch => {
