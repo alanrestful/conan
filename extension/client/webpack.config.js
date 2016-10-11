@@ -40,6 +40,7 @@ module.exports = {
   },
   resolve: {
     root: [
+      path.resolve(APP_PATH + "/actions/"),
       path.resolve(APP_PATH + "/components/"),
       path.resolve(APP_PATH + "/reducers/"),
       path.resolve(APP_PATH + "/static/")
