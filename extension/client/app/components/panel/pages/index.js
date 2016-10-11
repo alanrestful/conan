@@ -3,11 +3,11 @@ require("./index.scss");
 
 import React from "react";
 import moment from "moment";
-import { Card, Icon, Popconfirm } from "antd";
+import { Card, Icon, Popconfirm, Checkbox } from "antd";
 
-import { isEmpty } from "../../../static/scripts/helpers";
+import { isEmpty } from "scripts/helpers";
 
-import Spin from "../../common/spin/index";
+import Spin from "common/spin";
 
 export default class extends React.Component {
 
@@ -34,11 +34,17 @@ export default class extends React.Component {
       });
     }
     this.setState({
-      pages
+      pages,
+      selectedActions: nextProps.selectedActions
     });
   }
 
+  changeSelectedActions(event) {
+    event.stopPropagation();
+  }
+
   pageItem(pages) {
+    let selectedActions = this.state.selectedActions || {};
     return (
       <ul className="pages">
       {
@@ -48,6 +54,7 @@ export default class extends React.Component {
               <li key={i} onClick={ this.pageActived.bind(this, i) } className={ this.state.actived == i ? "actived" : null }>
                 <p className="link" title={ v.url }>{ v.url }</p>
                 <p className="time"><Icon type="clock-circle-o" /> { moment().format("YYYY-MM-DD HH:mm:ss") }</p>
+                <Checkbox className="checkbox" onChange={ this.changeSelectedActions.bind(this) } checked={ !!selectedActions[i] } />
               </li>
             )
           }
@@ -66,6 +73,9 @@ export default class extends React.Component {
 
   clearAllPages() {
     this.props.clearAllPages();
+    this.setState({
+      pages: []
+    })
   }
 
   render() {

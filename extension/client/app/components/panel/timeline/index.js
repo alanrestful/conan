@@ -56,7 +56,7 @@ export default class extends React.Component {
         actions = v;
       }
     });
-    this.props.playback(actions);
+    this.props.playback({ ...actions, tArray: [actions.tArray] });
     notification.success({
       message: "提示",
       description: "所选用例已经开始尝试执行，请耐心等待执行结果！（大误）"
