@@ -2,9 +2,7 @@ import React from "react";
 import { Row, Col } from "antd";
 
 import Header from "header";
-import GroupDetail from "panel/group_detail/connect";
-import Setting from "panel/project_setting/connect";
-import Group from "panel/group/connect";
+import Setting from "panel/setting";
 
 export default class extends React.Component {
 
@@ -13,12 +11,8 @@ export default class extends React.Component {
       <div>
         <Header />
         <Row gutter={24}>
-          <Col span={6}>
+          <Col span={24}>
             <Setting />
-            <Group />
-          </Col>
-          <Col span={18}>
-            <GroupDetail />
           </Col>
         </Row>
       </div>
