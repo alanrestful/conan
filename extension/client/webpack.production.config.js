@@ -43,7 +43,7 @@ module.exports = {
       path.resolve(APP_PATH + "/reducers/"),
       path.resolve(APP_PATH + "/static/")
     ],
-    extensions: ["", ".js", "/index.js"]
+    extensions: ["", ".js"]
   },
   plugins: [
     new CopyWebpackPlugin([
