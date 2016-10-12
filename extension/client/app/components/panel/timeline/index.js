@@ -29,26 +29,19 @@ export default class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      page: {},
-      actions: [],
+      pages: [],
       selectedActionIndexs: {},
       createsModalVisible: false
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    let pages = nextProps.pages,
-        index = nextProps.selectedPageIndex,
-        action = nextProps.action;
-    if(index == undefined) {
+    if(nextProps.selectedPageIndex == undefined) {
       return false;
     }
-    let page = pages[index] || {};
     this.setState({
-      pages,
-      page,
-      selectedActionIndexs: nextProps.selectedActionIndexs || {},
-      actions: action ? [ ...page.tArray[0], action ] : (page && page.tArray) ? page.tArray[0] : []
+      pages: nextProps.pages,
+      selectedActionIndexs: nextProps.selectedActionIndexs || {}
     });
   }
 
@@ -57,7 +50,7 @@ export default class extends React.Component {
    * @return {[type]} [description]
    */
   playIt() {
-    let selectedActions = this.state.selectedActions,
+    let selectedActions = this.convertSelectedActions(),
         actions;
     selectedActions.map((v, i) => {
       if(i) {
@@ -127,17 +120,18 @@ export default class extends React.Component {
    * @return {[type]}        [description]
    */
   expectCommon(index, expect) {
+    let pageIndex = this.props.selectedPageIndex,
+        pages = this.state.pages,
+        currentPage = pages[pageIndex];
     if(index === undefined) {
-      this.setState({
-        page: { ...this.state.page, ...expect }
-      });
+       pages[pageIndex] = { ...currentPage, ...expect }
     } else {
-      this.setState({
-        actions: this.state.actions.map((v, i) => {
-          return i == index ? { ...v, ...expect } : v;
-        })
-      });
+      pages[pageIndex].tArray = [ currentPage.tArray[0].map((v, i) => i == index ? { ...v, ...expect } : v) ];
     }
+    console.log(pages)
+    this.setState({
+      pages
+    });
   }
 
   /**
@@ -166,9 +160,10 @@ export default class extends React.Component {
    * @return {[type]}      [description]
    */
   createsModalSubmit(data) {
+    console.log(this.convertSelectedActions())
     this.props.createGroups({
       ...data,
-      fragment: JSON.stringify(this.state.selectedActions),
+      fragment: JSON.stringify(this.convertSelectedActions()),
       pid: this.props.project.id
     });
   }
@@ -234,25 +229,26 @@ export default class extends React.Component {
 
   /**
    * 将索引数据转成动作数据
-   * @param  {Object} selectedActionIndexs 索引数据
-   * @return {[type]}                       [description]
+   * @return {Array} 转换好的动作数据
    */
-  convertSelectedActions(selectedActionIndexs) {
+  convertSelectedActions() {
     let pages = this.state.pages,
-        page = {},
+        selectedActionIndexs = this.state.selectedActionIndexs,
         actions = [];
-    for(let k of Object.keys(selectedActionIndexs)) {
-      page = pages[k];
-      for(let key of selectedActionIndexs[k]) {
-        actions.push(page.tArray[0][key]);
-      }
-    }
-    this.props.changeSelectedActions([{ ...page, tArray: actions }]);
+    Object.keys(selectedActionIndexs).map(k => {
+      let page = pages[k],
+          tArray = [];
+      selectedActionIndexs[k].map(v => tArray.push(page.tArray[0][v]));
+      actions.push({ ...page, tArray });
+    });
+    return actions;
   }
 
   render() {
-    let page = this.state.page,
-        actions = this.state.actions;
+    let pages = this.state.pages,
+        index = this.props.selectedPageIndex,
+        page = pages[index] || {},
+        actions = page.tArray ? page.tArray[0] : {};
     return (
       <div>
         <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(this.state.selectedActionIndexs) ? null : <span><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /> 回放</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreatesModal.bind(this) }><Icon type="plus-circle-o" /> 创建</a>&nbsp;&nbsp;&nbsp;&nbsp;</span> }<a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /> 预期</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel timeline">
