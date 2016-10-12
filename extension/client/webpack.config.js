@@ -11,7 +11,7 @@ var CopyWebpackPlugin = require("copy-webpack-plugin");
 module.exports = {
   entry: [
     "webpack/hot/only-dev-server",
-    "./app/index.js"
+    "./app/app.js"
   ],
   output: {
     path: BUILD_PATH + "/assest/",
@@ -25,7 +25,7 @@ module.exports = {
       loader: "babel-loader",
       query: {
         presets: ["react", "es2015", "stage-2"],
-        plugins: [["import", {
+        plugins: ["transform-decorators-legacy", ["import", {
           style: "css",
           libraryName: "antd"
         }]]
@@ -40,7 +40,7 @@ module.exports = {
   },
   resolve: {
     root: [
-      path.resolve(APP_PATH + "/actions/"),
+      path.resolve(APP_PATH),
       path.resolve(APP_PATH + "/components/"),
       path.resolve(APP_PATH + "/reducers/"),
       path.resolve(APP_PATH + "/static/")
