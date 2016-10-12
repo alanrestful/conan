@@ -35,7 +35,7 @@ export default (state = {}, action) => {
     case "CHANGE_SELECTED_ACTIONS":
       return {
         ...state,
-        selectedActions: action.result
+        selectedActionIndexs: action.result
       }
     default:
       return state;

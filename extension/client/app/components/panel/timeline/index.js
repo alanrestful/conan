@@ -21,7 +21,7 @@ const TimelineItem = Timeline.Item;
   pages: state.actions.pages,
   selectedPageIndex: state.actions.selectedPageIndex,
   action: state.actions.action,
-  selectedActions: state.actions.selectedActions,
+  selectedActionIndexs: state.actions.selectedActionIndexs,
   project: state.projects.project
 }), dispatch => bindActionCreators({ playback, createGroups, deletePageByIndex, changeSelectedActions }, dispatch))
 export default class extends React.Component {
@@ -47,7 +47,7 @@ export default class extends React.Component {
     this.setState({
       pages,
       page,
-      selectedActions: nextProps.selectedActions,
+      selectedActionIndexs: nextProps.selectedActionIndexs || {},
       actions: action ? [ ...page.tArray[0], action ] : (page && page.tArray) ? page.tArray[0] : []
     });
   }
@@ -180,7 +180,7 @@ export default class extends React.Component {
   timelineItem(actions) {
     return actions.map((v, i) => {
       return (
-        <TimelineItem key={i} dot={ <Checkbox key={v.baseURI + i} onChange={ this.selectedAction.bind(this, v, i) } /> }>
+        <TimelineItem key={ i } dot={ <Checkbox key={ v.baseURI + i } onChange={ this.selectedAction.bind(this, v, i) } /> }>
           <div className="time"><Icon type="clock-circle-o" /> { moment(v.inDate).format("YYYY-MM-DD HH:mm:ss") }</div>
           <div className="action">
             <span className="address" title={ `xPath: ${ v.xPath }` }><Icon type="environment-o" /> { v.xPath }</span>
@@ -229,10 +229,7 @@ export default class extends React.Component {
     } else {
       selectedActionIndexs[ selectedPageIndex ] = actions;
     }
-    // this.setState({
-    //   selectedActionIndexs
-    // });
-    this.changeSelectedActions(selectedActionIndexs);
+    this.props.changeSelectedActions({ ...selectedActionIndexs });
   }
 
   /**
@@ -240,7 +237,7 @@ export default class extends React.Component {
    * @param  {Object} selectedActionIndexs 索引数据
    * @return {[type]}                       [description]
    */
-  changeSelectedActions(selectedActionIndexs) {
+  convertSelectedActions(selectedActionIndexs) {
     let pages = this.state.pages,
         page = {},
         actions = [];
@@ -278,7 +275,7 @@ export default class extends React.Component {
           }
           </Timeline>
         </Card>
-        <CreatesModal selectedActions={ this.state.selectedActions } visible={ this.state.createsModalVisible } onSubmit={ this.createsModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
+        <CreatesModal selectedActionIndexs={ this.state.selectedActionIndexs } visible={ this.state.createsModalVisible } onSubmit={ this.createsModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
       </div>
     )
   }

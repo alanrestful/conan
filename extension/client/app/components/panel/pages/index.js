@@ -17,7 +17,7 @@ import { isEmpty } from "scripts/helpers";
   pages: state.actions.pages,
   page: state.actions.page,
   action: state.actions.action,
-  selectedActions: state.actions.selectedActions
+  selectedActionIndexs: state.actions.selectedActionIndexs
 }), dispatch => bindActionCreators({ getActionData, clearAllPages, pageActived }, dispatch))
 export default class extends React.Component {
 
@@ -44,8 +44,7 @@ export default class extends React.Component {
       });
     }
     this.setState({
-      pages,
-      selectedActions: nextProps.selectedActions
+      pages
     });
   }
 
@@ -54,17 +53,17 @@ export default class extends React.Component {
   }
 
   pageItem(pages) {
-    let selectedActions = this.state.selectedActions || {};
+    let selectedActionIndexs = this.props.selectedActionIndexs || {};
     return (
       <ul className="pages">
       {
         pages.map((v, i) => {
           if(v) {
             return (
-              <li key={i} onClick={ this.pageActived.bind(this, i) } className={ this.state.actived == i ? "actived" : null }>
+              <li key={ i } onClick={ this.pageActived.bind(this, i) } className={ this.state.actived == i ? "actived" : null }>
                 <p className="link" title={ v.url }>{ v.url }</p>
                 <p className="time"><Icon type="clock-circle-o" /> { moment().format("YYYY-MM-DD HH:mm:ss") }</p>
-                <Checkbox className="checkbox" onChange={ this.changeSelectedActions.bind(this) } checked={ !!selectedActions[i] } />
+                <Checkbox className="checkbox" onChange={ this.changeSelectedActions.bind(this) } checked={ !!selectedActionIndexs[i] } />
               </li>
             )
           }
