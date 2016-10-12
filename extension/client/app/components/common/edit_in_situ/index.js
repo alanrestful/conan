@@ -20,6 +20,10 @@ export default class extends React.Component {
     }
   }
 
+  handleBlur(event) {
+    event.target.value ? this.handleEnter(event) : this.handleCancel();
+  }
+
   /**
    * 取消事件
    * @param  {[type]} event [description]
@@ -43,7 +47,7 @@ export default class extends React.Component {
   render() {
     return (
       <div className="edit-in-situ">
-        <Input placeholder={ this.props.placeholder || "请输入..." } autoFocus={true} defaultValue={ this.props.value } onBlur={ this.handleCancel.bind(this) } onKeyUp={ this.handleKeyUp.bind(this) } onPressEnter={ this.handleEnter.bind(this) }/>
+        <Input placeholder={ this.props.placeholder || "请输入..." } autoFocus={true} defaultValue={ this.props.value } onBlur={ this.handleBlur.bind(this) } onKeyUp={ this.handleKeyUp.bind(this) } onPressEnter={ this.handleEnter.bind(this) }/>
         <Tooltip title="确定请按 Enter 键，取消请按 ESC 键。">
           <Icon type="question-circle-o" />
         </Tooltip>

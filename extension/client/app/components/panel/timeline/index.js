@@ -128,7 +128,6 @@ export default class extends React.Component {
     } else {
       pages[pageIndex].tArray = [ currentPage.tArray[0].map((v, i) => i == index ? { ...v, ...expect } : v) ];
     }
-    console.log(pages)
     this.setState({
       pages
     });
