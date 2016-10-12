@@ -3,17 +3,27 @@ require("./index.scss");
 
 import React from "react";
 import moment from "moment";
+import pureRender from 'pure-render-decorator';
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
 import { Card, Timeline, Icon, Popconfirm, Checkbox, Button, notification } from "antd";
-
-import { isEmpty } from "scripts/helpers";
 
 import Spin from "common/spin";
 import EditInSitu from "common/edit_in_situ";
-
 import CreatesModal from "./modals/creates";
+import { playback, createGroups, deletePageByIndex, changeSelectedActions } from "actions/actions";
+import { isEmpty } from "scripts/helpers";
 
 const TimelineItem = Timeline.Item;
 
+@pureRender
+@connect(state => ({
+  pages: state.actions.pages,
+  selectedPageIndex: state.actions.selectedPageIndex,
+  action: state.actions.action,
+  selectedActions: state.actions.selectedActions,
+  project: state.projects.project
+}), dispatch => bindActionCreators({ playback, createGroups, deletePageByIndex, changeSelectedActions }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {
@@ -192,7 +202,7 @@ export default class extends React.Component {
                   </Popconfirm>
                 </span>
               </div>
-            ) : <div className="control"><Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small">代码</Button> }</div>
+            ) : <div className="control"><Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small">JSON</Button> }</div>
           }
         </TimelineItem>
       )

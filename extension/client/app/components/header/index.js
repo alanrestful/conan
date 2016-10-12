@@ -2,8 +2,10 @@ require("./index.scss");
 
 import React from "react";
 import Identicon from "identicon.js";
+import pureRender from 'pure-render-decorator';
 import { Row, Col, Menu, Dropdown, Icon } from "antd";
 
+@pureRender
 export default class extends React.Component {
 
   constructor(props) {

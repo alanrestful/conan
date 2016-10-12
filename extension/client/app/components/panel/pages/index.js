@@ -3,12 +3,22 @@ require("./index.scss");
 
 import React from "react";
 import moment from "moment";
+import pureRender from 'pure-render-decorator';
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
 import { Card, Icon, Popconfirm, Checkbox } from "antd";
 
+import Spin from "common/spin";
+import { getActionData, clearAllPages, pageActived } from "actions/actions";
 import { isEmpty } from "scripts/helpers";
 
-import Spin from "common/spin";
-
+@pureRender
+@connect(state => ({
+  pages: state.actions.pages,
+  page: state.actions.page,
+  action: state.actions.action,
+  selectedActions: state.actions.selectedActions
+}), dispatch => bindActionCreators({ getActionData, clearAllPages, pageActived }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {

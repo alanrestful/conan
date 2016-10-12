@@ -4,7 +4,8 @@ import { Modal, Form, Input, Select, Button } from "antd";
 const FormItem = Form.Item,
       Option = Select.Option;
 
-export default Form.create()(class extends React.Component {
+@Form.create()
+export default class extends React.Component {
 
   constructor(props) {
     super(props);
@@ -162,4 +163,4 @@ export default Form.create()(class extends React.Component {
       </Modal>
     )
   }
-});
+}

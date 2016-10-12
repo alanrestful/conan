@@ -2,15 +2,27 @@ require("./index.scss");
 
 import React from "react";
 import moment from "moment";
+import pureRender from 'pure-render-decorator';
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
 import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox } from "antd";
-
-import { isEmpty } from "scripts/helpers";
 
 import Search from "common/search";
 import Spin from "common/spin";
 import EditInSitu from "common/edit_in_situ";
 import CreateCaseModal from "./modals/create_case";
+import { playback, createGroups } from "actions/actions";
+import { checkedModel, deleteGroup } from "actions/groups";
+import { isEmpty } from "scripts/helpers";
 
+@pureRender
+@connect(state => ({
+    groups: state.groups.groups,
+    selectedGroup: state.groups.selectedGroup,
+    models: state.groups.models,
+    checkedModelIndexs: state.groups.checkedModelIndexs,
+    project: state.projects.project
+}), dispatch => bindActionCreators({ playback, createGroups, checkedModel, deleteGroup }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {
@@ -221,7 +233,7 @@ export default class extends React.Component {
                 <Col span={ 14 } className="group-item">
                   <div className="group-item-title clearfix">
                     <h4>{ model.name }</h4>
-                    <Button size="small">代码</Button>
+                    <Button size="small">JSON</Button>
                   </div>
                   <div className="group-result clearfix">
                     <span className="group-result-info">预期结果：以下报错均出现</span>
@@ -263,7 +275,7 @@ export default class extends React.Component {
                                     </div>
                                   ) : (
                                     <div>
-                                      <Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small">代码</Button> }
+                                      <Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small">JSON</Button> }
                                     </div>
                                   )
                                 }

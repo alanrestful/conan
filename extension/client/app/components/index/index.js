@@ -3,9 +3,9 @@ import { Link } from "react-router";
 import { Row, Col } from "antd";
 
 import Header from "header";
-import Timeline from "panel/timeline/connect";
-import Setting from "panel/project_setting/connect";
-import Pages from "panel/pages/connect";
+import Timeline from "panel/timeline";
+import Setting from "panel/project_setting";
+import Pages from "panel/pages";
 
 export default class extends React.Component {
 

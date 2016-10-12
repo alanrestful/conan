@@ -3,7 +3,8 @@ import { Modal, Form, Input, Button, Alert } from "antd";
 
 const FormItem = Form.Item;
 
-export default Form.create()(class extends React.Component {
+@Form.create()
+export default class extends React.Component {
 
   constructor(props) {
     super(props);
@@ -76,7 +77,7 @@ export default Form.create()(class extends React.Component {
       <Modal title="设置" visible={ this.state.visible } onCancel={ this.handleCancel.bind(this) } footer={ [<Button key="back" type="ghost" size="large" onClick={ this.handleCancel.bind(this) }>取 消</Button>, <Button key="submit" type="primary" size="large" loading={ this.state.confirmLoading } onClick={ this.handleOk.bind(this) }>创 建</Button>, <Button key="continue" type="primary" size="large" loading={ this.state.continueLoading } onClick={ this.handleContinue.bind(this) }>创建并执行</Button>] }>
         <Form horizontal>
           <FormItem labelCol={{ span: 0 }} wrapperCol={{ span: 14, offset: 6 }} help=" ">
-            <Alert message={`当前有${ this.props.checkedModels.length }个选项被选中！`} type="info" showIcon />
+            <Alert message={ `当前有${ this.props.checkedModels.length }个选项被选中！` } type="info" showIcon />
           </FormItem>
           <FormItem { ...formItemLayout } label="用例组">
             { getFieldDecorator("tempGroup", {
@@ -109,4 +110,4 @@ export default Form.create()(class extends React.Component {
       </Modal>
     )
   }
-})
+}

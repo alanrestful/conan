@@ -3,14 +3,24 @@ require("./index.scss");
 
 import React from "react";
 import moment from "moment";
+import pureRender from 'pure-render-decorator';
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
 import { Tabs, Icon, Checkbox } from 'antd';
 
 import Spin from "common/spin";
-
+import { getGroup, getModels } from "actions/groups";
 import { isEmpty } from "scripts/helpers";
 
 const TabPane = Tabs.TabPane;
 
+@pureRender
+@connect(state => ({
+  groups: state.groups.groups,
+  selectedGroup: state.groups.selectedGroup,
+  checkedModelIndexs: state.groups.checkedModelIndexs,
+  project: state.projects.project
+}), dispatch => bindActionCreators({ getGroup, getModels }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {

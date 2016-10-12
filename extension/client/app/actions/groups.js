@@ -27,34 +27,6 @@ export const getModels = group => {
 };
 
 /**
- * 回放
- * @param  {Object} data    回放数据
- * @return {[type]}         [description]
- */
-export const playback = data => {
-  clientPlay({
-    method: "play",
-    data
-  });
-};
-
-/**
- * 创建组
- * @param  {Object} data    组数据
- * @return {[type]}         [description]
- */
-export const createGroups = data => {
-  return dispatch => {
-    fetchUtil({
-      url: "/api/cases/group",
-      method: "POST",
-      headers: json,
-      body: JSON.stringify(data)
-    }).then(result => dispatch(actionCreator("CREATE_GROUPS", { result })));
-  }
-};
-
-/**
  * 选中模板
  * @param  {Object} data 模板信息
  * @return {[type]}      [description]

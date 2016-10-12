@@ -1,12 +1,20 @@
 require("../index.scss");
 
 import React from "react";
+import pureRender from 'pure-render-decorator';
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
 import { Card, Icon, Tag } from "antd";
 
 import Spin from "common/spin";
-
 import SettingModal from "./modals/setting";
+import { getAllProjects, setProjectInfo } from "actions/projects";
 
+@pureRender
+@connect(state => ({
+  projects: state.projects.projects,
+  project: state.projects.project
+}), dispatch => bindActionCreators({ getAllProjects, setProjectInfo }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {

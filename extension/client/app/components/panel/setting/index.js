@@ -1,10 +1,12 @@
 require("../index.scss");
 
 import React from "react";
+import pureRender from 'pure-render-decorator';
 import { Card, Icon, Tag } from "antd";
 
 import Spin from "common/spin";
 
+@pureRender
 export default class extends React.Component {
 
   constructor(props) {
