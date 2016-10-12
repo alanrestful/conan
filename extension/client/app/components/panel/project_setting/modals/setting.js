@@ -152,6 +152,7 @@ export default class extends React.Component {
                 initialValue: "warning"
               })(
                 <Select>
+                  <Option value="log">Log</Option>
                   <Option value="info">Info</Option>
                   <Option value="warning">Warning</Option>
                   <Option value="error">Error</Option>

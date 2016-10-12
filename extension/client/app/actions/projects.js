@@ -20,3 +20,10 @@ export const getAllProjects = () => {
  * @return {[type]}      [description]
  */
 export const setProjectInfo = data => actionCreator("SET_PROJECT_INFO", { result: data });
+
+/**
+ * 设置客户端配置
+ * @param  {Object} data 配置信息
+ * @return {[type]}      [description]
+ */
+export const setClientConfig = data => actionCreator("SET_CLIENT_CONFIG", { result: data });
