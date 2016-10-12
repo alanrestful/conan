@@ -2,7 +2,8 @@ require("./index.scss");
 
 import React from "react";
 import Identicon from "identicon.js";
-import pureRender from 'pure-render-decorator';
+import pureRender from "pure-render-decorator";
+import { Link } from "react-router";
 import { Row, Col, Menu, Dropdown, Icon } from "antd";
 
 @pureRender
@@ -29,14 +30,14 @@ export default class extends React.Component {
     return (
       <div className="header">
         <Row>
-          <Col span={5}><a href="#/" className="logo"><img src={ require("images/parana.png") } alt="Parana" /><span>Conan</span></a></Col>
+          <Col span={5}><Link href="/" className="logo"><img src={ require("images/parana.png") } alt="Parana" /><span>Conan</span></Link></Col>
           <Col span={9} offset={10}>
             <nav>
               <ul>
-                <li><a href="#/">录制</a></li>
-                <li><a href="#/playback">回放</a></li>
-                <li><a href="#/dashboard">统计</a></li>
-                <li><a href="#/setting">设置</a></li>
+                <li><Link to="/" activeClassName="actived">录制</Link></li>
+                <li><Link to="/playback" activeClassName="actived">回放</Link></li>
+                <li><Link to="/dashboard" activeClassName="actived">统计</Link></li>
+                <li><Link to="/setting" activeClassName="actived">设置</Link></li>
               </ul>
             </nav>
             <Dropdown overlay={this.dropdown()}>

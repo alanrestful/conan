@@ -1,7 +1,7 @@
 require("../index.scss");
 
 import React from "react";
-import pureRender from 'pure-render-decorator';
+import pureRender from "pure-render-decorator";
 import { Card, Icon, Tag } from "antd";
 
 import Spin from "common/spin";

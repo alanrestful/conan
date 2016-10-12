@@ -110,4 +110,3 @@ export const deletePageByIndex = index => {
  * @return {[type]}         [description]
  */
 export const changeSelectedActions = data => actionCreator("CHANGE_SELECTED_ACTIONS", { result: data });
-

@@ -1,7 +1,7 @@
 require("../index.scss");
 
 import React from "react";
-import pureRender from 'pure-render-decorator';
+import pureRender from "pure-render-decorator";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Card, Icon, Tag } from "antd";

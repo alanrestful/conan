@@ -41,7 +41,7 @@ a {
         width: 80px;
         text-align: center;
         color: #fff;
-        &:hover {
+        &:hover, &.actived {
           color: $color-text;
           background-color: $color-secondary;
         }

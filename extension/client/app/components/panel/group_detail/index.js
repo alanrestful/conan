@@ -2,7 +2,7 @@ require("./index.scss");
 
 import React from "react";
 import moment from "moment";
-import pureRender from 'pure-render-decorator';
+import pureRender from "pure-render-decorator";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox } from "antd";
