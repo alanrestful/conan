@@ -5,9 +5,10 @@ import { createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import { Router, Route, hashHistory } from "react-router";
 
-import Index from "index/index";
-import Playback from "playback/index";
-import NoMatch from "no_match/index";
+import Index from "index";
+import Playback from "playback";
+import Setting from "setting";
+import NoMatch from "no_match";
 
 import reducers from "reducers";
 
@@ -16,6 +17,7 @@ const AppRouter = () => {
     <Router history={ hashHistory }>
       <Route path="/" component={ Index } />
       <Route path="/playback" component={ Playback } />
+      <Route path="/setting" component={ Setting } />
       <Route path="*" component={ NoMatch } />
     </Router>
   );
