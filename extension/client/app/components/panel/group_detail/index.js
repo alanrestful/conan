@@ -5,14 +5,15 @@ import moment from "moment";
 import pureRender from "pure-render-decorator";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox } from "antd";
+import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox, Popover } from "antd";
 
 import Search from "common/search";
 import Spin from "common/spin";
 import EditInSitu from "common/edit_in_situ";
 import CreateCaseModal from "./modals/create_case";
-import { playback, createGroups } from "actions/actions";
+import { playback } from "actions/actions";
 import { checkedModel, deleteGroup } from "actions/groups";
+import { createCase, getCases } from "actions/cases";
 import { isEmpty } from "scripts/helpers";
 
 @pureRender
@@ -21,8 +22,9 @@ import { isEmpty } from "scripts/helpers";
   selectedGroup: state.groups.selectedGroup,
   models: state.groups.models,
   checkedModelIndexs: state.groups.checkedModelIndexs,
+  cases: state.cases.cases,
   project: state.projects.project
-}), dispatch => bindActionCreators({ playback, createGroups, checkedModel, deleteGroup }, dispatch))
+}), dispatch => bindActionCreators({ playback, checkedModel, deleteGroup, createCase, getCases }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {
@@ -30,7 +32,8 @@ export default class extends React.Component {
     this.state = {
       selectedModel: {},
       checkedModels: [],
-      createCaseModalVisible: false
+      createCaseModalVisible: false,
+      selectCaseModalVisible: false
     }
   }
 
@@ -132,8 +135,15 @@ export default class extends React.Component {
   }
 
   createCaseModalSubmit(data, tag) {
-    this.props.createGroups({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id });
-    tag && this.props.playback(data.fragment);
+    console.log(21, data, tag)
+    let fragment = data.fragment;
+    fragment.map(v => {
+      if(v.hash) {
+
+      }
+    })
+    // this.props.createGroups({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id });
+    // tag && this.props.playback(data.fragment);
   }
 
   /**
@@ -188,10 +198,58 @@ export default class extends React.Component {
     this.setState({
       checkedModels
     });
-    this.props.checkedModel(checkedModelIndexs);
+    this.props.checkedModel({ ...checkedModelIndexs });
   }
 
   confirm() {}
+
+  changeMenu(info, visible) {
+    if(visible) {
+      this.props.getCases(info._id);
+      this.setState({
+        tempModel: info,
+        selectCaseModalVisible: visible
+      });
+    } else {
+      this.setState({
+        selectCaseModalVisible: visible
+      });
+    }
+  }
+
+  createMenus(id) {
+    let cases = this.props.cases;
+    return (
+      <ul>
+      {
+        cases ? isEmpty(cases) ? <Spin done /> : cases.map((v, i) => (
+          <li key={ i } onClick={ this.selectedCase.bind(this, v) }>{ v.name }</li>
+        )) : <Spin />
+      }
+      </ul>
+    )
+  }
+
+  selectedCase(info) {
+    let model = this.state.tempModel;
+    this.setState({
+      selectedModel: { ...model, fragment: JSON.stringify(this.serializeModel(JSON.parse(model.fragment), JSON.parse(info.data))) },
+      selectCaseModalVisible: false
+    });
+  }
+
+  serializeModel(fragment, data) {
+    return fragment.map(v => {
+      let _data = data[v.hash]
+      if(_data) {
+        v.expect = _data.expect;
+      }
+      if(v.tArray) {
+        v.tArray = this.serializeModel(v.tArray, data);
+      }
+      return v;
+    });
+  }
 
   render() {
     let models = this.props.models || [],
@@ -210,10 +268,13 @@ export default class extends React.Component {
               {
                 isEmpty(models) ? <Spin done text="您还没有选择组，或者所选组暂无数据~" /> : models.map((v, i) => {
                   return (
-                    <li key={ i } onClick={ this.selectedModel.bind(this, v) } className={ model._id == v._id ? "actived" : "" }>
+                    <li key={ i } className={ model._id == v._id ? "actived" : "" }>
+                      <Popover placement="bottomRight" title="用例" content={ this.createMenus(this) } onVisibleChange={ this.changeMenu.bind(this, v) } trigger="click" visible={ this.state.selectCaseModalVisible }>
+                        <a className="ant-dropdown-link">用例 <Icon type="down" /></a>
+                      </Popover>
                       <Checkbox onChange={ this.checkedModel.bind(this, v) } checked={ checkedCurrentModel && checkedCurrentModel.includes(v._id) } />
-                        <p className="link">{ v.name }</p>
-                        <p className="time"><Icon type="clock-circle-o" /> { moment(v.updated_at).format("YYYY-MM-DD HH:mm:ss") } &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
+                      <p className="link" onClick={ this.selectedModel.bind(this, v) }>{ v.name }</p>
+                      <p className="time" onClick={ this.selectedModel.bind(this, v) }><Icon type="clock-circle-o" /> { moment(v.updated_at).format("YYYY-MM-DD HH:mm:ss") } &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
                     </li>
                   )
                 })
@@ -236,7 +297,7 @@ export default class extends React.Component {
                         {
                           v.expectEditing ? <EditInSitu value={ v.expect } onEnter={ this.editOnEnter.bind(this, i) } onCancel={ this.editOnCancel.bind(this, i) } /> : v.expect ? (
                             <div className="group-result clearfix">
-                              <span className="group-result-info">预期结果：以下报错均出现</span>
+                              <span className="group-result-info">预期结果：{ v.expect }</span>
                               <span className="group-result-control">
                                 <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
                                 <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
@@ -275,6 +336,7 @@ export default class extends React.Component {
                                         <span className="group-result-info">预期结果：{ v.expect }</span>
                                         <span className="group-result-control">
                                           <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>
+                                          &nbsp;&nbsp;&nbsp;&nbsp;
                                           <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
                                             <a><Icon type="cross-circle-o" /> 删除</a>
                                           </Popconfirm>
