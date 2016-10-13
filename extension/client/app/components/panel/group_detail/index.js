@@ -17,22 +17,19 @@ import { isEmpty } from "scripts/helpers";
 
 @pureRender
 @connect(state => ({
-    groups: state.groups.groups,
-    selectedGroup: state.groups.selectedGroup,
-    models: state.groups.models,
-    checkedModelIndexs: state.groups.checkedModelIndexs,
-    project: state.projects.project
+  groups: state.groups.groups,
+  selectedGroup: state.groups.selectedGroup,
+  models: state.groups.models,
+  checkedModelIndexs: state.groups.checkedModelIndexs,
+  project: state.projects.project
 }), dispatch => bindActionCreators({ playback, createGroups, checkedModel, deleteGroup }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      models: [],
-      selectedGroup: {},
       selectedModel: {},
       checkedModels: [],
-      checkedModelIndexs: {},
       createCaseModalVisible: false
     }
   }
@@ -43,9 +40,6 @@ export default class extends React.Component {
       selectedModel = {};
     }
     this.setState({
-      models: nextProps.models || [],
-      selectedGroup: nextProps.selectedGroup || {},
-      checkedModelIndexs: nextProps.checkedModelIndexs || {},
       selectedModel
     });
   }
@@ -169,8 +163,8 @@ export default class extends React.Component {
    */
   checkedModel(model) {
     let checkedModels = this.state.checkedModels,
-        checkedModelIndexs = this.state.checkedModelIndexs,
-        groupId = this.state.selectedGroup._id,
+        checkedModelIndexs = this.props.checkedModelIndexs || {},
+        groupId = this.props.selectedGroup._id,
         current = checkedModelIndexs[groupId];
     if(current) {
       if(current.includes(model._id)) {
@@ -200,13 +194,12 @@ export default class extends React.Component {
   confirm() {}
 
   render() {
-    let models = this.state.models,
+    let models = this.props.models || [],
         model = this.state.selectedModel,
         fragment = isEmpty(model) ? [] : JSON.parse(model.fragment),
-        group = this.state.selectedGroup,
-        checkedModelIndexs = this.state.checkedModelIndexs,
-        checkedCurrentModel = checkedModelIndexs[group._id];
-    console.log(1, this.props.checkedModelIndexs);
+        group = this.props.selectedGroup || {},
+        checkedModelIndexs = this.props.checkedModelIndexs || {},
+        checkedCurrentModel = isEmpty(group) ? [] : checkedModelIndexs[group._id];
     return (
       <div>
         <Card title={ `${ group.name || "组名称" } ${ isEmpty(models) ? "" : `${ models.length }个模板` }` } extra={ isEmpty(group) ? null : <span>{ isEmpty(checkedModelIndexs) ? null : <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a> }&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteGroup.bind(this, group) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
@@ -235,58 +228,61 @@ export default class extends React.Component {
                     <h4>{ model.name }</h4>
                     <Button size="small">JSON</Button>
                   </div>
-                  <div className="group-result clearfix">
-                    <span className="group-result-info">预期结果：以下报错均出现</span>
-                    <span className="group-result-control">
-                      <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                      <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
-                        <a><Icon type="cross-circle-o" /> 删除</a>
-                      </Popconfirm>
-                    </span>
-                  </div>
-                  <ul className="action-line">
                   {
-                    fragment.map(v => {
-                      return v.tArray.map((v, i) => {
-                        return (
-                          <li className="clearfix" key={ i }>
-                            <span className="index">{ i + 1 }.</span>
-                            <span className="action-content-wrap">
-                              <span className="action-content">
-                                <div>
-                                  <span className="address" title={ `xPath: ${ v.xPath }` }><Icon type="environment-o" /> { v.xPath }</span>
-                                  { v.className ? <span className="action" title={ `Class Name: ${ v.className }` }><Icon type="tag-o" /> { v.className }</span> : null }
-                                  { v.id ? <span className="action" title={ `ID: ${ v.id }` }><Icon type="tags-o" /> { v.id }</span> : null }
-                                  { v.name ? <span className="action" title={ `Name: ${ v.name }` }><Icon type="eye-o" /> { v.name }</span> : null }
-                                  { v.type ? <span className="action" title={ `Type: ${ v.type }` }><Icon type="file-unknown" /> { v.type }</span> : null }
-                                  { v.tagName ? <span className="action" title={ `Tag Name: ${ v.tagName }` }><Icon type="setting" /> { v.tagName }</span> : null }
-                                  { v.value ? <span className="address" title={ `Value: ${ v.type == "password" ? v.value.replace(/./g, "*") : v.value }` }><Icon type="book" /> { v.type == "password" ? v.value.replace(/./g, "*") : v.value }</span> : null }
-                                </div>
-                                {
-                                  v.expectEditing ? <EditInSitu value={ v.expect } onEnter={ this.editOnEnter.bind(this, i) } onCancel={ this.editOnCancel.bind(this, i) } /> : v.expect ? (
-                                    <div className="group-result small error clearfix">
-                                      <span className="group-result-info">预期结果：{ v.expect }</span>
-                                      <span className="group-result-control">
-                                        <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>
-                                        <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
-                                          <a><Icon type="cross-circle-o" /> 删除</a>
-                                        </Popconfirm>
-                                      </span>
-                                    </div>
-                                  ) : (
-                                    <div>
-                                      <Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small">JSON</Button> }
-                                    </div>
-                                  )
-                                }
+                    fragment.map((v, i) => (
+                      <div key={ i }>
+                        <div className="page-title">{ v.url }</div>
+                        <div className="group-result clearfix">
+                          <span className="group-result-info">预期结果：以下报错均出现</span>
+                          <span className="group-result-control">
+                            <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
+                              <a><Icon type="cross-circle-o" /> 删除</a>
+                            </Popconfirm>
+                          </span>
+                        </div>
+                        <ul className="action-line">
+                        {
+                          v.tArray.map((v, i) => (
+                            <li className="clearfix" key={ i }>
+                              <span className="index">{ i + 1 }.</span>
+                              <span className="action-content-wrap">
+                                <span className="action-content">
+                                  <div>
+                                    <span className="address" title={ `xPath: ${ v.xPath }` }><Icon type="environment-o" /> { v.xPath }</span>
+                                    { v.className ? <span className="action" title={ `Class Name: ${ v.className }` }><Icon type="tag-o" /> { v.className }</span> : null }
+                                    { v.id ? <span className="action" title={ `ID: ${ v.id }` }><Icon type="tags-o" /> { v.id }</span> : null }
+                                    { v.name ? <span className="action" title={ `Name: ${ v.name }` }><Icon type="eye-o" /> { v.name }</span> : null }
+                                    { v.type ? <span className="action" title={ `Type: ${ v.type }` }><Icon type="file-unknown" /> { v.type }</span> : null }
+                                    { v.tagName ? <span className="action" title={ `Tag Name: ${ v.tagName }` }><Icon type="setting" /> { v.tagName }</span> : null }
+                                    { v.value ? <span className="address" title={ `Value: ${ v.type == "password" ? v.value.replace(/./g, "*") : v.value }` }><Icon type="book" /> { v.type == "password" ? v.value.replace(/./g, "*") : v.value }</span> : null }
+                                  </div>
+                                  {
+                                    v.expectEditing ? <EditInSitu value={ v.expect } onEnter={ this.editOnEnter.bind(this, i) } onCancel={ this.editOnCancel.bind(this, i) } /> : v.expect ? (
+                                      <div className="group-result small error clearfix">
+                                        <span className="group-result-info">预期结果：{ v.expect }</span>
+                                        <span className="group-result-control">
+                                          <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>
+                                          <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
+                                            <a><Icon type="cross-circle-o" /> 删除</a>
+                                          </Popconfirm>
+                                        </span>
+                                      </div>
+                                    ) : (
+                                      <div>
+                                        <Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small">JSON</Button> }
+                                      </div>
+                                    )
+                                  }
+                                </span>
                               </span>
-                            </span>
-                          </li>
-                        )
-                      })
-                    })
+                            </li>
+                          ))
+                        }
+                        </ul>
+                      </div>
+                    ))
                   }
-                  </ul>
                 </Col>
               )
             }

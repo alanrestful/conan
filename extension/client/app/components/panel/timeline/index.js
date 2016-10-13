@@ -159,7 +159,6 @@ export default class extends React.Component {
    * @return {[type]}      [description]
    */
   createsModalSubmit(data) {
-    console.log(this.convertSelectedActions())
     this.props.createGroups({
       ...data,
       fragment: JSON.stringify(this.convertSelectedActions()),
@@ -172,9 +171,10 @@ export default class extends React.Component {
   }
 
   timelineItem(actions) {
+    let actionIndexs = this.state.selectedActionIndexs[this.props.selectedPageIndex] || [];
     return actions.map((v, i) => {
       return (
-        <TimelineItem key={ i } dot={ <Checkbox key={ v.baseURI + i } onChange={ this.selectedAction.bind(this, v, i) } /> }>
+        <TimelineItem key={ i } dot={ <Checkbox onChange={ this.selectedAction.bind(this, v, i) } checked={ actionIndexs.includes(i) } /> }>
           <div className="time"><Icon type="clock-circle-o" /> { moment(v.inDate).format("YYYY-MM-DD HH:mm:ss") }</div>
           <div className="action">
             <span className="address" title={ `xPath: ${ v.xPath }` }><Icon type="environment-o" /> { v.xPath }</span>

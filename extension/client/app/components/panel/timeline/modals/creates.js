@@ -49,9 +49,9 @@ export default class extends React.Component {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 }
     };
-    let selectedActions = this.props.selectedActions || {},
+    let selectedActionIndexs = this.props.selectedActionIndexs || {},
         actionLength = 0;
-    Object.keys(selectedActions).map(k => selectedActions[k].map(v => actionLength ++));
+    Object.keys(selectedActionIndexs).map(k => selectedActionIndexs[k].map(v => actionLength ++));
     let getFieldDecorator = this.props.form.getFieldDecorator;
     return (
       <Modal title="创建模板" visible={ this.state.visible } onOk={ this.handleOk.bind(this) } confirmLoading={ this.state.confirmLoading } onCancel={ this.handleCancel.bind(this) }>
