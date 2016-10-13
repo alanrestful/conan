@@ -210,11 +210,10 @@ export default class extends React.Component {
               {
                 isEmpty(models) ? <Spin done text="您还没有选择组，或者所选组暂无数据~" /> : models.map((v, i) => {
                   return (
-                    <li key={ i } onClick={ this.selectedModel.bind(this, v) }>
-                      <Checkbox onChange={ this.checkedModel.bind(this, v) } checked={ checkedCurrentModel && checkedCurrentModel.includes(v._id) }>
+                    <li key={ i } onClick={ this.selectedModel.bind(this, v) } className={ model._id == v._id ? "actived" : "" }>
+                      <Checkbox onChange={ this.checkedModel.bind(this, v) } checked={ checkedCurrentModel && checkedCurrentModel.includes(v._id) } />
                         <p className="link">{ v.name }</p>
                         <p className="time"><Icon type="clock-circle-o" /> { moment(v.updated_at).format("YYYY-MM-DD HH:mm:ss") } &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
-                      </Checkbox>
                     </li>
                   )
                 })

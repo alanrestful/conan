@@ -14,9 +14,14 @@
     .group-list {
       @extend .pages;
       margin: -24px 0 0;
-      .ant-checkbox + span {
-        display: inline-block;
-        vertical-align: top;
+      li {
+        border-bottom: none;
+      }
+      .ant-checkbox-wrapper {
+        float: left;
+      }
+      p {
+        margin-left: 20px;
       }
     }
   }
