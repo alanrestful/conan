@@ -49,23 +49,23 @@ export default class extends React.Component {
 
   /**
    * 显示编辑 预期 的文本框
-   * @param  {Int} index 索引
+   * @param  {String} hash 哈希值
    * @return {[type]}       [description]
    */
-  showEditInSitu(index) {
-    this.expectCommon(index, {
+  showEditInSitu(hash) {
+    this.expectCommon(hash, {
       expectEditing: true
     });
   }
 
   /**
    * 编辑 预期 完成
-   * @param  {Int} index 索引
+   * @param  {String} hash 哈希值
    * @param  {String} value 值
    * @return {[type]}       [description]
    */
-  editOnEnter(index, value) {
-    this.expectCommon(index, {
+  editOnEnter(hash, value) {
+    this.expectCommon(hash, {
       expect: value,
       expectEditing: false
     });
@@ -73,22 +73,22 @@ export default class extends React.Component {
 
   /**
    * 取消编辑 预期
-   * @param  {Int} index 索引
+   * @param  {String} hash 哈希值
    * @return {[type]}       [description]
    */
-  editOnCancel(index) {
-    this.expectCommon(index, {
+  editOnCancel(hash) {
+    this.expectCommon(hash, {
       expectEditing: false
     });
   }
 
   /**
    * 删除 预期
-   * @param  {Int} index 索引
+   * @param  {String} hash 哈希值
    * @return {[type]}       [description]
    */
-  deleteExpect(index) {
-    this.expectCommon(index, {
+  deleteExpect(hash) {
+    this.expectCommon(hash, {
       expect: undefined,
       expectEditing: false
     });
@@ -96,22 +96,32 @@ export default class extends React.Component {
 
   /**
    * 对 预期 操作的通用方法
-   * @param  {Int} index  索引
+   * @param  {String} hash  哈希值
    * @param  {String} expect 值
    * @return {[type]}        [description]
    */
-  expectCommon(index, expect) {
-    if(index === undefined) {
-      this.setState({
-        page: { ...this.state.page, ...expect }
-      });
-    } else {
-      this.setState({
-        actions: this.state.actions.map((v, i) => {
-          return i == index ? { ...v, ...expect } : v;
-        })
-      });
-    }
+  expectCommon(hash, expect) {
+    console.log(hash, expect)
+    let selectedModel = this.state.selectedModel,
+        fragment = JSON.parse(selectedModel.fragment);
+    fragment = fragment.map(v => {
+      if(v.hash == hash) {
+        v = { ...v, ...expect };
+      }
+      if(v.tArray) {
+        v.tArray = v.tArray.map(v => {
+          if(v.hash == hash) {
+            v = { ...v, ...expect };
+          }
+          return v;
+        });
+      }
+      return v;
+    });
+    console.log(fragment)
+    this.setState({
+      selectedModel: { ...selectedModel, fragment: JSON.stringify(fragment) }
+    });
   }
 
   /**
@@ -134,16 +144,15 @@ export default class extends React.Component {
     });
   }
 
+  /**
+   * 创建用例
+   * @param  {Object} data 用例数据
+   * @param  {Boolean} tag  是否立即执行
+   * @return {[type]}      [description]
+   */
   createCaseModalSubmit(data, tag) {
-    console.log(21, data, tag)
-    let fragment = data.fragment;
-    fragment.map(v => {
-      if(v.hash) {
-
-      }
-    })
-    // this.props.createGroups({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id });
-    // tag && this.props.playback(data.fragment);
+    this.props.createCase({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id });
+    tag && this.props.playback(data.fragment);
   }
 
   /**
@@ -203,6 +212,12 @@ export default class extends React.Component {
 
   confirm() {}
 
+  /**
+   * 显示或者隐藏用例列表
+   * @param  {Object} info    用例数据
+   * @param  {Boolean} visible 显示状态
+   * @return {[type]}         [description]
+   */
   changeMenu(info, visible) {
     if(visible) {
       this.props.getCases(info._id);
@@ -217,6 +232,11 @@ export default class extends React.Component {
     }
   }
 
+  /**
+   * 生成用例列表
+   * @param  {Int} id 用例Id
+   * @return {[type]}    [description]
+   */
   createMenus(id) {
     let cases = this.props.cases;
     return (
@@ -230,6 +250,11 @@ export default class extends React.Component {
     )
   }
 
+  /**
+   * 选择用例
+   * @param  {Object} info 用例的数据
+   * @return {[type]}      [description]
+   */
   selectedCase(info) {
     let model = this.state.tempModel;
     this.setState({
@@ -238,6 +263,12 @@ export default class extends React.Component {
     });
   }
 
+  /**
+   * 将用例的数据塞入模板当中
+   * @param  {Array} fragment 模板数据
+   * @param  {Array} data     用例数据
+   * @return {Array}          序列化好的数据
+   */
   serializeModel(fragment, data) {
     return fragment.map(v => {
       let _data = data[v.hash]
@@ -295,19 +326,19 @@ export default class extends React.Component {
                       <div key={ i }>
                         <div className="page-title">{ v.url }</div>
                         {
-                          v.expectEditing ? <EditInSitu value={ v.expect } onEnter={ this.editOnEnter.bind(this, i) } onCancel={ this.editOnCancel.bind(this, i) } /> : v.expect ? (
+                          v.expectEditing ? <EditInSitu value={ v.expect } onEnter={ this.editOnEnter.bind(this, v.hash) } onCancel={ this.editOnCancel.bind(this, v.hash) } /> : v.expect ? (
                             <div className="group-result clearfix">
                               <span className="group-result-info">预期结果：{ v.expect }</span>
                               <span className="group-result-control">
-                                <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
+                                <a onClick={ this.showEditInSitu.bind(this, v.hash) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteExpect.bind(this, v.hash) }>
                                   <a><Icon type="cross-circle-o" /> 删除</a>
                                 </Popconfirm>
                               </span>
                             </div>
                           ) : (
                             <div className="page-control">
-                              <Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button>
+                              <Button size="small" onClick={ this.showEditInSitu.bind(this, v.hash) }>预期</Button>
                               {
                                 v.isFormEl ? null : <Button size="small" type="ghost">JSON</Button>
                               }
@@ -331,20 +362,20 @@ export default class extends React.Component {
                                     { v.value ? <span className="address" title={ `Value: ${ v.type == "password" ? v.value.replace(/./g, "*") : v.value }` }><Icon type="book" /> { v.type == "password" ? v.value.replace(/./g, "*") : v.value }</span> : null }
                                   </div>
                                   {
-                                    v.expectEditing ? <EditInSitu value={ v.expect } onEnter={ this.editOnEnter.bind(this, i) } onCancel={ this.editOnCancel.bind(this, i) } /> : v.expect ? (
+                                    v.expectEditing ? <EditInSitu value={ v.expect } onEnter={ this.editOnEnter.bind(this, v.hash) } onCancel={ this.editOnCancel.bind(this, v.hash) } /> : v.expect ? (
                                       <div className="group-result small error clearfix">
                                         <span className="group-result-info">预期结果：{ v.expect }</span>
                                         <span className="group-result-control">
-                                          <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>
+                                          <a onClick={ this.showEditInSitu.bind(this, v.hash) }><Icon type="edit" /> 编辑</a>
                                           &nbsp;&nbsp;&nbsp;&nbsp;
-                                          <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
+                                          <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteExpect.bind(this, v.hash) }>
                                             <a><Icon type="cross-circle-o" /> 删除</a>
                                           </Popconfirm>
                                         </span>
                                       </div>
                                     ) : (
                                       <div>
-                                        <Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small" type="ghost">JSON</Button> }
+                                        <Button size="small" onClick={ this.showEditInSitu.bind(this, v.hash) }>预期</Button> { v.isFormEl ? null : <Button size="small" type="ghost">JSON</Button> }
                                       </div>
                                     )
                                   }

@@ -1,17 +1,14 @@
 import { fetchUtil, json, actionCreator, clientPlay } from "scripts/util";
 
-export const createCase = (group, groups) => {
+export const createCase = (info) => {
   return dispatch => {
     fetchUtil({
-      url: `/api/cases?gid=${group._id}`,
-      method: "POST"
+      url: `/api/cases`,
+      method: "POST",
+      headers: json,
+      body: JSON.stringify(info)
     }).then(result => {
-      groups.map((v, i) => {
-        if(v._id == group._id) {
-          delete groups[i];
-        }
-      });
-      dispatch(actionCreator("SUCCESS_DELETE_GROUP", { result: groups }));
+      dispatch(actionCreator("SUCCESS_CREATE_CASE", { result: groups }));
     });
   }
 };

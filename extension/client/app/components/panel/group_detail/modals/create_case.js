@@ -68,16 +68,31 @@ export default class extends React.Component {
   }
 
   render() {
-    let getFieldDecorator = this.props.form.getFieldDecorator;
+    let getFieldDecorator = this.props.form.getFieldDecorator,
+        checkedModels = this.props.checkedModels,
+        hash = {};
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
+    checkedModels.map(v => {
+      JSON.parse(v.fragment).map(v => {
+        if(v.hash) {
+          hash[v.hash] = { expect: v.expect || "" }
+        }
+        v.tArray && v.tArray.map(v => {
+          if(v.hash) {
+            hash[v.hash] = { expect: v.expect || "" }
+          }
+        });
+      });
+    });
+    console.log(checkedModels)
     return (
       <Modal title="设置" visible={ this.state.visible } onCancel={ this.handleCancel.bind(this) } footer={ [<Button key="back" type="ghost" size="large" onClick={ this.handleCancel.bind(this) }>取 消</Button>, <Button key="submit" type="primary" size="large" loading={ this.state.confirmLoading } onClick={ this.handleOk.bind(this) }>创 建</Button>, <Button key="continue" type="primary" size="large" loading={ this.state.continueLoading } onClick={ this.handleContinue.bind(this) }>创建并执行</Button>] }>
         <Form horizontal>
           <FormItem labelCol={{ span: 0 }} wrapperCol={{ span: 14, offset: 6 }} help=" ">
-            <Alert message={ `当前有${ this.props.checkedModels.length }个选项被选中！` } type="info" showIcon />
+            <Alert message={ `当前有${ checkedModels.length }个选项被选中！` } type="info" showIcon />
           </FormItem>
           <FormItem { ...formItemLayout } label="用例组">
             { getFieldDecorator("tempGroup", {
@@ -99,7 +114,7 @@ export default class extends React.Component {
           </FormItem>
           <FormItem { ...formItemLayout } label="数据">
             { getFieldDecorator("data", {
-                initialValue: "",
+                initialValue: JSON.stringify(hash),
                 rules: [ { required: true, whitespace: false, message: "请输入用例组数据！" } ]
               })(
                 <Input type="textarea" placeholder="数据" />
