@@ -29,11 +29,19 @@
       }
       button {
         float: right;
+        margin-left: 5px;
       }
     }
     .page-title {
       margin: 10px 0;
       color: $color-primary;
+    }
+    .page-control {
+      float: right;
+      margin-top: -30px;
+      button {
+        margin-left: 5px;
+      }
     }
     .action-line {
       li {

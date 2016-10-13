@@ -226,21 +226,34 @@ export default class extends React.Component {
                 <Col span={ 14 } className="group-item">
                   <div className="group-item-title clearfix">
                     <h4>{ model.name }</h4>
-                    <Button size="small">JSON</Button>
+                    <Button size="small" type="ghost">JSON</Button>
+                    <Button size="small" type="primary">回放</Button>
+                    <Button size="small">导出</Button>
                   </div>
                   {
                     fragment.map((v, i) => (
                       <div key={ i }>
                         <div className="page-title">{ v.url }</div>
-                        <div className="group-result clearfix">
-                          <span className="group-result-info">预期结果：以下报错均出现</span>
-                          <span className="group-result-control">
-                            <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
-                              <a><Icon type="cross-circle-o" /> 删除</a>
-                            </Popconfirm>
-                          </span>
-                        </div>
+                        {
+                          v.expectEditing ? <EditInSitu value={ v.expect } onEnter={ this.editOnEnter.bind(this, i) } onCancel={ this.editOnCancel.bind(this, i) } /> : v.expect ? (
+                            <div className="group-result clearfix">
+                              <span className="group-result-info">预期结果：以下报错均出现</span>
+                              <span className="group-result-control">
+                                <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }>
+                                  <a><Icon type="cross-circle-o" /> 删除</a>
+                                </Popconfirm>
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="page-control">
+                              <Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button>
+                              {
+                                v.isFormEl ? null : <Button size="small" type="ghost">JSON</Button>
+                              }
+                            </div>
+                          )
+                        }
                         <ul className="action-line">
                         {
                           v.tArray.map((v, i) => (
@@ -270,7 +283,7 @@ export default class extends React.Component {
                                       </div>
                                     ) : (
                                       <div>
-                                        <Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small">JSON</Button> }
+                                        <Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small" type="ghost">JSON</Button> }
                                       </div>
                                     )
                                   }

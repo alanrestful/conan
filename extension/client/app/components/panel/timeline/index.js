@@ -196,7 +196,7 @@ export default class extends React.Component {
                   </Popconfirm>
                 </span>
               </div>
-            ) : <div className="control"><Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small">JSON</Button> }</div>
+            ) : <div className="control"><Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small" type="ghost">JSON</Button> }</div>
           }
         </TimelineItem>
       )
