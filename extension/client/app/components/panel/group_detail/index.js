@@ -220,7 +220,7 @@ export default class extends React.Component {
   createMenus(id) {
     let cases = this.props.cases;
     return (
-      <ul>
+      <ul className="case-list">
       {
         cases ? isEmpty(cases) ? <Spin done /> : cases.map((v, i) => (
           <li key={ i } onClick={ this.selectedCase.bind(this, v) }>{ v.name }</li>
