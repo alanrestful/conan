@@ -32,8 +32,7 @@ export default class extends React.Component {
     this.state = {
       selectedModel: {},
       checkedModels: [],
-      createCaseModalVisible: false,
-      selectCaseModalVisible: false
+      createCaseModalVisible: false
     }
   }
 
@@ -176,7 +175,7 @@ export default class extends React.Component {
         actions = v;
       }
     });
-    this.props.playback({ ...actions, tArray: [actions.tArray] });
+    this.props.playback({ ...actions, tArray: [ actions.tArray ]});
     notification.success({
       message: "提示",
       description: "所选用例已经开始尝试执行，请耐心等待执行结果！（大误）"
@@ -248,16 +247,16 @@ export default class extends React.Component {
    * @return {[type]}         [description]
    */
   changeMenu(info, visible) {
+    let selectCaseModalVisible = {};
+    selectCaseModalVisible[`selectCaseModalVisible${ info._id }`] = visible;
     if(visible) {
       this.props.getCases(info._id);
       this.setState({
         tempModel: info,
-        selectCaseModalVisible: visible
+        ...selectCaseModalVisible
       });
     } else {
-      this.setState({
-        selectCaseModalVisible: visible
-      });
+      this.setState(selectCaseModalVisible);
     }
   }
 
@@ -272,7 +271,7 @@ export default class extends React.Component {
       <ul className="case-list">
       {
         cases ? isEmpty(cases) ? <Spin done /> : cases.map((v, i) => (
-          <li key={ i } onClick={ this.selectedCase.bind(this, v) }>{ v.name } <span>{ moment(v.created_at).format("YYYY-MM-DD HH:mm:ss") }</span></li>
+          <li key={ i } onClick={ this.selectedCase.bind(this, v, id) }>{ v.name } <span>{ moment(v.created_at).format("YYYY-MM-DD HH:mm:ss") }</span></li>
         )) : <Spin />
       }
       </ul>
@@ -282,13 +281,16 @@ export default class extends React.Component {
   /**
    * 选择用例
    * @param  {Object} info 用例的数据
+   * @param  {Int} modelId 模板Id
    * @return {[type]}      [description]
    */
-  selectedCase(info) {
-    let model = this.state.tempModel;
+  selectedCase(info, modelId) {
+    let model = this.state.tempModel,
+        selectCaseModalVisible = {};
+    selectCaseModalVisible[`selectCaseModalVisible${ modelId }`] = false;
     this.setState({
       selectedModel: { ...model, fragment: JSON.stringify(this.serializeModel(JSON.parse(model.fragment), JSON.parse(info.data))) },
-      selectCaseModalVisible: false
+      ...selectCaseModalVisible
     });
     message.success("用例加载成功！");
   }
@@ -330,7 +332,7 @@ export default class extends React.Component {
                 isEmpty(models) ? <Spin done text="您还没有选择组，或者所选组暂无数据~" /> : models.map((v, i) => {
                   return (
                     <li key={ i } className={ model._id == v._id ? "actived" : "" }>
-                      <Popover placement="bottomRight" title="用例" content={ this.createMenus(this) } onVisibleChange={ this.changeMenu.bind(this, v) } trigger="click" visible={ this.state.selectCaseModalVisible }>
+                      <Popover placement="bottomRight" title="用例" content={ this.createMenus(v._id) } onVisibleChange={ this.changeMenu.bind(this, v) } trigger="click" visible={ !!this.state[`selectCaseModalVisible${ v._id }`] }>
                         <a className="ant-dropdown-link">用例 <Icon type="down" /></a>
                       </Popover>
                       <Checkbox onChange={ this.checkedModel.bind(this, v) } checked={ checkedCurrentModel && checkedCurrentModel.includes(v._id) } />

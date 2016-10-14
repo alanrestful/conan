@@ -6,7 +6,7 @@ import moment from "moment";
 import pureRender from "pure-render-decorator";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Card, Timeline, Icon, Popconfirm, Checkbox, Button, notification } from "antd";
+import { Card, Timeline, Icon, Popconfirm, Checkbox, Button, notification, message } from "antd";
 
 import Spin from "common/spin";
 import EditInSitu from "common/edit_in_situ";
@@ -164,6 +164,7 @@ export default class extends React.Component {
       fragment: JSON.stringify(this.convertSelectedActions()),
       pid: this.props.project.id
     });
+    message.success("模板创建成功！");
   }
 
   confirm() {
