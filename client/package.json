@@ -4,7 +4,7 @@
     "conanClient": "./conanClient.js"
   },
   "scripts": {
-    "conan": "npm install && cp ../extension/com.conan.client.json /Library/Google/Chrome/NativeMessagingHosts && npm link"
+    "conan": "npm install && cp ../com.conan.client.json /Library/Google/Chrome/NativeMessagingHosts && npm link"
   },
   "main": "./conanClient.js",
   "version": "1.0.0",
