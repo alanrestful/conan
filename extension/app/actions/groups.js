@@ -27,6 +27,22 @@ export const getModels = group => {
 };
 
 /**
+ * 编辑模板
+ * @param  {Object} model      模板信息
+ * @return {[type]}         [description]
+ */
+export const editModel = model => {
+  return dispatch => {
+    fetchUtil({
+      url: `/api/cases/model`,
+      method: "PUT",
+      headers: json,
+      body: JSON.stringify(model)
+    }).then(result => dispatch(actionCreator("SUCCESS_EDIT_MODEL", { result: { models: result.result } })));
+  }
+};
+
+/**
  * 选中模板
  * @param  {Object} data 模板信息
  * @return {[type]}      [description]
