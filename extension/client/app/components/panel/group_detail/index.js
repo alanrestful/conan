@@ -5,7 +5,7 @@ import moment from "moment";
 import pureRender from "pure-render-decorator";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox, Popover } from "antd";
+import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox, Popover, notification, message } from "antd";
 
 import Search from "common/search";
 import Spin from "common/spin";
@@ -124,6 +124,12 @@ export default class extends React.Component {
     });
   }
 
+  playIt() {
+    let selectedModel = this.state.selectedModel,
+        fragment = JSON.parse(selectedModel.fragment);
+    this.serializePlay(fragment);
+  }
+
   /**
    * 显示创建用例对话框
    * @return {[type]} [description]
@@ -152,7 +158,29 @@ export default class extends React.Component {
    */
   createCaseModalSubmit(data, tag) {
     this.props.createCase({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id });
-    tag && this.props.playback(data.fragment);
+    tag && this.serializePlay(data.fragment);
+    message.success("用例创建成功！");
+  }
+
+  /**
+   * 整理回放数据并回放
+   * @param  {Object} fragment 回访数据
+   * @return {[type]}          [description]
+   */
+  serializePlay(fragment) {
+    let actions = {};
+    fragment.map((v, i) => {
+      if(i) {
+        actions.tArray = [ ...actions.tArray, ...v.tArray ];
+      } else {
+        actions = v;
+      }
+    });
+    this.props.playback({ ...actions, tArray: [actions.tArray] });
+    notification.success({
+      message: "提示",
+      description: "所选用例已经开始尝试执行，请耐心等待执行结果！（大误）"
+    });
   }
 
   /**
@@ -162,6 +190,7 @@ export default class extends React.Component {
    */
   deleteGroup(group) {
     this.props.deleteGroup(group, this.props.groups);
+    message.success("模板删除成功！");
   }
 
   /**
@@ -243,7 +272,7 @@ export default class extends React.Component {
       <ul className="case-list">
       {
         cases ? isEmpty(cases) ? <Spin done /> : cases.map((v, i) => (
-          <li key={ i } onClick={ this.selectedCase.bind(this, v) }>{ v.name }</li>
+          <li key={ i } onClick={ this.selectedCase.bind(this, v) }>{ v.name } <span>{ moment(v.created_at).format("YYYY-MM-DD HH:mm:ss") }</span></li>
         )) : <Spin />
       }
       </ul>
@@ -261,6 +290,7 @@ export default class extends React.Component {
       selectedModel: { ...model, fragment: JSON.stringify(this.serializeModel(JSON.parse(model.fragment), JSON.parse(info.data))) },
       selectCaseModalVisible: false
     });
+    message.success("用例加载成功！");
   }
 
   /**
@@ -318,7 +348,7 @@ export default class extends React.Component {
                   <div className="group-item-title clearfix">
                     <h4>{ model.name }</h4>
                     <Button size="small" type="ghost">JSON</Button>
-                    <Button size="small" type="primary">回放</Button>
+                    <Button size="small" type="primary" onClick={ this.playIt.bind(this) }>回放</Button>
                     <Button size="small">导出</Button>
                   </div>
                   {

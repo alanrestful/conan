@@ -93,6 +93,7 @@
   overflow: hidden;
 }
 .case-list {
+  width: 310px;
   margin: -8px -16px;
   li {
     height: 35px;
@@ -102,6 +103,10 @@
     cursor: pointer;
     &:hover {
       background-color: $color-secondary;
+    }
+    span {
+      float: right;
+      color: $color-dark;
     }
   }
 }
