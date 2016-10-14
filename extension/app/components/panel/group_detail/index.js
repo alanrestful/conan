@@ -13,8 +13,7 @@ import EditInSitu from "common/edit_in_situ";
 import CreateCaseModal from "./modals/create_case";
 import EditModelModal from "./modals/edit_model";
 import { playback } from "actions/actions";
-import { checkedModel, editModel, deleteGroup } from "actions/groups";
-import { createCase, getCases } from "actions/cases";
+import { checkedModel, editModel, deleteGroup, createCase, getCases } from "actions/groups";
 import { isEmpty } from "scripts/helpers";
 
 @pureRender
@@ -23,7 +22,7 @@ import { isEmpty } from "scripts/helpers";
   selectedGroup: state.groups.selectedGroup,
   models: state.groups.models,
   checkedModelIndexs: state.groups.checkedModelIndexs,
-  cases: state.cases.cases,
+  cases: state.groups.cases,
   project: state.projects.project
 }), dispatch => bindActionCreators({ playback, checkedModel, editModel, deleteGroup, createCase, getCases }, dispatch))
 export default class extends React.Component {
@@ -155,7 +154,8 @@ export default class extends React.Component {
    * @return {[type]}      [description]
    */
   createCaseModalSubmit(data, tag) {
-    this.props.createCase({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id });
+    let { groups, selectedGroup, models } = this.props;
+    this.props.createCase({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id }, groups, selectedGroup, models);
     tag && this.serializePlay(data.fragment);
     message.success("用例创建成功！");
   }
@@ -186,7 +186,7 @@ export default class extends React.Component {
    * @return {[type]}      [description]
    */
   editModelModalSubmit(data) {
-    this.props.editModel({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id });
+    this.props.editModel({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id }, this.props.models);
     message.success("修改模板成功！");
   }
 
@@ -266,8 +266,6 @@ export default class extends React.Component {
     });
     this.props.checkedModel({ ...checkedModelIndexs });
   }
-
-  confirm() {}
 
   /**
    * 显示或者隐藏用例列表

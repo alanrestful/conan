@@ -31,14 +31,22 @@ export const getModels = group => {
  * @param  {Object} model      模板信息
  * @return {[type]}         [description]
  */
-export const editModel = model => {
+export const editModel = (model, models) => {
   return dispatch => {
     fetchUtil({
       url: `/api/cases/model`,
       method: "PUT",
       headers: json,
       body: JSON.stringify(model)
-    }).then(result => dispatch(actionCreator("SUCCESS_EDIT_MODEL", { result: { models: result.result } })));
+    }).then(result => {
+      models = models.map(v => {
+        if(v._id == model.mid) {
+          v.name = model.name;
+        }
+        return v;
+      });
+      dispatch(actionCreator("SUCCESS_EDIT_MODEL", { result: [ ...models ] }));
+    });
   }
 };
 
@@ -68,5 +76,38 @@ export const deleteGroup = (group, groups) => {
       });
       dispatch(actionCreator("SUCCESS_DELETE_GROUP", { result: groups }));
     });
+  }
+};
+
+export const createCase = (info, groups, selectedGroup, models) => {
+  return dispatch => {
+    fetchUtil({
+      url: `/api/cases`,
+      method: "POST",
+      headers: json,
+      body: JSON.stringify(info)
+    }).then(result => {
+      if(selectedGroup.name == info.tempGroup) {
+        models.push(result.result.model);
+      } else {
+        let status = false;
+        groups.map(v => {
+          if(v.name == info.tempGroup) {
+            status = true;
+          }
+        });
+        !status && groups.push(result.result.group);
+      }
+      dispatch(actionCreator("SUCCESS_CREATE_CASE", { result: { groups: [ ...groups ], models: [ ...models ] } }));
+    });
+  }
+};
+
+export const getCases = id => {
+  actionCreator("SUCCESS_LOAD_CASES", { result: undefined });
+  return dispatch => {
+    fetchUtil({
+      url: `/api/cases/datas?mid=${id}`
+    }).then(result => dispatch(actionCreator("SUCCESS_LOAD_CASES", { result: result.result })));
   }
 };
