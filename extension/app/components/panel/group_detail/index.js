@@ -336,6 +336,7 @@ export default class extends React.Component {
       let _data = data[v.hash]
       if(_data) {
         v.expect = _data.expect;
+        v.value = _data.value;
       }
       if(v.tArray) {
         v.tArray = this.serializeModel(v.tArray, data);

@@ -78,11 +78,16 @@ export default class extends React.Component {
     checkedModels.map(v => {
       JSON.parse(v.fragment).map(v => {
         if(v.hash) {
-          hash[v.hash] = { expect: v.expect || "" }
+          hash[v.hash] = {
+            expect: v.expect || ""
+          }
         }
         v.tArray && v.tArray.map(v => {
           if(v.hash) {
-            hash[v.hash] = { expect: v.expect || "" }
+            hash[v.hash] = {
+              expect: v.expect || "",
+              value: v.value || ""
+            }
           }
         });
       });
@@ -116,7 +121,7 @@ export default class extends React.Component {
                 initialValue: JSON.stringify(hash),
                 rules: [ { required: true, whitespace: false, message: "请输入用例组数据！" } ]
               })(
-                <Input type="textarea" placeholder="数据" />
+                <Input type="textarea" placeholder="数据" rows={ 5 } />
               )
             }
           </FormItem>
