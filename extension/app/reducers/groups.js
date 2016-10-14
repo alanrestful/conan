@@ -20,6 +20,12 @@ export default (state = {}, action) => {
         ...state,
         models: action.result
       }
+    case "SUCCESS_DELETE_MODEL":
+      console.log(action.result)
+      return {
+        ...state,
+        models: action.result
+      }
     case "SUCCESS_CHECKED_MODELS":
       return {
         ...state,

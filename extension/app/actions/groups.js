@@ -51,6 +51,28 @@ export const editModel = (model, models) => {
 };
 
 /**
+ * 删除指定模板
+ * @param  {Object} model  需要删除的模板
+ * @param  {Array} models 当前组所有的模板
+ * @return {[type]}        [description]
+ */
+export const deleteModel = (model, models) => {
+  return dispatch => {
+    fetchUtil({
+      url: `/api/cases/model?mid=${model._id}`,
+      method: "DELETE"
+    }).then(result => {
+      models.map((v, i) => {
+        if(v._id == model._id) {
+          models.splice(i, 1);
+        }
+      });
+      dispatch(actionCreator("SUCCESS_DELETE_MODEL", { result: [ ...models ] }));
+    });
+  }
+};
+
+/**
  * 选中模板
  * @param  {Object} data 模板信息
  * @return {[type]}      [description]
@@ -71,7 +93,7 @@ export const deleteGroup = (group, groups) => {
     }).then(result => {
       groups.map((v, i) => {
         if(v._id == group._id) {
-          delete groups[i];
+          groups.splice(i, 1);
         }
       });
       dispatch(actionCreator("SUCCESS_DELETE_GROUP", { result: groups }));
@@ -79,6 +101,14 @@ export const deleteGroup = (group, groups) => {
   }
 };
 
+/**
+ * 创建用例
+ * @param  {Object} info          用例信息
+ * @param  {Array} groups        模板组列表
+ * @param  {Object} selectedGroup 当前选择的模板组
+ * @param  {Array} models        模板列表
+ * @return {[type]}               [description]
+ */
 export const createCase = (info, groups, selectedGroup, models) => {
   return dispatch => {
     fetchUtil({
@@ -103,6 +133,11 @@ export const createCase = (info, groups, selectedGroup, models) => {
   }
 };
 
+/**
+ * 获取用例列表
+ * @param  {String} id 模板Id
+ * @return {[type]}    [description]
+ */
 export const getCases = id => {
   actionCreator("SUCCESS_LOAD_CASES", { result: undefined });
   return dispatch => {

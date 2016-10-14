@@ -13,7 +13,7 @@ import EditInSitu from "common/edit_in_situ";
 import CreateCaseModal from "./modals/create_case";
 import EditModelModal from "./modals/edit_model";
 import { playback } from "actions/actions";
-import { checkedModel, editModel, deleteGroup, createCase, getCases } from "actions/groups";
+import { checkedModel, editModel, deleteModel, createCase, getCases } from "actions/groups";
 import { isEmpty } from "scripts/helpers";
 
 @pureRender
@@ -24,7 +24,7 @@ import { isEmpty } from "scripts/helpers";
   checkedModelIndexs: state.groups.checkedModelIndexs,
   cases: state.groups.cases,
   project: state.projects.project
-}), dispatch => bindActionCreators({ playback, checkedModel, editModel, deleteGroup, createCase, getCases }, dispatch))
+}), dispatch => bindActionCreators({ playback, checkedModel, editModel, deleteModel, createCase, getCases }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {
@@ -213,11 +213,14 @@ export default class extends React.Component {
 
   /**
    * 删除当前组
-   * @param  {Object} group 组信息
+   * @param  {Object} model 模板信息
    * @return {[type]}       [description]
    */
-  deleteGroup(group) {
-    this.props.deleteGroup(group, this.props.groups);
+  deleteModel(model) {
+    this.props.deleteModel(model, this.props.models);
+    this.setState({
+      selectedModel: {}
+    });
     message.success("模板删除成功！");
   }
 
@@ -350,7 +353,7 @@ export default class extends React.Component {
         checkedCurrentModel = isEmpty(group) ? [] : checkedModelIndexs[group._id];
     return (
       <div>
-        <Card title={ `${ group.name || "组名称" } ${ isEmpty(models) ? "" : `${ models.length }个模板` }` } extra={ isEmpty(group) ? null : <span>{ isEmpty(checkedModelIndexs) ? null : <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a> }&nbsp;&nbsp;&nbsp;&nbsp;{ isEmpty(this.state.selectedModel) ? null : <a onClick={ this.showEditModelModal.bind(this) }><Icon type="edit" /> 编辑</a> }&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteGroup.bind(this, group) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel">
+        <Card title={ `${ group.name || "组名称" } ${ isEmpty(models) ? "" : `${ models.length }个模板` }` } extra={ isEmpty(group) ? null : <span>{ isEmpty(checkedModelIndexs) ? null : <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a> }&nbsp;&nbsp;&nbsp;&nbsp;{ isEmpty(this.state.selectedModel) ? null : <span><a onClick={ this.showEditModelModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="此操作将不可恢复，您确定要删除此模板？" placement="bottom" onConfirm={ this.deleteModel.bind(this, model) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> }</span> } className="panel">
           <Row className="group-detail">
             <Col span={10} className="group-list-wrapper">
               <div className="group-search"><Search /></div>
