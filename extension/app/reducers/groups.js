@@ -21,7 +21,6 @@ export default (state = {}, action) => {
         models: action.result
       }
     case "SUCCESS_DELETE_MODEL":
-      console.log(action.result)
       return {
         ...state,
         models: action.result
@@ -32,7 +31,6 @@ export default (state = {}, action) => {
         checkedModelIndexs: action.result
       }
     case "SUCCESS_CREATE_CASE":
-      console.log(action.result)
       return {
         ...state,
         ...action.result

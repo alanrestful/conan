@@ -30,7 +30,7 @@ export default class extends React.Component {
     return (
       <div className="header">
         <Row>
-          <Col span={5}><Link href="/" className="logo"><img src={ require("images/parana.png") } alt="Parana" /><span>Conan</span></Link></Col>
+          <Col span={5}><Link to="/" className="logo"><img src={ require("images/parana.png") } alt="Parana" /><span>Conan</span></Link></Col>
           <Col span={9} offset={10}>
             <nav>
               <ul>

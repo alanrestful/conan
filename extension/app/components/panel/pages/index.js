@@ -73,6 +73,11 @@ export default class extends React.Component {
     )
   }
 
+  /**
+   * 页面选中
+   * @param  {Int} index 页面的索引
+   * @return {[type]}       [description]
+   */
   pageActived(index) {
     this.setState({
       actived: index
@@ -80,17 +85,21 @@ export default class extends React.Component {
     this.props.pageActived(index);
   }
 
+  /**
+   * 清除所有的页面
+   * @return {[type]} [description]
+   */
   clearAllPages() {
     this.props.clearAllPages();
     this.setState({
       pages: []
-    })
+    });
   }
 
   render() {
     let pages = this.state.pages;
     return (
-      <Card title="页面" extra={ pages.length ? <Popconfirm title="此操作将不可恢复，您确定要清空所有用例？" placement="bottom" onConfirm={ this.clearAllPages.bind(this) }><a><Icon type="delete" /> 清空</a></Popconfirm> : null } className="panel">
+      <Card title="页面" extra={ pages.length ? <Popconfirm title="此操作将不可恢复，您确定要删除所有的页面？" placement="bottom" onConfirm={ this.clearAllPages.bind(this) }><a><Icon type="delete" /> 清空</a></Popconfirm> : null } className="panel">
       {
         pages.length ? this.pageItem(pages) : <Spin done />
       }
