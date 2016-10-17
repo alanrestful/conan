@@ -13,39 +13,40 @@ import { getActionData, clearAllPages, pageActived } from "actions/actions";
 import { isEmpty } from "scripts/helpers";
 
 @pureRender
-@connect(state => ({
-  pages: state.actions.pages,
-  page: state.actions.page,
-  action: state.actions.action,
-  selectedActionIndexs: state.actions.selectedActionIndexs
-}), dispatch => bindActionCreators({ getActionData, clearAllPages, pageActived }, dispatch))
+@connect(state => {
+  let pages = state.actions.pages || [],
+      page = state.actions.page,
+      action = state.actions.action,
+      status = false;
+  pages.map(v => {
+    if(page) {
+      if(v.url == page.url) {
+        status = true;
+      }
+    }
+    if(action) {
+      if(v.url == action.baseURI) {
+        v.tArray[0].push(action);
+      }
+    }
+  });
+  if(page && !status) {
+    pages.push(page);
+  }
+  return {
+    pages: [ ...pages ],
+    selectedActionIndexs: state.actions.selectedActionIndexs
+  }
+}, dispatch => bindActionCreators({ getActionData, clearAllPages, pageActived }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      pages: []
-    };
+    this.state = {};
   }
 
   componentWillMount() {
     this.props.getActionData();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    let _pages = isEmpty(this.state.pages) ? nextProps.pages : this.state.pages,
-        pages = nextProps.page ? [ ..._pages, nextProps.page ] : _pages,
-        action = nextProps.action;
-    if(action) {
-      pages.map((v, i) => {
-        if(v && action.baseURI == v.url) {
-          v.tArray[0] = [ ...v.tArray[0], action ];
-        }
-      });
-    }
-    this.setState({
-      pages
-    });
   }
 
   changeSelectedActions(event) {
@@ -91,13 +92,10 @@ export default class extends React.Component {
    */
   clearAllPages() {
     this.props.clearAllPages();
-    this.setState({
-      pages: []
-    });
   }
 
   render() {
-    let pages = this.state.pages;
+    let pages = this.props.pages;
     return (
       <Card title="页面" extra={ pages.length ? <Popconfirm title="此操作将不可恢复，您确定要删除所有的页面？" placement="bottom" onConfirm={ this.clearAllPages.bind(this) }><a><Icon type="delete" /> 清空</a></Popconfirm> : null } className="panel">
       {

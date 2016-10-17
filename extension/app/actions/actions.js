@@ -11,15 +11,12 @@ export const getActionData = () => {
     initConnect();
 
     allTArrays(result => {
-      console.log("000", result);
       dispatch(actionCreator("SUCCESS_LOAD_PAGES", { result }));
     });
 
     listenerTarrayStorage(result => {
-      console.log(111, result);
       dispatch(actionCreator("PRODUCE_NEW_PAGE", { result: { ...result, createAt: moment().format("YYYY-MM-DD HH:mm:ss") } }));
     }, result => {
-      console.log(222, result);
       dispatch(actionCreator("PRODUCE_NEW_ACTION", { result: { ...result, createAt: moment().format("YYYY-MM-DD HH:mm:ss") } }));
     });
 
@@ -43,13 +40,32 @@ export const getActionData = () => {
 };
 
 /**
+ * 删除指定页面
+ * @param  {Int}   index    页面索引
+ * @param  {Array}   pages    所有页面
+ * @param  {Function} callback 回调
+ * @return {[type]}            [description]
+ */
+export const deletePage = (index, pages, callback) => {
+  return dispatch => {
+    clearAllTArray(index, () => {
+      pages.splice(index, 1);
+      dispatch(actionCreator("DELETE_PAGE_BY_INDEX", { result: [ ...pages ]}));
+      callback instanceof Function && callback();
+    });
+  }
+};
+
+/**
  * 清空所有页面
+ * @param  {Function} callback 回调
  * @return {[type]}         [description]
  */
-export const clearAllPages = () => {
+export const clearAllPages = callback => {
   return dispatch => {
     clearAllTArray(null, () => {
       dispatch(actionCreator("DELETE_ALL_PAGES", { result: [] }));
+      callback instanceof Function && callback();
     });
   }
 };
@@ -88,19 +104,6 @@ export const createGroups = data => {
       headers: json,
       body: JSON.stringify(data)
     }).then(result => dispatch(actionCreator("CREATE_GROUPS", { result })));
-  }
-};
-
-/**
- * 删除指定页面
- * @param  {Int} index   索引
- * @return {[type]}         [description]
- */
-export const deletePageByIndex = index => {
-  return dispatch => {
-    clearAllTArray(index, () => {
-      dispatch(actionCreator("DELETE_PAGE_BY_INDEX", { result: [] }));
-    });
   }
 };
 

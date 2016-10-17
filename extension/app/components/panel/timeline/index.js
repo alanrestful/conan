@@ -11,7 +11,7 @@ import { Card, Timeline, Icon, Popconfirm, Checkbox, Button, notification, messa
 import Spin from "common/spin";
 import EditInSitu from "common/edit_in_situ";
 import CreatesModal from "./modals/creates";
-import { playback, createGroups, deletePageByIndex, changeSelectedActions } from "actions/actions";
+import { playback, createGroups, deletePage, changeSelectedActions } from "actions/actions";
 import { isEmpty } from "scripts/helpers";
 
 const TimelineItem = Timeline.Item;
@@ -23,7 +23,7 @@ const TimelineItem = Timeline.Item;
   action: state.actions.action,
   selectedActionIndexs: state.actions.selectedActionIndexs,
   project: state.projects.project
-}), dispatch => bindActionCreators({ playback, createGroups, deletePageByIndex, changeSelectedActions }, dispatch))
+}), dispatch => bindActionCreators({ playback, createGroups, deletePage, changeSelectedActions }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {
@@ -167,8 +167,10 @@ export default class extends React.Component {
     message.success("模板创建成功！");
   }
 
-  confirm() {
-    // message.success('点击了确定');
+  deletePage() {
+    this.props.deletePage(this.props.selectedPageIndex, this.state.pages, () => {
+      message.success("页面删除成功！")
+    });
   }
 
   timelineItem(actions) {
@@ -251,7 +253,7 @@ export default class extends React.Component {
         actions = page.tArray ? page.tArray[0] : {};
     return (
       <div>
-        <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(this.state.selectedActionIndexs) ? null : <span><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /> 回放</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreatesModal.bind(this) }><Icon type="plus-circle-o" /> 创建</a>&nbsp;&nbsp;&nbsp;&nbsp;</span> }<a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /> 预期</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.confirm.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel timeline">
+        <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(this.state.selectedActionIndexs) ? null : <span><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /> 回放</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreatesModal.bind(this) }><Icon type="plus-circle-o" /> 创建</a>&nbsp;&nbsp;&nbsp;&nbsp;</span> }<a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /> 预期</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deletePage.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel timeline">
           {
             page.expectEditing ? <EditInSitu value={ page.expect } onEnter={ this.editOnEnter.bind(this, undefined) } onCancel={ this.editOnCancel.bind(this, undefined) } /> : page.expect ? (
               <div className="group-result clearfix">

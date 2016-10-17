@@ -25,7 +25,7 @@ export default (state = {}, action) => {
     case "DELETE_PAGE_BY_INDEX":
       return {
         ...state,
-        action: action.result
+        pages: action.result
       }
     case "DELETE_ALL_PAGES":
       return {

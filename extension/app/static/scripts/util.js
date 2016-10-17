@@ -30,9 +30,7 @@ export const processSussess = options => {
   if(options.tipWords) {
     PubSub.publish('toast.info', options.tipWords);
   }
-  if(options.callback instanceof Function) {
-    options.callback();
-  }
+  options.callback instanceof Function && options.callback();
 }
 
 export const processError = (error, url, history) => {
@@ -216,7 +214,7 @@ export const clearAllTArray = (index, callback) => {
     }
 
     chrome.storage.local.set(result);
-    callback();
+    callback instanceof Function && callback();
   });
 }
 
@@ -230,7 +228,7 @@ export const allTArrays = callback => {
     var conanConfig = result.conan;
 
     var tArrays = conanConfig.tester_arrays;
-    callback(tArrays);
+    callback instanceof Function && callback(tArrays);
   });
 }
 
@@ -276,7 +274,7 @@ export const setElExpect = (tIndex, arrayIndex, objIndex, expect) => {
 /**
  * 判断两个对象是否相同
  */
-function __is_diff(old_obj, new_obj){
+const __is_diff = (old_obj, new_obj) => {
   for(var p in old_obj) {
       if(typeof(new_obj[p])=='undefined') {return true;}
   }
@@ -301,7 +299,7 @@ function __is_diff(old_obj, new_obj){
 /**
  * 获取数据是否有改动
  */
-function __diff_t_arrays(old_arrays , new_arrays, arrayFun, objFun){
+const __diff_t_arrays = (old_arrays , new_arrays, arrayFun, objFun) => {
   for(var newI in new_arrays){
     if(!old_arrays[newI]){
       //新增的测试组
