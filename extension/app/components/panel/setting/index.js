@@ -4,9 +4,8 @@ import React from "react";
 import pureRender from "pure-render-decorator";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Card, Form, Input, Select, Checkbox, Button } from "antd";
+import { Card, Form, Input, Select, Button, message } from "antd";
 
-import Spin from "common/spin";
 import { setClientConfig } from "actions/projects";
 
 const FormItem = Form.Item,
@@ -22,6 +21,8 @@ export default class extends React.Component {
     let config = localStorage.getItem("config");
     if(config) {
       config = JSON.parse(config);
+    } else {
+      config = {};
     }
     this.state = {
       config,
@@ -55,6 +56,7 @@ export default class extends React.Component {
       }
       this.props.setClientConfig(values);
       localStorage.setItem("config", JSON.stringify(values));
+      message.success("保存成功！")
     });
   }
 
@@ -63,7 +65,8 @@ export default class extends React.Component {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 }
     };
-    let getFieldDecorator = this.props.form.getFieldDecorator;
+    let getFieldDecorator = this.props.form.getFieldDecorator,
+        config = this.state.config;
     return (
       <div>
         <Card title="全局设置" className="panel">
@@ -73,7 +76,7 @@ export default class extends React.Component {
             </FormItem>
             <FormItem { ...formItemLayout } label="测试服务器">
               { getFieldDecorator("testerServer", {
-                  initualValue: "",
+                  initialValue: config.testerServer,
                   rules: [ { required: true, whitespace: true, message: "请输入测试服务器地址！" } ]
                 })(
                   <Input placeholder="测试服务器地址" />
@@ -82,7 +85,7 @@ export default class extends React.Component {
             </FormItem>
             <FormItem { ...formItemLayout } label="日志级别">
               { getFieldDecorator("logLevel", {
-                  initualValue: "log",
+                  initialValue: config.logLevel || "log",
                   rules: [ { required: true, whitespace: true, message: "请选择日志级别！" } ]
                 })(
                   <Select>
@@ -96,7 +99,7 @@ export default class extends React.Component {
             </FormItem>
             <FormItem { ...formItemLayout } label="同步测试">
               { getFieldDecorator("syncTester", {
-                  initualValue: "true",
+                  initialValue: config.syncTester || "true",
                   rules: [ { required: true, whitespace: true, message: "请选择是否同步测试！" } ]
                 })(
                   <Select>
@@ -111,7 +114,7 @@ export default class extends React.Component {
             </FormItem>
             <FormItem { ...formItemLayout } label="引擎">
               { getFieldDecorator("driver", {
-                  initualValue: "",
+                  initialValue: config.driver || "",
                   rules: [ { required: true, whitespace: true, message: "请选择Web引擎！" } ]
                 })(
                   <Select>
@@ -133,7 +136,7 @@ export default class extends React.Component {
             </FormItem>
             <FormItem { ...formItemLayout } label="地址">
               { getFieldDecorator("path", {
-                  initualValue: "",
+                  initialValue: config.path,
                   rules: [ { required: true, whitespace: true, message: "请输入WebDriver地址！" } ]
                 })(
                   <Input placeholder="WebDriver地址" />

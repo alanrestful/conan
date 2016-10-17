@@ -64,7 +64,11 @@ export const fetchUtil = options => {
   if(fetchOptions.method != "GET") {
     fetchOptions.body = options.body;
   }
-  return fetch(`http://localhost:9010${url}`, fetchOptions)
+  let config = localStorage.getItem("config");
+  if(config) {
+    config = JSON.parse(config);
+  }
+  return fetch(`${config.testerServer}${url}`, fetchOptions)
   .then(fetchCheckStatus)
   .then(parseText)
   .then(data => {
