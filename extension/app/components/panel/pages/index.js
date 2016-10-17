@@ -6,7 +6,7 @@ import moment from "moment";
 import pureRender from "pure-render-decorator";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Card, Icon, Popconfirm, Checkbox } from "antd";
+import { Card, Icon, Popconfirm, Checkbox, message } from "antd";
 
 import Spin from "common/spin";
 import { getActionData, clearAllPages, pageActived } from "actions/actions";
@@ -91,7 +91,7 @@ export default class extends React.Component {
    * @return {[type]} [description]
    */
   clearAllPages() {
-    this.props.clearAllPages();
+    this.props.clearAllPages(() => message.success("页面清空成功！"));
   }
 
   render() {

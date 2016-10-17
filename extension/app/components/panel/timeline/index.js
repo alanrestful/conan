@@ -168,9 +168,7 @@ export default class extends React.Component {
   }
 
   deletePage() {
-    this.props.deletePage(this.props.selectedPageIndex, this.state.pages, () => {
-      message.success("页面删除成功！")
-    });
+    this.props.deletePage(this.props.selectedPageIndex, this.state.pages, () => message.success("页面删除成功！"));
   }
 
   timelineItem(actions) {
