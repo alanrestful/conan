@@ -21,7 +21,7 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.js$/,
-      exclude: /node_modules/,
+      exclude: /node_modules|scripts\/(background|content|jquery\.min)\.js/,
       loader: "babel-loader",
       query: {
         presets: ["react", "es2015", "stage-2"],
@@ -60,6 +60,7 @@ module.exports = {
     ], {
       ignore: [
         "helpers.js",
+        "util.js",
         "*.scss"
       ]}
     ),

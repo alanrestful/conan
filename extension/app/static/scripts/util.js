@@ -2,63 +2,62 @@ export const form = { 'Content-Type' : 'application/x-www-form-urlencoded; chars
 export const xhr = { 'x-requested-with': 'XMLHttpRequest', "Accept": "application/json" };
 export const json = { 'Content-Type' : 'application/json', 'x-requested-with': 'XMLHttpRequest', "Accept": "application/json" };
 
-export function fetchCheckStatus(response) {
+export const fetchCheckStatus = response => {
   if (response.status >= 200 && response.status < 300) {
-    return response
+    return response;
   } else {
-    return response.text().then((data)=>{
-      let message
-      try{
-        message = JSON.parse(data).message
-      }catch(e) {
-        message = data
+    return response.text().then(data => {
+      let message;
+      try {
+        message = JSON.parse(data).message;
+      } catch(e) {
+        message = data;
       }
-      var errorObj = {data: message, status: response.status}
-      throw errorObj
+      throw { data: message, status: response.status };
     })
   }
 }
 
-export function parseJSON(response) {
-  return response.json()
+export const parseJSON = response => {
+  return response.json();
 }
 
-export function parseText(response) {
-  return response.text()
+export const parseText = response => {
+  return response.text();
 }
 
-export function processSussess(options) {
+export const processSussess = options => {
   if(options.tipWords) {
     PubSub.publish('toast.info', options.tipWords);
   }
-  if(typeof options.callback == "function") {
-    options.callback()
+  if(options.callback instanceof Function) {
+    options.callback();
   }
 }
 
-export function processError(errorObj, url, history) {
-  if(errorObj.status == 401) {
+export const processError = (error, url, history) => {
+  if(error.status == 401) {
     noAuthToLogin(url, history);
     PubSub.publish('toast.close');
   } else {
-    PubSub.publish('toast.info', errorObj.data);
+    PubSub.publish('toast.info', error.data);
   }
 }
 
-export function goBack (history) {
+export const goBack = history => {
   history.goBack();
 }
 
-export function toastFunction(toast, type, msg) {
+export const toastFunction = (toast, type, msg) => {
   if(!msg){
-    msg = '';
+    msg = "";
   }
-  toast.setState({type: type, msg: msg});
+  toast.setState({ type: type, msg: msg });
 }
 
 
-export function fetchUtil(options) {
-  let { url, method, body, headers, history, hrefCallback, otherErrorCallback } = options
+export const fetchUtil = options => {
+  let { url, method, body, headers, history, hrefCallback, otherErrorCallback } = options;
   let fetchOptions = {
     method: method ? method : "GET",
     credentials: 'same-origin',
@@ -70,34 +69,31 @@ export function fetchUtil(options) {
   return fetch(`http://localhost:9010${url}`, fetchOptions)
   .then(fetchCheckStatus)
   .then(parseText)
-  .then((data)=>{
-    try{
-      return JSON.parse(data)
+  .then(data => {
+    try {
+      return JSON.parse(data);
     }catch(e) {
-      return data
+      return data;
     }
   })
-  .catch(errorObj=>{
-    let href = hrefCallback ? hrefCallback : window.location.href;
-    processError(errorObj, href, history.replace)
-    if(typeof(otherErrorCallback) == "function") {
-      otherErrorCallback()
-    }
-    return Promise.reject('end')
+  .catch(error => {
+    processError(error, hrefCallback ? hrefCallback : location.href, history.replace)
+    otherErrorCallback instanceof Function && otherErrorCallback();
+    return Promise.reject("end");
   })
 }
 
-export function actionCreator(type, action) {
+export const actionCreator = (type, action) => {
   return {
     type,
     ...action
-  }
+  };
 }
 
 /**
  * 初始化通信链接
  */
-export function initConnect(){
+export const initConnect = () => {
   chrome.tabs.getCurrent(function(tab) {
     chrome.runtime.sendMessage({"method": "connectInit", "tabId" : tab.id});
   });
@@ -106,7 +102,7 @@ export function initConnect(){
 /**
  * 初始化native通信设置
  */
-export function clientInit(){
+export const clientInit = () => {
   chrome.runtime.sendMessage({"method": "clientInit"});
 }
 
@@ -115,7 +111,7 @@ export function clientInit(){
  * driver: web引擎(chrome|firefox|ie|opera|safari|android|MicrosoftEdge|iPad|iPhone|phantomjs|htmlunit)
  * path: webDriver地址
  */
-export function configWebDriver(driver, path){
+export const configWebDriver = (driver, path) => {
   chrome.storage.local.get('conan', function(result){
     var conanConfig = result.conan;
 
@@ -134,7 +130,7 @@ export function configWebDriver(driver, path){
  *}
  *
  */
-export function configClientDefault(config){
+export const configClientDefault = config => {
   chrome.storage.local.get('conan', function(result){
     var conanConfig = result.conan;
 
@@ -166,7 +162,7 @@ export function configClientDefault(config){
  *  "data": "[tArray(测试用例JSON数据)]"
  * }
  */
-export function clientPlay(tDeal){
+export const clientPlay = tDeal => {
   chrome.runtime.sendMessage({"method": "clientPlay", "tDeal": tDeal});
 }
 
@@ -181,7 +177,7 @@ export function clientPlay(tDeal){
  * playRes
  * 调用本地处理程序的处理结果(入参：native调用结果)(由clientPlay引起的回调)
  */
-export function initNativeMessage(initSuccess, initFailed, disconnect, playRes){
+export const initNativeMessage = (initSuccess, initFailed, disconnect, playRes) => {
   chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     switch(request.event){
       case "clientInitSuccess":
@@ -209,7 +205,7 @@ export function initNativeMessage(initSuccess, initFailed, disconnect, playRes){
  * index: 需要清空的数据索引，在整个测试用例组中
  * callback: 清空数据后回调
  */
-export function clearAllTArray(index, callback){
+export const clearAllTArray = (index, callback) => {
   chrome.storage.local.get('conan', function(result){
     var conanConfig = result.conan;
 
@@ -229,7 +225,7 @@ export function clearAllTArray(index, callback){
  * @param callback获取数据后回调
  * 传入全部数据信息
  */
-export function allTArrays(callback){
+export const allTArrays = callback => {
   chrome.storage.local.get('conan', function(result){
     var conanConfig = result.conan;
 
@@ -245,7 +241,7 @@ export function allTArrays(callback){
  * @param objFun(tObj , index)
  * tObj:测试元素, index:在测试用例中的位置
  */
-export function listenerTarrayStorage(arrayFun, objFun){
+export const listenerTarrayStorage = (arrayFun, objFun) => {
   chrome.storage.onChanged.addListener(function(changes, namespace){
     for(var key in changes){
       let storageChange = changes[key];
@@ -265,7 +261,7 @@ export function listenerTarrayStorage(arrayFun, objFun){
  * objIndex: 在tArray中的索引
  * expect: 预设结果
  */
-export function setElExpect(tIndex, arrayIndex, objIndex, expect){
+export const setElExpect = (tIndex, arrayIndex, objIndex, expect) => {
   chrome.storage.local.get('conan', function(result){
     var conanConfig = result.conan;
 
