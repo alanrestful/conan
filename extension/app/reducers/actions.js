@@ -8,7 +8,9 @@ export default (state = {}, action) => {
     case "SET_ACTIVED_PAGE_INDEX":
       return {
         ...state,
-        selectedPageIndex: action.result
+        selectedPageIndex: action.result,
+        action: null,
+        page: null
       }
     case "PRODUCE_NEW_PAGE":
       return {
