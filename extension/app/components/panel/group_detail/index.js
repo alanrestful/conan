@@ -12,6 +12,7 @@ import Spin from "common/spin";
 import EditInSitu from "common/edit_in_situ";
 import CreateCaseModal from "./modals/create_case";
 import EditModelModal from "./modals/edit_model";
+import ViewjsonModal from "../modals/viewjson";
 import { playback } from "actions/actions";
 import { checkedModel, editModel, deleteModel, createCase, getCases } from "actions/groups";
 import { isEmpty } from "scripts/helpers";
@@ -32,7 +33,8 @@ export default class extends React.Component {
     this.state = {
       selectedModel: {},
       checkedModels: [],
-      createCaseModalVisible: false
+      createCaseModalVisible: false,
+      viewjsonModalVisible: false
     }
   }
 
@@ -345,6 +347,33 @@ export default class extends React.Component {
     });
   }
 
+  viewJson(index, jsons) {
+    if(index) {
+      let actions = [ ...jsons ];
+      jsons = [];
+      actions = actions.splice(0, 1 + index).reverse();
+      for(let i = 0; i < actions.length; i ++) {
+        let action = actions[i];
+        if(action.isFormEl || !i){
+          jsons.push(action);
+        } else {
+          break;
+        }
+      }
+      jsons.reverse();
+    }
+    this.setState({
+      viewjsonModalVisible: true,
+      jsons: JSON.stringify(jsons)
+    });
+  }
+
+  closeViewjsonModal() {
+    this.setState({
+      viewjsonModalVisible: false
+    })
+  }
+
   render() {
     let models = this.props.models || [],
         model = this.state.selectedModel,
@@ -380,37 +409,37 @@ export default class extends React.Component {
                 <Col span={ 14 } className="group-item">
                   <div className="group-item-title clearfix">
                     <h4>{ model.name }</h4>
-                    <Button size="small" type="ghost">JSON</Button>
+                    <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, undefined, model) }>JSON</Button>
                     <Button size="small" type="primary" onClick={ this.playIt.bind(this) }>回放</Button>
                     <Button size="small">导出</Button>
                   </div>
                   {
-                    fragment.map((v, i) => (
+                    fragment.map((m, i) => (
                       <div key={ i }>
-                        <div className="page-title">{ v.url }</div>
+                        <div className="page-title">{ m.url }</div>
                         {
-                          v.expectEditing ? <EditInSitu value={ v.expect } onEnter={ this.editOnEnter.bind(this, v.hash) } onCancel={ this.editOnCancel.bind(this, v.hash) } /> : v.expect ? (
+                          m.expectEditing ? <EditInSitu value={ m.expect } onEnter={ this.editOnEnter.bind(this, m.hash) } onCancel={ this.editOnCancel.bind(this, m.hash) } /> : m.expect ? (
                             <div className="group-result clearfix">
-                              <span className="group-result-info">预期结果：{ v.expect }</span>
+                              <span className="group-result-info">预期结果：{ m.expect }</span>
                               <span className="group-result-control">
-                                <a onClick={ this.showEditInSitu.bind(this, v.hash) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteExpect.bind(this, v.hash) }>
+                                <a onClick={ this.showEditInSitu.bind(this, m.hash) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteExpect.bind(this, m.hash) }>
                                   <a><Icon type="cross-circle-o" /> 删除</a>
                                 </Popconfirm>
                               </span>
                             </div>
                           ) : (
                             <div className="page-control">
-                              <Button size="small" onClick={ this.showEditInSitu.bind(this, v.hash) }>预期</Button>
+                              <Button size="small" onClick={ this.showEditInSitu.bind(this, m.hash) }>预期</Button>
                               {
-                                v.isFormEl ? null : <Button size="small" type="ghost">JSON</Button>
+                                m.isFormEl ? null : <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, undefined, m) }>JSON</Button>
                               }
                             </div>
                           )
                         }
                         <ul className="action-line">
                         {
-                          v.tArray.map((v, i) => (
+                          m.tArray.map((v, i) => (
                             <li className="clearfix" key={ i }>
                               <span className="index">{ i + 1 }.</span>
                               <span className="action-content-wrap">
@@ -438,7 +467,7 @@ export default class extends React.Component {
                                       </div>
                                     ) : (
                                       <div>
-                                        <Button size="small" onClick={ this.showEditInSitu.bind(this, v.hash) }>预期</Button> { v.isFormEl ? null : <Button size="small" type="ghost">JSON</Button> }
+                                        <Button size="small" onClick={ this.showEditInSitu.bind(this, v.hash) }>预期</Button> { v.isFormEl ? null : <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, i, m.tArray) }>JSON</Button> }
                                       </div>
                                     )
                                   }
@@ -458,6 +487,7 @@ export default class extends React.Component {
         </Card>
         <CreateCaseModal visible={ this.state.createCaseModalVisible } checkedModels={ this.state.checkedModels } onSubmit={ this.createCaseModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
         <EditModelModal visible={ this.state.editModelModalVisible } selectedModel={ this.state.selectedModel } onSubmit={ this.editModelModalSubmit.bind(this) } onClose={ this.closeEditModelModal.bind(this) } />
+        <ViewjsonModal jsons={ this.state.jsons } visible={ this.state.viewjsonModalVisible } onClose={ this.closeViewjsonModal.bind(this) } />
       </div>
     )
   }

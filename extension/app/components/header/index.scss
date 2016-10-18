@@ -36,6 +36,7 @@ a {
   nav {
     li {
       float: left;
+      margin-right: 3px;
       a {
         display: inline-block;
         width: 80px;
@@ -44,6 +45,10 @@ a {
         &:hover, &.actived {
           color: $color-text;
           background-color: $color-secondary;
+          margin-top: 3px;
+          border-radius: 3px 3px 0 0;
+          height: 57px;
+          line-height: 54px;
         }
       }
     }
@@ -52,6 +57,7 @@ a {
   .user-menu {
     margin-left: 10px;
     color: #fff;
+    float: right;
     .avatar {
       width: 35px;
       height: 35px;

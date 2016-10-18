@@ -11,6 +11,7 @@ import { Card, Timeline, Icon, Popconfirm, Checkbox, Button, notification, messa
 import Spin from "common/spin";
 import EditInSitu from "common/edit_in_situ";
 import CreatesModal from "./modals/creates";
+import ViewjsonModal from "../modals/viewjson";
 import { playback, createGroups, deletePage, changeSelectedActions } from "actions/actions";
 import { isEmpty } from "scripts/helpers";
 
@@ -30,8 +31,10 @@ export default class extends React.Component {
     super(props);
     this.state = {
       pages: [],
+      jsons: "",
       selectedActionIndexs: {},
-      createsModalVisible: false
+      createsModalVisible: false,
+      viewjsonModalVisible: false
     }
   }
 
@@ -167,8 +170,38 @@ export default class extends React.Component {
     message.success("模板创建成功！");
   }
 
+  /**
+   * 删除页面
+   * @return {[type]} [description]
+   */
   deletePage() {
     this.props.deletePage(this.props.selectedPageIndex, this.state.pages, () => message.success("页面删除成功！"));
+  }
+
+  viewJson(index) {
+    let pageIndex = this.props.selectedPageIndex,
+        pages = this.state.pages,
+        actions = [ ...pages[pageIndex].tArray[0] ],
+        jsons = [];
+    actions = actions.splice(0, 1 + index).reverse();
+    for(let i = 0; i < actions.length; i ++) {
+      let action = actions[i];
+      if(action.isFormEl || !i){
+        jsons.push(action);
+      } else {
+        break;
+      }
+    }
+    this.setState({
+      viewjsonModalVisible: true,
+      jsons: JSON.stringify(jsons.reverse())
+    });
+  }
+
+  closeViewjsonModal() {
+    this.setState({
+      viewjsonModalVisible: false
+    })
   }
 
   timelineItem(actions) {
@@ -197,7 +230,7 @@ export default class extends React.Component {
                   </Popconfirm>
                 </span>
               </div>
-            ) : <div className="control"><Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small" type="ghost">JSON</Button> }</div>
+            ) : <div className="control"><Button size="small" onClick={ this.showEditInSitu.bind(this, i) }>预期</Button> { v.isFormEl ? null : <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, i) }>JSON</Button> }</div>
           }
         </TimelineItem>
       )
@@ -272,6 +305,7 @@ export default class extends React.Component {
           </Timeline>
         </Card>
         <CreatesModal selectedActionIndexs={ this.state.selectedActionIndexs } visible={ this.state.createsModalVisible } onSubmit={ this.createsModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
+        <ViewjsonModal jsons={ this.state.jsons } visible={ this.state.viewjsonModalVisible } onClose={ this.closeViewjsonModal.bind(this) } />
       </div>
     )
   }
