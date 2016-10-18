@@ -28,7 +28,7 @@ export default class extends React.Component {
 
   render() {
     return (
-      <Modal title="创建用例" visible={ this.state.visible } onCancel={ this.handleCancel.bind(this) } footer={ [<Button key="back" type="ghost" size="large" onClick={ this.handleCancel.bind(this) }>取 消</Button>] }>
+      <Modal title="查看JSON" visible={ this.state.visible } onCancel={ this.handleCancel.bind(this) } footer={ [<Button key="back" type="ghost" size="large" onClick={ this.handleCancel.bind(this) }>关 闭</Button>] }>
         <pre>
           <code>
           {
