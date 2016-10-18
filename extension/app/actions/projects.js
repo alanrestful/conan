@@ -10,7 +10,7 @@ export const getAllProjects = () => {
       url: "/api/projects",
       history
     })
-    .then(result => dispatch(actionCreator("SUCCESS_GET_PROJECTS", { result })));
+    .then(result => dispatch(actionCreator("SUCCESS_GET_PROJECTS", { result: result.result })));
   }
 };
 

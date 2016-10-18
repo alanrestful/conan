@@ -9,20 +9,12 @@ export default class extends React.Component {
 
   constructor(props) {
     super(props);
-    let projects = this.props.projects;
-    projects = projects ? projects.result : [];
     this.state = {
-      visible: this.props.visible,
-      projects
+      visible: this.props.visible
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.projects) {
-      this.setState({
-        projects: nextProps.projects.result
-      })
-    }
     this.setState({
       visible: nextProps.visible
     })
@@ -66,8 +58,10 @@ export default class extends React.Component {
    * @return {[type]}    [description]
    */
   changeProjectName(id) {
-    let env, name;
-    this.state.projects.map(v => {
+    let env,
+        name,
+        projects = this.props.projects || [];
+    projects.map(v => {
       if(v._id == id) {
         env = v.env_json;
         name = v.name;
@@ -86,7 +80,7 @@ export default class extends React.Component {
       wrapperCol: { span: 14 }
     };
     let getFieldDecorator = this.props.form.getFieldDecorator,
-        projects = this.state.projects,
+        projects = this.props.projects || [],
         env = this.state.env || [];
     return (
       <Modal title="设置" visible={ this.state.visible } onOk={ this.handleOk.bind(this) } confirmLoading={ this.state.confirmLoading } onCancel={ this.handleCancel.bind(this) }>
