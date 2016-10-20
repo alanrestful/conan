@@ -104,5 +104,24 @@ function DriverEngine(browser, position, size){
     }
 }
 
+function DealResult(){
+    this.pass = true;
+    this.error = [];
+    this.expectResult = [];
+
+    // 系统执行时的error日志
+    this.sysError = function(error){
+        this.error.push(error);
+    };
+
+    //pass = false时会存在error
+    this.expectRes = function(pass, error){
+        if(pass){
+            this.pass = false;
+        }
+        this.expectResult.push({"pass": pass, "error": error});
+    };
+}
+
 var engine = new DriverEngine("chrome" , [0, 0], [1280, 1024]);
 engine.play({"domain":"http://mallt.jidd.com.cn:8888","path":"/","tArray":[[{"baseURI":"http://mallt.jidd.com.cn:8888/","className":"form-control","id":"loginId","isFormEl":true,"name":"loginBy","placeholder":"请输入用户名","tagName":"INPUT","type":"text","value":"滦县鹏大商贸有限公司","xPath":"//*[@id='loginId']"},{"baseURI":"http://mallt.jidd.com.cn:8888/","className":"form-control","id":"password","isFormEl":true,"name":"password","placeholder":"请输入密码","tagName":"INPUT","type":"password","value":"123456","xPath":"//*[@id='password']"},{"baseURI":"http://mallt.jidd.com.cn:8888/","className":"btn","innerText":"登录","isFormEl":false,"tagName":"BUTTON","type":"submit","xPath":"//*[@class='user-login-form']/button[1]"}]],"url":"http://mallt.jidd.com.cn:8888/"});

@@ -12,6 +12,7 @@
   "dependencies": {
     "selenium-webdriver": "2.53.3",
     "config": "^1.21.0",
-    "log4js": "0.6.38"
+    "log4js": "0.6.38",
+    "moment": "2.15.1"
   }
 }
