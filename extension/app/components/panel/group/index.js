@@ -31,11 +31,10 @@ export default class extends React.Component {
     }
   }
 
-  componentWillMount() {
-    this.props.getGroup(this.props.project.id);
-  }
-
   componentWillReceiveProps(nextProps) {
+    if(nextProps.project && !this.props.project) {
+      this.props.getGroup(nextProps.project.id);
+    }
     this.setState({
       selectedGroup: nextProps.selectedGroup || {},
       checkedModelIndexs: nextProps.checkedModelIndexs || {}

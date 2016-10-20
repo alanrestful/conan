@@ -80,6 +80,7 @@ export default class extends React.Component {
       wrapperCol: { span: 14 }
     };
     let getFieldDecorator = this.props.form.getFieldDecorator,
+        project = this.props.project || {},
         projects = this.props.projects || [],
         env = this.state.env || [];
     return (
@@ -87,7 +88,7 @@ export default class extends React.Component {
         <Form horizontal>
           <FormItem { ...formItemLayout } label="项目">
             { getFieldDecorator("id", {
-                initialValue: "",
+                initialValue: project.id || "",
                 rules: [ { required: true, whitespace: true, message: "请选择项目名称！" } ],
                 onChange: this.changeProjectName.bind(this)
               })(
@@ -105,7 +106,7 @@ export default class extends React.Component {
           </FormItem>
           <FormItem { ...formItemLayout } label="环境">
             { getFieldDecorator("env", {
-                initialValue: "",
+                initialValue: project.env || "",
                 rules: [ { required: true, whitespace: true, message: "请选择环境！" } ]
               })(
                 <Select>
@@ -121,7 +122,7 @@ export default class extends React.Component {
           </FormItem>
           <FormItem { ...formItemLayout } label="IP地址">
             { getFieldDecorator("ip", {
-                initialValue: "192.168.1.1",
+                initialValue: project.ip || "192.168.1.1",
                 rules: [ { required: true, whitespace: false, message: "请输入IP地址！" } ]
               })(
                 <Input placeholder="服务端IP地址" />
@@ -130,7 +131,7 @@ export default class extends React.Component {
           </FormItem>
           <FormItem { ...formItemLayout } label="设备">
             { getFieldDecorator("device", {
-                initialValue: "chrome"
+                initialValue: project.device || "chrome"
               })(
                 <Select>
                   <Option value="chrome">Chrome</Option>
@@ -143,7 +144,7 @@ export default class extends React.Component {
           </FormItem>
           <FormItem { ...formItemLayout } label="日志级别">
             { getFieldDecorator("logs", {
-                initialValue: "warning"
+                initialValue: project.logs || "warning"
               })(
                 <Select>
                   <Option value="log">Log</Option>

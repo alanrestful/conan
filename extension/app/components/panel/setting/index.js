@@ -6,14 +6,12 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Card, Form, Input, Select, Button, message } from "antd";
 
-import { setClientConfig } from "actions/projects";
-
 const FormItem = Form.Item,
       Option = Select.Option;
 
 @pureRender
 @Form.create()
-@connect(state => ({}), dispatch => bindActionCreators({ setClientConfig }, dispatch))
+@connect(state => ({}), dispatch => bindActionCreators({}, dispatch))
 export default class extends React.Component {
 
   constructor(props) {
@@ -54,7 +52,6 @@ export default class extends React.Component {
         });
         return false;
       }
-      this.props.setClientConfig(values);
       localStorage.setItem("config", JSON.stringify(values));
       message.success("保存成功！")
     });

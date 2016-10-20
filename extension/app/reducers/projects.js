@@ -5,7 +5,7 @@ export default (state = {}, action) => {
         ...state,
         projects: action.result
       }
-    case "SET_PROJECT_INFO":
+    case "GET_PROJECT_INFO":
       return {
         ...state,
         project: action.result
