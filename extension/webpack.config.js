@@ -21,7 +21,7 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.js$/,
-      exclude: /node_modules|scripts\/(background|content|jquery\.min|highlight\.pack)\.js/,
+      exclude: /node_modules|scripts\/(background|content|jquery\.min|prism)\.js/,
       loader: "babel-loader",
       query: {
         presets: ["react", "es2015", "stage-2"],

@@ -194,7 +194,7 @@ export default class extends React.Component {
     }
     this.setState({
       viewjsonModalVisible: true,
-      jsons: JSON.stringify(jsons.reverse())
+      jsons: JSON.stringify(jsons.reverse(), null, 2)
     });
   }
 

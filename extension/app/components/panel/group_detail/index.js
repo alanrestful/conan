@@ -31,6 +31,7 @@ export default class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      jsons: "",
       selectedModel: {},
       checkedModels: [],
       createCaseModalVisible: false,
@@ -364,7 +365,7 @@ export default class extends React.Component {
     }
     this.setState({
       viewjsonModalVisible: true,
-      jsons: JSON.stringify(jsons)
+      jsons: JSON.stringify(jsons, null, 2)
     });
   }
 

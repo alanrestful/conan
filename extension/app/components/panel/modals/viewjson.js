@@ -12,10 +12,6 @@ export default class extends React.Component {
     };
   }
 
-  componentDidMount() {
-    // hljs.initHighlighting();
-  }
-
   componentWillReceiveProps(nextProps) {
     this.setState({
       visible: nextProps.visible
@@ -30,11 +26,7 @@ export default class extends React.Component {
     return (
       <Modal title="查看JSON" visible={ this.state.visible } onCancel={ this.handleCancel.bind(this) } footer={ [<Button key="back" type="ghost" size="large" onClick={ this.handleCancel.bind(this) }>关 闭</Button>] }>
         <pre>
-          <code>
-          {
-            this.props.jsons
-          }
-          </code>
+          <code dangerouslySetInnerHTML={{__html: Prism.highlight(this.props.jsons, Prism.languages.json)}}></code>
         </pre>
       </Modal>
     )
