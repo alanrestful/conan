@@ -15,8 +15,8 @@ import { isEmpty } from "scripts/helpers";
 @pureRender
 @connect(state => {
   let pages = state.actions.pages || [],
-      page = state.actions.page,
-      action = state.actions.action,
+      page = state.result.page,
+      action = state.result.action,
       status = false;
   pages.map(v => {
     if(page) {

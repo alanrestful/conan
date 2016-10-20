@@ -8,21 +8,7 @@ export default (state = {}, action) => {
     case "SET_ACTIVED_PAGE_INDEX":
       return {
         ...state,
-        selectedPageIndex: action.result,
-        action: null,
-        page: null
-      }
-    case "PRODUCE_NEW_PAGE":
-      return {
-        ...state,
-        page: action.result,
-        action: null
-      }
-    case "PRODUCE_NEW_ACTION":
-      return {
-        ...state,
-        action: action.result,
-        page: null
+        selectedPageIndex: action.result
       }
     case "DELETE_PAGE_BY_INDEX":
       return {
@@ -37,9 +23,7 @@ export default (state = {}, action) => {
     case "CHANGE_SELECTED_ACTIONS":
       return {
         ...state,
-        selectedActionIndexs: action.result,
-        action: null,
-        page: null
+        selectedActionIndexs: action.result
       }
     default:
       return state;

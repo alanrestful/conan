@@ -1,5 +1,5 @@
 import moment from "moment";
-import { initConnect, allTArrays, listenerTarrayStorage, initNativeMessage, clientInit, clientPlay, clearAllTArray, fetchUtil, json, actionCreator } from "scripts/util";
+import { initConnect, allTArrays, listenerTarrayStorage, initNativeMessage, clientInit, clientPlay, clearAllTArray, setElExpect, fetchUtil, json, actionCreator } from "scripts/util";
 
 /**
  * 获取页面或者动作
@@ -31,6 +31,8 @@ export const getActionData = () => {
       console.log(error);
     }, (result) => {
       console.log("clientPlayRes");
+      console.log(result)
+      dispatch(actionCreator("SUCCESS_LOAD_RESULT", { result }));
     });
 
     clientInit();
@@ -113,3 +115,9 @@ export const createGroups = data => {
  * @return {[type]}         [description]
  */
 export const changeSelectedActions = data => actionCreator("CHANGE_SELECTED_ACTIONS", { result: data });
+
+export const editExpect = (pageIndex, tIndex, actionIndex, value) => {
+  return dispatch => {
+    setElExpect(pageIndex, tIndex, actionIndex, value);
+  }
+}

@@ -40,3 +40,20 @@
     }
   }
 }
+
+.result-list {
+  line-height: 2em;
+  padding: 5px;
+  margin: 5px 0;
+  &:not(:first-child) {
+    border-top: $color-secondary solid 1px;
+  }
+  li {
+    .success {
+      color: $color-success;
+    }
+    .error {
+      color: $color-error;
+    }
+  }
+}

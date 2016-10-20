@@ -12,7 +12,8 @@ import Spin from "common/spin";
 import EditInSitu from "common/edit_in_situ";
 import CreatesModal from "./modals/creates";
 import ViewjsonModal from "../modals/viewjson";
-import { playback, createGroups, deletePage, changeSelectedActions } from "actions/actions";
+import ResultModal from "./modals/result";
+import { playback, createGroups, deletePage, changeSelectedActions, editExpect } from "actions/actions";
 import { isEmpty } from "scripts/helpers";
 
 const TimelineItem = Timeline.Item;
@@ -21,30 +22,62 @@ const TimelineItem = Timeline.Item;
 @connect(state => ({
   pages: state.actions.pages,
   selectedPageIndex: state.actions.selectedPageIndex,
-  action: state.actions.action,
+  action: state.result.action,
   selectedActionIndexs: state.actions.selectedActionIndexs,
-  project: state.projects.project
-}), dispatch => bindActionCreators({ playback, createGroups, deletePage, changeSelectedActions }, dispatch))
+  project: state.projects.project,
+  result: state.result.result
+}), dispatch => bindActionCreators({ playback, createGroups, deletePage, changeSelectedActions, editExpect }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      pages: [],
       jsons: "",
+      pages: [],
+      result: [],
       selectedActionIndexs: {},
       createsModalVisible: false,
-      viewjsonModalVisible: false
+      viewjsonModalVisible: false,
+      resultModalVisible: false
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.selectedPageIndex == undefined) {
-      return false;
+    if(nextProps.selectedPageIndex != undefined) {
+      this.setState({
+        pages: nextProps.pages,
+        selectedActionIndexs: nextProps.selectedActionIndexs || {}
+      });
     }
+    if(nextProps.result) {
+      this.renderResult(nextProps.result);
+    }
+  }
+
+  renderResult(result) {
+    let r = this.state.result;
+    if(!r.length) {
+      notification.open({
+        duration: 0,
+        message: "执行结果",
+        description: <div>屠龙宝刀，<a onClick={ this.showResultModal.bind(this) }>点击</a>就送。</div>
+      });
+    }
+    r.push(result);
     this.setState({
-      pages: nextProps.pages,
-      selectedActionIndexs: nextProps.selectedActionIndexs || {}
+      result: r
+    });
+  }
+
+  showResultModal() {
+    this.setState({
+      resultModalVisible: true
+    });
+  }
+
+  closeResultModal() {
+    this.setState({
+      resultModalVisible: false
     });
   }
 
@@ -65,7 +98,7 @@ export default class extends React.Component {
     this.props.playback({ ...actions, tArray: [actions.tArray] });
     notification.success({
       message: "提示",
-      description: "所选用例已经开始尝试执行，请耐心等待执行结果！（大误）"
+      description: "所选用例已经开始尝试执行，请耐心等待执行结果！"
     });
   }
 
@@ -87,6 +120,7 @@ export default class extends React.Component {
    * @return {[type]}       [description]
    */
   editOnEnter(index, value) {
+    this.props.editExpect(this.props.selectedPageIndex, 0, index, value);
     this.expectCommon(index, {
       expect: value,
       expectEditing: false
@@ -110,6 +144,7 @@ export default class extends React.Component {
    * @return {[type]}       [description]
    */
   deleteExpect(index) {
+    this.props.editExpect(this.props.selectedPageIndex, 0, index, "");
     this.expectCommon(index, {
       expect: undefined,
       expectEditing: false
@@ -306,6 +341,7 @@ export default class extends React.Component {
         </Card>
         <CreatesModal selectedActionIndexs={ this.state.selectedActionIndexs } visible={ this.state.createsModalVisible } onSubmit={ this.createsModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
         <ViewjsonModal jsons={ this.state.jsons } visible={ this.state.viewjsonModalVisible } onClose={ this.closeViewjsonModal.bind(this) } />
+        <ResultModal result={ this.state.result } visible={ this.state.resultModalVisible } onClose={ this.closeResultModal.bind(this) } />
       </div>
     )
   }
