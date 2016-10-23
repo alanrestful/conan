@@ -200,7 +200,7 @@ function create_view(event_obj){
 }
 
 function basic_view(ul, event_obj){
-  return __set_li_back_obj(ul, ["id", "class", "style", "title"], event_obj);
+  return __set_li_back_obj(ul, ["id", "class", "style", "title", "xPath"], event_obj);
 }
 
 
@@ -265,6 +265,9 @@ function __li_view(attr_v, event_obj){
         view_val.push(JSON.parse("{\""+attr_v+"\":\""+event_obj.val()+"\"}"));
       }
     }
+  }else if(attr_v == "xPath") {
+    li_view += "<span style='color:red'>"+event_obj.localXpath().xpath+"</span></li>";
+    view_val.push(li_view);
   }else{
     if(event_obj.attr(attr_v) == "undefined" || event_obj.attr(attr_v) == null){
       li_view += "<span>"+event_obj.attr(attr_v)+"</span></li>";

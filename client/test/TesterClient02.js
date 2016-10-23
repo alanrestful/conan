@@ -5,7 +5,7 @@ var webdriver = require('selenium-webdriver');
 var until = webdriver.until;
 
 //new WebDriver().manage().window().maximize();
-var driver = new webdriver.Builder().forBrowser("chrome").build();
+var driver = new webdriver.Builder().forBrowser("opera").build();
 
 console.log(driver instanceof webdriver.WebDriver);
 
@@ -13,7 +13,8 @@ console.log(driver instanceof webdriver.WebDriver);
 //    console.log(obj);
 //});
 driver.manage().window().setPosition(0, 0);
-driver.manage().window().setSize(1324, 1000);
+driver.manage().window().setSize(1500, 200);
+driver.manage().window().maximize();
 
 console.log("getPosition");
 driver.manage().window().getPosition().then(function(obj){
@@ -21,7 +22,7 @@ driver.manage().window().getPosition().then(function(obj){
 });
 console.log("getSize");
 
-//selenium-webdriver大量使用了class Promise<T>来处理数据->获取数据方式如下
+//selenium-webdriver大量使用了class Promise<T>来处理数据->获取数据方式如下cd
 driver.manage().window().getSize().then(function(obj){
     console.log(obj);
 });
