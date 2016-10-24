@@ -38,7 +38,7 @@ export default class extends React.Component {
     }
   }
 
-  componentWill() {
+  componentWillMount() {
     let project = this.props.project;
     if(project) {
       this.props.getGroup(project.id);
