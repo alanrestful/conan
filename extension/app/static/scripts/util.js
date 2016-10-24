@@ -67,6 +67,8 @@ export const fetchUtil = options => {
   let config = localStorage.getItem("config");
   if(config) {
     config = JSON.parse(config);
+  } else {
+    config = {};
   }
   return fetch(`${config.testerServer}${url}`, fetchOptions)
   .then(fetchCheckStatus)
