@@ -38,6 +38,13 @@ export default class extends React.Component {
     }
   }
 
+  componentWill() {
+    let project = this.props.project;
+    if(project) {
+      this.props.getGroup(project.id);
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     if(nextProps.project && !this.props.project) {
       this.props.getGroup(nextProps.project.id);
