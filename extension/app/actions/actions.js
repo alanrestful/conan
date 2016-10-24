@@ -84,12 +84,12 @@ export const pageActived = index => actionCreator("SET_ACTIVED_PAGE_INDEX", { re
  * @param  {Object} data    回放数据
  * @return {[type]}         [description]
  */
-export const playback  = data => {
+export const playback  = (data, drivers) => {
   return dispatch => {
     clientPlay({
       method: "play",
       data
-    });
+    }, drivers);
   }
 };
 

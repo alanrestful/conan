@@ -10,6 +10,7 @@ import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox, Popover, Tooltip, n
 import Search from "common/search";
 import Spin from "common/spin";
 import EditInSitu from "common/edit_in_situ";
+import PlaySetting from "common/play_setting";
 import CreateCaseModal from "./modals/create_case";
 import ViewjsonModal from "../modals/viewjson";
 import { playback } from "actions/actions";
@@ -29,7 +30,14 @@ export default class extends React.Component {
 
   constructor(props) {
     super(props);
+    let drivers = localStorage.getItem("drivers");
+    if(drivers) {
+      drivers = JSON.parse(drivers);
+    } else {
+      drivers = ["chrome"];
+    }
     this.state = {
+      drivers,
       jsons: "",
       checkedCases: [],
       selectedCase: {},
@@ -113,6 +121,12 @@ export default class extends React.Component {
     });
   }
 
+  playSettingChange(drivers) {
+    this.setState({
+      drivers
+    });
+  }
+
   playIt() {
     let selectedCase = this.state.selectedCase,
         fragment = JSON.parse(selectedCase.fragment);
@@ -165,7 +179,7 @@ export default class extends React.Component {
         actions = v;
       }
     });
-    this.props.playback({ ...actions, tArray: [ actions.tArray ]});
+    this.props.playback({ ...actions, tArray: [ actions.tArray ]}, this.state.drivers);
     notification.success({
       message: "提示",
       description: "所选用例已经开始尝试执行，请耐心等待执行结果！"
@@ -297,7 +311,7 @@ export default class extends React.Component {
         checkedCurrent = checkedIds[groupId] ? checkedIds[groupId][model._id] || [] : [];
     return (
       <div>
-        <Card title={ `${ model.name || "用例" } ${ isEmpty(cases) ? "" : `${ cases.length }个用例` }` } extra={ <span><Tooltip title="回放"><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /></a></Tooltip>{ isEmpty(model) ? null : <Tooltip title="创建用例"><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip> }{ isEmpty(selectedCase) ? null : <span><Tooltip title="编辑"><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /></a></Tooltip><Popconfirm title="此操作将不可恢复，您确定要删除此用例？" placement="bottom" onConfirm={ this.deleteCase.bind(this, selectedCase) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> }</span> } className="panel">
+        <Card title={ `${ model.name || "用例" } ${ isEmpty(cases) ? "" : `${ cases.length }个用例` }` } extra={ <span><Popover title="回放选项" trigger="hover" placement="bottomRight" content={ <PlaySetting onChange={ this.playSettingChange.bind(this) } drivers={ this.state.drivers } /> }><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /></a></Popover>{ isEmpty(model) ? null : <Tooltip title="创建用例"><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip> }{ isEmpty(selectedCase) ? null : <span><Tooltip title="编辑"><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /></a></Tooltip><Popconfirm title="此操作将不可恢复，您确定要删除此用例？" placement="bottom" onConfirm={ this.deleteCase.bind(this, selectedCase) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> }</span> } className="panel">
           <Row className="group-detail">
             <Col span={10} className="group-list-wrapper">
               <div className="group-search"><Search /></div>

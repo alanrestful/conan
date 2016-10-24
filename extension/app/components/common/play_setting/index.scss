@@ -1,0 +1,11 @@
+.play-setting {
+  margin: -10px 0;
+  li {
+    margin: 10px 0;
+    height: 14px;
+    line-height: 14px;
+    .ant-switch {
+      float: right;
+    }
+  }
+}
