@@ -39,7 +39,12 @@ if (cluster.isMaster) {
                 process.exit();
             });
         }catch(err){
-            logger.error(err);
+            var dealRes = new engine.DealResult();
+            dealRes["browser"] = msg.driver;
+            dealRes.sysError(err.stack);
+            
+            process.send(dealRes);
+            process.exit();
         }
     });
 }
