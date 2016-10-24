@@ -4,7 +4,7 @@ import React from "react";
 import pureRender from "pure-render-decorator";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Card, Icon, Tag } from "antd";
+import { Card, Icon, Tag, Tooltip } from "antd";
 
 import Spin from "common/spin";
 import SettingModal from "./modals/setting";
@@ -51,13 +51,17 @@ export default class extends React.Component {
     localStorage.setItem("project", JSON.stringify(data));
   }
 
+  getRandomColor() {
+    return ["", "red", "yellow", "blue", "green"][Math.round(Math.random() * 4)];
+  }
+
   render() {
     let project = this.props.project;
     return (
       <div>
-        <Card title="设置" extra={ <a onClick={ this.showModal.bind(this) }><Icon type="edit" /> 编辑</a> } className="panel">
+        <Card title="设置" extra={ <Tooltip title="编辑"><a onClick={ this.showModal.bind(this) }><Icon type="edit" /></a></Tooltip> } className="panel">
         {
-          project ? <div><Tag color="red" title="项目名称">{ project.name }</Tag><Tag color="yellow" title="环境">{ project.env }</Tag><Tag color="blue" title="设备">{ project.device }</Tag><Tag color="green" title="日志级别">{ project.logs }</Tag><Tag title="IP">{ project.ip }</Tag></div> : <Spin done text="待配置" />
+          project ? <div><Tag color={ this.getRandomColor() } title="项目名称">{ project.name }</Tag><Tag color={ this.getRandomColor() } title="环境">{ project.env }</Tag><Tag color={ this.getRandomColor() } title="设备">{ project.device }</Tag><Tag color={ this.getRandomColor() } title="日志级别">{ project.logs }</Tag><Tag color={ this.getRandomColor() } title="IP">{ project.ip }</Tag></div> : <Spin done text="待配置" />
         }
         </Card>
         <SettingModal projects={ this.props.projects } project={ this.state.project } visible={ this.state.visible } onSubmit={ this.settingModalSubmit.bind(this) } onClose={ this.closeModal.bind(this) } />

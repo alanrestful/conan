@@ -6,7 +6,7 @@ import moment from "moment";
 import pureRender from "pure-render-decorator";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Card, Icon, Popconfirm, Checkbox, message } from "antd";
+import { Card, Icon, Popconfirm, Checkbox, Tooltip, message } from "antd";
 
 import Spin from "common/spin";
 import { getActionData, clearAllPages, pageActived } from "actions/actions";
@@ -97,7 +97,7 @@ export default class extends React.Component {
   render() {
     let pages = this.props.pages;
     return (
-      <Card title="页面" extra={ pages.length ? <Popconfirm title="此操作将不可恢复，您确定要删除所有的页面？" placement="bottom" onConfirm={ this.clearAllPages.bind(this) }><a><Icon type="delete" /> 清空</a></Popconfirm> : null } className="panel">
+      <Card title="页面" extra={ pages.length ? <Popconfirm title="此操作将不可恢复，您确定要删除所有的页面？" placement="bottom" onConfirm={ this.clearAllPages.bind(this) }><Tooltip title="清空"><a><Icon type="delete" /></a></Tooltip></Popconfirm> : null } className="panel">
       {
         pages.length ? this.pageItem(pages) : <Spin done />
       }

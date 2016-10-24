@@ -158,7 +158,7 @@ export const configClientDefault = config => {
 /**
  * case的回归测试
  * tDeal:测试数据内容（传递到native message的）
- * webDrivers:需要测试的webDriver（默认[chrome]）
+ * webDrivers:需要测试的webDriver（默认[chrome,firefox]）
  * tDeal:
  * {
  *  "method": "play",

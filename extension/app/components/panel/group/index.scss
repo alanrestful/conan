@@ -1,41 +1,40 @@
 @import "../../../static/styles/theme";
+@import "../pages/index.scss";
 
-.ant-tabs {
-  background-color: #fff;
-  .ant-tabs-bar {
-    color: $color-dark;
-    background-color: $color-primary;
-    border-bottom: none;
-    margin-bottom: 0;
-    .ant-tabs-tab {
-      height: 48px;
-      line-height: 30px;
-      &:hover {
-        color: #fff;
-      }
-      &.ant-tabs-tab-active {
-          color: #fff;
+.ant-collapse {
+  margin: -24px;
+  border: none;
+  .ant-collapse-item {
+    border-top-color: $color-secondary;
+    .ant-collapse-header {
+      background-color: $color-almost;
+      label {
+        float: right;
+        margin-right: 15px;
       }
     }
-  }
-  .ant-tabs-ink-bar {
-    background-color: #fff;
-    height: 3px;
+    .group-list {
+      margin: -16px;
+      li {
+        padding: 12px;
+        &.actived {
+          padding-left: 7px;
+        }
+      }
+    }
   }
 }
 
-.group-tab {
-  .ant-tabs-nav {
-    width: 100%;
-    .ant-tabs-tab {
-      width: 50%;
-      margin-right: 0;
-      text-align: center;
-    }
+.group-list {
+  @extend .pages;
+  margin: -24px 0 0;
+  li {
+    border-bottom: none;
   }
-  .ant-tabs-content {
-    .ant-tabs-tabpane {
-      padding: 24px;
-    }
+  .ant-checkbox-wrapper {
+    float: left;
+  }
+  p {
+    margin-left: 20px;
   }
 }

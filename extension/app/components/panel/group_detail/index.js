@@ -5,48 +5,37 @@ import moment from "moment";
 import pureRender from "pure-render-decorator";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox, Popover, notification, message } from "antd";
+import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox, Popover, Tooltip, notification, message } from "antd";
 
 import Search from "common/search";
 import Spin from "common/spin";
 import EditInSitu from "common/edit_in_situ";
 import CreateCaseModal from "./modals/create_case";
-import EditModelModal from "./modals/edit_model";
 import ViewjsonModal from "../modals/viewjson";
 import { playback } from "actions/actions";
-import { checkedModel, editModel, deleteModel, createCase, getCases } from "actions/groups";
+import { checkedCase, editCase, deleteCase, createCase } from "actions/groups";
 import { isEmpty } from "scripts/helpers";
 
 @pureRender
 @connect(state => ({
-  groups: state.groups.groups,
-  selectedGroup: state.groups.selectedGroup,
   models: state.groups.models,
-  checkedModelIndexs: state.groups.checkedModelIndexs,
   cases: state.groups.cases,
+  selectedGroup: state.groups.selectedGroup,
+  selectedModel: state.groups.selectedModel,
+  checkedIds: state.groups.checkedIds,
   project: state.projects.project
-}), dispatch => bindActionCreators({ playback, checkedModel, editModel, deleteModel, createCase, getCases }, dispatch))
+}), dispatch => bindActionCreators({ playback, checkedCase, editCase, deleteCase, createCase }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       jsons: "",
-      selectedModel: {},
-      checkedModels: [],
+      checkedCases: [],
+      selectedCase: {},
       createCaseModalVisible: false,
       viewjsonModalVisible: false
     }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    let selectedModel = this.state.selectedModel;
-    if(this.props.selectedGroup && nextProps.selectedGroup._id != this.props.selectedGroup._id) {
-      selectedModel = {};
-    }
-    this.setState({
-      selectedModel
-    });
   }
 
   /**
@@ -103,8 +92,8 @@ export default class extends React.Component {
    * @return {[type]}        [description]
    */
   expectCommon(hash, expect) {
-    let selectedModel = this.state.selectedModel,
-        fragment = JSON.parse(selectedModel.fragment);
+    let selectedCase = this.state.selectedCase,
+        fragment = JSON.parse(selectedCase.fragment);
     fragment = fragment.map(v => {
       if(v.hash == hash) {
         v = { ...v, ...expect };
@@ -120,13 +109,13 @@ export default class extends React.Component {
       return v;
     });
     this.setState({
-      selectedModel: { ...selectedModel, fragment: JSON.stringify(fragment) }
+      selectedCase: { ...selectedCase, fragment: JSON.stringify(fragment) }
     });
   }
 
   playIt() {
-    let selectedModel = this.state.selectedModel,
-        fragment = JSON.parse(selectedModel.fragment);
+    let selectedCase = this.state.selectedCase,
+        fragment = JSON.parse(selectedCase.fragment);
     this.serializePlay(fragment);
   }
 
@@ -157,40 +146,10 @@ export default class extends React.Component {
    * @return {[type]}      [description]
    */
   createCaseModalSubmit(data, tag) {
-    let { groups, selectedGroup, models } = this.props;
-    this.props.createCase({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id }, groups, selectedGroup, models);
+    console.log(data)
+    this.props.createCase({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id }, this.props.cases);
     tag && this.serializePlay(data.fragment);
     message.success("用例创建成功！");
-  }
-
-  /**
-   * 显示修改模板的对话框
-   * @return {[type]} [description]
-   */
-  showEditModelModal() {
-    this.setState({
-      editModelModalVisible: true
-    })
-  }
-
-  /**
-   * 关闭修改模板的对话框
-   * @return {[type]} [description]
-   */
-  closeEditModelModal() {
-    this.setState({
-      editModelModalVisible: false
-    })
-  }
-
-  /**
-   * 修改模板
-   * @param  {Object} data 模板数据
-   * @return {[type]}      [description]
-   */
-  editModelModalSubmit(data) {
-    this.props.editModel({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id }, this.props.models);
-    message.success("修改模板成功！");
   }
 
   /**
@@ -210,122 +169,77 @@ export default class extends React.Component {
     this.props.playback({ ...actions, tArray: [ actions.tArray ]});
     notification.success({
       message: "提示",
-      description: "所选用例已经开始尝试执行，请耐心等待执行结果！（大误）"
+      description: "所选用例已经开始尝试执行，请耐心等待执行结果！"
     });
   }
 
   /**
-   * 删除当前组
-   * @param  {Object} model 模板信息
+   * 删除当前用例
+   * @param  {Object} c 用例信息
    * @return {[type]}       [description]
    */
-  deleteModel(model) {
-    this.props.deleteModel(model, this.props.models);
+  deleteCase(c) {
+    this.props.deleteCase(c, this.props.cases);
     this.setState({
-      selectedModel: {}
+      selectedCase: {}
     });
-    message.success("模板删除成功！");
+    message.success("用例删除成功！");
   }
 
   /**
-   * 选择模板
-   * @param  {Object} model 模板数据
+   * 选择用例
+   * @param  {Object} c 用例数据
    * @return {[type]}       [description]
    */
-  selectedModel(model) {
-    this.setState({
-      selectedModel: model
-    });
-  }
-
-  /**
-   * 选择模板
-   * @param  {Object} model 模板数据
-   * @return {[type]}       [description]
-   */
-  checkedModel(model) {
-    let checkedModels = this.state.checkedModels,
-        checkedModelIndexs = this.props.checkedModelIndexs || {},
+  checkedCase(c) {
+    let checkedCases = this.state.checkedCases,
+        checkedIds = this.props.checkedIds || {},
         groupId = this.props.selectedGroup._id,
-        current = checkedModelIndexs[groupId];
+        modelId = this.props.selectedModel._id,
+        current = checkedIds[groupId];
     if(current) {
-      if(current.includes(model._id)) {
-        current.splice(current.indexOf(model._id), 1);
-        checkedModels.map((v, i) => {
-          if(v._id == model._id) {
-            checkedModels.splice(i, 1);
+      current = current[modelId]
+      if(current) {
+        if(current.includes(c._id)) {
+          current.splice(current.indexOf(c._id), 1);
+          checkedCases.map((v, i) => {
+            if(v._id == c._id) {
+              checkedCases.splice(i, 1);
+            }
+          })
+          if(isEmpty(current)) {
+            delete checkedIds[groupId];
           }
-        })
-        if(isEmpty(current)) {
-          delete checkedModelIndexs[groupId];
+        } else {
+          current.push(c._id);
+          checkedCases.push(c);
         }
       } else {
-        current.push(model._id);
-        checkedModels.push(model);
+        current[modelId] = [c._id];
+        checkedCases.push(c);
       }
     } else {
-      checkedModelIndexs[groupId] = [model._id];
-      checkedModels.push(model);
+      checkedIds[groupId] = {};
+      checkedIds[groupId][modelId] = [c._id];
+      checkedCases.push(c);
     }
     this.setState({
-      checkedModels
+      checkedCases
     });
-    this.props.checkedModel({ ...checkedModelIndexs });
-  }
-
-  /**
-   * 显示或者隐藏用例列表
-   * @param  {Object} info    用例数据
-   * @param  {Boolean} visible 显示状态
-   * @return {[type]}         [description]
-   */
-  changeMenu(info, visible) {
-    let selectCaseModalVisible = {};
-    selectCaseModalVisible[`selectCaseModalVisible${ info._id }`] = visible;
-    if(visible) {
-      this.props.getCases(info._id);
-      this.setState({
-        tempModel: info,
-        ...selectCaseModalVisible
-      });
-    } else {
-      this.setState(selectCaseModalVisible);
-    }
-  }
-
-  /**
-   * 生成用例列表
-   * @param  {Int} id 用例Id
-   * @return {[type]}    [description]
-   */
-  createMenus(id) {
-    let cases = this.props.cases;
-    return (
-      <ul className="case-list">
-      {
-        cases ? isEmpty(cases) ? <Spin done /> : cases.map((v, i) => (
-          <li key={ i } onClick={ this.selectedCase.bind(this, v, id) }>{ v.name } <span>{ moment(v.created_at).format("YYYY-MM-DD HH:mm:ss") }</span></li>
-        )) : <Spin />
-      }
-      </ul>
-    )
+    this.props.checkedCase({ ...checkedIds });
   }
 
   /**
    * 选择用例
    * @param  {Object} info 用例的数据
-   * @param  {Int} modelId 模板Id
    * @return {[type]}      [description]
    */
-  selectedCase(info, modelId) {
-    let model = this.state.tempModel,
-        selectCaseModalVisible = {};
-    selectCaseModalVisible[`selectCaseModalVisible${ modelId }`] = false;
+  selectedCase(info) {
+    let model = this.props.selectedModel;
+    console.log(model)
     this.setState({
-      selectedModel: { ...model, fragment: JSON.stringify(this.serializeModel(JSON.parse(model.fragment), JSON.parse(info.data))) },
-      ...selectCaseModalVisible
+      selectedCase: { ...info, fragment: JSON.stringify(this.serializeModel(JSON.parse(model.fragment), JSON.parse(info.data))) }
     });
-    message.success("用例加载成功！");
   }
 
   /**
@@ -376,29 +290,27 @@ export default class extends React.Component {
   }
 
   render() {
-    let models = this.props.models || [],
-        model = this.state.selectedModel,
-        fragment = isEmpty(model) ? [] : JSON.parse(model.fragment),
-        group = this.props.selectedGroup || {},
-        checkedModelIndexs = this.props.checkedModelIndexs || {},
-        checkedCurrentModel = isEmpty(group) ? [] : checkedModelIndexs[group._id];
+    let cases = this.props.cases || [],
+        selectedCase = this.state.selectedCase,
+        model = this.props.selectedModel || {},
+        fragment = isEmpty(selectedCase) ? [] : JSON.parse(selectedCase.fragment),
+        checkedIds = this.props.checkedIds || {},
+        groupId = this.props.selectedGroup ? this.props.selectedGroup._id : "",
+        checkedCurrent = checkedIds[groupId] ? checkedIds[groupId][model._id] || [] : [];
     return (
       <div>
-        <Card title={ `${ group.name || "组名称" } ${ isEmpty(models) ? "" : `${ models.length }个模板` }` } extra={ isEmpty(group) ? null : <span>{ isEmpty(checkedModelIndexs) ? null : <a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /> 创建用例</a> }&nbsp;&nbsp;&nbsp;&nbsp;{ isEmpty(this.state.selectedModel) ? null : <span><a onClick={ this.showEditModelModal.bind(this) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="此操作将不可恢复，您确定要删除此模板？" placement="bottom" onConfirm={ this.deleteModel.bind(this, model) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> }</span> } className="panel">
+        <Card title={ `${ model.name || "用例" } ${ isEmpty(cases) ? "" : `${ cases.length }个用例` }` } extra={ <span><Tooltip title="回放"><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /></a></Tooltip>{ isEmpty(model) ? null : <Tooltip title="创建用例"><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip> }{ isEmpty(selectedCase) ? null : <span><Tooltip title="编辑"><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /></a></Tooltip><Popconfirm title="此操作将不可恢复，您确定要删除此用例？" placement="bottom" onConfirm={ this.deleteCase.bind(this, selectedCase) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> }</span> } className="panel">
           <Row className="group-detail">
             <Col span={10} className="group-list-wrapper">
               <div className="group-search"><Search /></div>
               <ul className="group-list">
               {
-                isEmpty(models) ? <Spin done text="您还没有选择组，或者所选组暂无数据~" /> : models.map((v, i) => {
+                isEmpty(cases) ? <Spin done text="您还没有选择模板，或者所选模板暂无数据~" /> : cases.map((v, i) => {
                   return (
-                    <li key={ i } className={ model._id == v._id ? "actived" : "" }>
-                      <Popover placement="bottomRight" title="用例" content={ this.createMenus(v._id) } onVisibleChange={ this.changeMenu.bind(this, v) } trigger="click" visible={ !!this.state[`selectCaseModalVisible${ v._id }`] }>
-                        <a className="ant-dropdown-link">用例 <Icon type="down" /></a>
-                      </Popover>
-                      <Checkbox onChange={ this.checkedModel.bind(this, v) } checked={ checkedCurrentModel && checkedCurrentModel.includes(v._id) } />
-                      <p className="link" onClick={ this.selectedModel.bind(this, v) }>{ v.name }</p>
-                      <p className="time" onClick={ this.selectedModel.bind(this, v) }><Icon type="clock-circle-o" /> { moment(v.updated_at).format("YYYY-MM-DD HH:mm:ss") } &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
+                    <li key={ i } className={ selectedCase._id == v._id ? "actived" : "" }>
+                      <Checkbox onChange={ this.checkedCase.bind(this, v) } checked={ checkedCurrent.includes(v._id) } />
+                      <p className="link" onClick={ this.selectedCase.bind(this, v) }>{ v.name }</p>
+                      <p className="time" onClick={ this.selectedCase.bind(this, v) }><Icon type="clock-circle-o" /> { moment(v.updated_at).format("YYYY-MM-DD HH:mm:ss") } &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
                     </li>
                   )
                 })
@@ -406,11 +318,11 @@ export default class extends React.Component {
               </ul>
             </Col>
             {
-              isEmpty(model) ? <Spin done text="您还没有选择模板，或者所选模板暂无数据~" /> : (
+              isEmpty(selectedCase) ? <Spin done text="您还没有选择用例，或者所选用例暂无数据~" /> : (
                 <Col span={ 14 } className="group-item">
                   <div className="group-item-title clearfix">
-                    <h4>{ model.name }</h4>
-                    <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, undefined, model) }>JSON</Button>
+                    <h4>{ selectedCase.name }</h4>
+                    <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, undefined, selectedCase) }>JSON</Button>
                     <Button size="small" type="primary" onClick={ this.playIt.bind(this) }>回放</Button>
                     <Button size="small">导出</Button>
                   </div>
@@ -486,8 +398,7 @@ export default class extends React.Component {
             }
           </Row>
         </Card>
-        <CreateCaseModal visible={ this.state.createCaseModalVisible } checkedModels={ this.state.checkedModels } onSubmit={ this.createCaseModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
-        <EditModelModal visible={ this.state.editModelModalVisible } selectedModel={ this.state.selectedModel } onSubmit={ this.editModelModalSubmit.bind(this) } onClose={ this.closeEditModelModal.bind(this) } />
+        <CreateCaseModal visible={ this.state.createCaseModalVisible } cases={ selectedCase } model={ model } onSubmit={ this.createCaseModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
         <ViewjsonModal jsons={ this.state.jsons } visible={ this.state.viewjsonModalVisible } onClose={ this.closeViewjsonModal.bind(this) } />
       </div>
     )

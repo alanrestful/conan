@@ -80,7 +80,7 @@ export const deleteModel = (model, models) => {
 export const checkedModel = data => actionCreator("SUCCESS_CHECKED_MODELS", { result: data });
 
 /**
- * 删除指定组
+ * 删除指定组(废弃)
  * @param  {Object} group  需要删除的组
  * @param  {Array} groups 所有的组
  * @return {[type]}        [description]
@@ -104,45 +104,59 @@ export const deleteGroup = (group, groups) => {
 /**
  * 创建用例
  * @param  {Object} info          用例信息
- * @param  {Array} groups        模板组列表
- * @param  {Object} selectedGroup 当前选择的模板组
- * @param  {Array} models        模板列表
+ * @param  {Array} cases        用例列表
  * @return {[type]}               [description]
  */
-export const createCase = (info, groups, selectedGroup, models) => {
+export const createCase = (info, cases) => {
   return dispatch => {
     fetchUtil({
-      url: `/api/cases`,
+      url: `/api/cases/data`,
       method: "POST",
       headers: json,
       body: JSON.stringify(info)
-    }).then(result => {
-      if(selectedGroup.name == info.tempGroup) {
-        models.push(result.result.model);
-      } else {
-        let status = false;
-        groups.map(v => {
-          if(v.name == info.tempGroup) {
-            status = true;
-          }
-        });
-        !status && groups.push(result.result.group);
-      }
-      dispatch(actionCreator("SUCCESS_CREATE_CASE", { result: { groups: [ ...groups ], models: [ ...models ] } }));
-    });
+    }).then(result => dispatch(actionCreator("SUCCESS_CREATE_CASE", { result: [ ...cases.push(result.result) ]})));
   }
 };
 
 /**
  * 获取用例列表
- * @param  {String} id 模板Id
+ * @param  {Object} model 模板信息
  * @return {[type]}    [description]
  */
-export const getCases = id => {
+export const getCases = model => {
   actionCreator("SUCCESS_LOAD_CASES", { result: undefined });
   return dispatch => {
     fetchUtil({
-      url: `/api/cases/datas?mid=${id}`
-    }).then(result => dispatch(actionCreator("SUCCESS_LOAD_CASES", { result: result.result })));
+      url: `/api/cases/datas?mid=${model._id}`
+    }).then(result => dispatch(actionCreator("SUCCESS_LOAD_CASES", { result: { selectedModel: model, cases: result.result }})));
+  }
+};
+
+/**
+ * 选择用例
+ * @param  {Object} checkedIds 选择的用例Ids
+ * @return {[type]}            [description]
+ */
+export const checkedCase = checkedIds => actionCreator("SET_CHECKED_IDS", { result: checkedIds })
+
+/**
+ * 删除指定用例
+ * @param  {Object} c  需要删除的用例
+ * @param  {Array} groups 所有的用例
+ * @return {[type]}        [description]
+ */
+export const deleteCase = (c, cases) => {
+  return dispatch => {
+    fetchUtil({
+      url: `/api/cases/data?did=${c._id}`,
+      method: "DELETE"
+    }).then(result => {
+      cases.map((v, i) => {
+        if(v._id == c._id) {
+          cases.splice(i, 1);
+        }
+      });
+      dispatch(actionCreator("SUCCESS_DELETE_GROUP", { result: cases }));
+    });
   }
 };

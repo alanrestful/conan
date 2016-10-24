@@ -25,10 +25,10 @@ export default (state = {}, action) => {
         ...state,
         models: action.result
       }
-    case "SUCCESS_CHECKED_MODELS":
+    case "SET_CHECKED_IDS":
       return {
         ...state,
-        checkedModelIndexs: action.result
+        checkedIds: action.result
       }
     case "SUCCESS_CREATE_CASE":
       return {
@@ -38,7 +38,7 @@ export default (state = {}, action) => {
     case "SUCCESS_LOAD_CASES":
       return {
         ...state,
-        cases: action.result
+        ...action.result
       }
     default:
       return state;

@@ -6,7 +6,7 @@ import moment from "moment";
 import pureRender from "pure-render-decorator";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Card, Timeline, Icon, Popconfirm, Checkbox, Button, notification, message } from "antd";
+import { Card, Timeline, Icon, Popconfirm, Checkbox, Button, Tooltip, notification, message } from "antd";
 
 import Spin from "common/spin";
 import EditInSitu from "common/edit_in_situ";
@@ -319,7 +319,7 @@ export default class extends React.Component {
         actions = page.tArray ? page.tArray[0] : {};
     return (
       <div>
-        <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(this.state.selectedActionIndexs) ? null : <span><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /> 回放</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onClick={ this.showCreatesModal.bind(this) }><Icon type="plus-circle-o" /> 创建</a>&nbsp;&nbsp;&nbsp;&nbsp;</span> }<a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /> 预期</a>&nbsp;&nbsp;&nbsp;&nbsp;<Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deletePage.bind(this) }><a><Icon type="cross-circle-o" /> 删除</a></Popconfirm></span> } className="panel timeline">
+        <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(this.state.selectedActionIndexs) ? null : <span><Tooltip title="回放"><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /></a></Tooltip><Tooltip title="创建模板"><a onClick={ this.showCreatesModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip></span> }<Tooltip title="预期"><a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /></a></Tooltip><Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deletePage.bind(this) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> } className="panel timeline">
           {
             page.expectEditing ? <EditInSitu value={ page.expect } onEnter={ this.editOnEnter.bind(this, undefined) } onCancel={ this.editOnCancel.bind(this, undefined) } /> : page.expect ? (
               <div className="group-result clearfix">
