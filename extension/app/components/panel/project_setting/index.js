@@ -8,13 +8,13 @@ import { Card, Icon, Tag, Tooltip } from "antd";
 
 import Spin from "common/spin";
 import SettingModal from "./modals/setting";
-import { getAllProjects, getProjectInfo, setProjectInfo } from "actions/projects";
+import { getAllProjects, getProjectInfo } from "actions/projects";
 
 @pureRender
 @connect(state => ({
   projects: state.projects.projects,
   project: state.projects.project
-}), dispatch => bindActionCreators({ getAllProjects, getProjectInfo, setProjectInfo }, dispatch))
+}), dispatch => bindActionCreators({ getAllProjects, getProjectInfo }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {
@@ -47,7 +47,6 @@ export default class extends React.Component {
   }
 
   settingModalSubmit(data) {
-    this.props.setProjectInfo(data);
     localStorage.setItem("project", JSON.stringify(data));
   }
 
