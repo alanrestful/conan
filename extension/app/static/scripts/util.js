@@ -158,14 +158,15 @@ export const configClientDefault = config => {
 /**
  * case的回归测试
  * tDeal:测试数据内容（传递到native message的）
+ * webDrivers:需要测试的webDriver（默认[chrome]）
  * tDeal:
  * {
  *  "method": "play",
  *  "data": "[tArray(测试用例JSON数据)]"
  * }
  */
-export const clientPlay = tDeal => {
-  chrome.runtime.sendMessage({"method": "clientPlay", "tDeal": tDeal});
+export const clientPlay = (tDeal, webDrivers) => {
+  chrome.runtime.sendMessage({"method": "clientPlay", "tDeal": tDeal, "webDrivers": webDrivers});
 }
 
 /**

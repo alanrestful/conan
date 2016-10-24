@@ -49,6 +49,7 @@ chrome.runtime.onMessage.addListener(
       case "clientPlay":
         // 测试用例回归
         console.log(request.tDeal);
+        request.tDeal["webDrivers"] = request.webDrivers ? request.webDrivers : ["chrome"];
         __on_sendToNative(request.tDeal);
         break;
       default:
