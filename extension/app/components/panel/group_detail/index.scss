@@ -1,6 +1,5 @@
 @import "../../../static/styles/common";
 @import "../../../static/styles/theme";
-@import "../pages/index.scss";
 
 .group-detail {
   margin: -24px;
@@ -10,22 +9,6 @@
     margin-bottom: -1000px;
     .group-search {
       padding: 24px;
-    }
-    .group-list {
-      @extend .pages;
-      margin: -24px 0 0;
-      li {
-        border-bottom: none;
-      }
-      .ant-dropdown-link {
-        float: right;
-      }
-      .ant-checkbox-wrapper {
-        float: left;
-      }
-      p {
-        margin-left: 20px;
-      }
     }
   }
   .group-item {
