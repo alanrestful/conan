@@ -192,7 +192,7 @@ export default class extends React.Component {
         model = this.state.selectedModel,
         models = this.props.models || [],
         checkedIds = this.props.checkedIds || {},
-        checkedCurrent = checkedIds[group._id] ? checkedIds[group._id][model._id] || [] : [];
+        checkedCurrent = checkedIds[group._id] || {};
     return groups ? isEmpty(groups) ? <Spin done /> : groups.map((v, i) => {
       return (
         <Panel header={ <div>{ v.name } <Checkbox className="checkbox" onChange={ this.changeSelectedActions.bind(this) } checked={ !isEmpty(this.state.checkedIds[v._id]) } /></div> } key={ i } className={ v._id == group._id ? "actived" : "" }>
@@ -201,7 +201,7 @@ export default class extends React.Component {
             isEmpty(models) ? <Spin done /> : models.map((v, i) => {
               return (
                 <li key={ i } className={ model._id == v._id ? "actived" : "" }>
-                  <Checkbox onChange={ this.checkedModel.bind(this, v) } checked={ checkedCurrent.includes(v._id) } />
+                  <Checkbox onChange={ this.checkedModel.bind(this, v) } checked={ !isEmpty(checkedCurrent[v._id]) } />
                   <p className="link" onClick={ this.selectedModel.bind(this, v) }>{ v.name }</p>
                   <p className="time" onClick={ this.selectedModel.bind(this, v) }><Icon type="clock-circle-o" /> { moment(v.updated_at).format("YYYY-MM-DD HH:mm:ss") } &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
                 </li>

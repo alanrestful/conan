@@ -10,15 +10,21 @@
       background-color: $color-almost;
       label {
         float: right;
-        margin-right: 15px;
+        margin-right: 10px;
       }
     }
     .group-list {
       margin: -16px;
       li {
-        padding: 12px;
+        padding: 10px;
         &.actived {
-          padding-left: 7px;
+          padding-left: 5px;
+        }
+        .ant-checkbox-wrapper {
+          float: right;
+        }
+        p {
+          margin-left: 5px;
         }
       }
     }
