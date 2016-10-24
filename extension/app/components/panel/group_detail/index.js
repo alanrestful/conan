@@ -160,8 +160,8 @@ export default class extends React.Component {
    * @return {[type]}      [description]
    */
   createCaseModalSubmit(data, tag) {
-    this.props.createCase({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id }, this.props.cases);
-    tag && this.serializePlay(data.fragment);
+    this.props.createCase({ ...data, pid: this.props.project.id }, this.props.cases);
+    tag && this.serializePlay(this.serializeModel(JSON.parse(this.props.selectedModel.fragment), data));
     message.success("用例创建成功！");
   }
 
@@ -335,7 +335,6 @@ export default class extends React.Component {
                   <div className="group-item-title clearfix">
                     <h4>{ selectedCase.name }</h4>
                     <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, undefined, selectedCase) }>JSON</Button>
-                    <Button size="small" type="primary" onClick={ this.playIt.bind(this) }>回放</Button>
                     <Button size="small">导出</Button>
                   </div>
                   {

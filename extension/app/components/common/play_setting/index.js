@@ -22,6 +22,7 @@ export default class extends React.Component {
       <ul className="play-setting">
         <li>Chrome<Switch size="small" onChange={ this.onChange.bind(this, "chrome") } checked={ drivers.includes("chrome") } /></li>
         <li>Firefox<Switch size="small" onChange={ this.onChange.bind(this, "firefox") } checked={ drivers.includes("firefox") } /></li>
+        <li>Safari<Switch size="small" onChange={ this.onChange.bind(this, "safari") } checked={ drivers.includes("safari") } /></li>
       </ul>
     )
   }

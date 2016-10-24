@@ -12,7 +12,7 @@ export default class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      avatar: require("images/avatar.png") || `data:image/png;base64, ${new Identicon("JSANN").toString()}`
+      avatar: require("images/avatar.png")
     }
   }
 
