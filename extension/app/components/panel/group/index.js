@@ -183,7 +183,6 @@ export default class extends React.Component {
     this.setState({
       checkedModels
     });
-    console.log(checkedIds)
     this.props.checkedModel({ ...checkedIds });
   }
 

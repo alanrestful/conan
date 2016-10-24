@@ -146,7 +146,6 @@ export default class extends React.Component {
    * @return {[type]}      [description]
    */
   createCaseModalSubmit(data, tag) {
-    console.log(data)
     this.props.createCase({ ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id }, this.props.cases);
     tag && this.serializePlay(data.fragment);
     message.success("用例创建成功！");
@@ -236,7 +235,6 @@ export default class extends React.Component {
    */
   selectedCase(info) {
     let model = this.props.selectedModel;
-    console.log(model)
     this.setState({
       selectedCase: { ...info, fragment: JSON.stringify(this.serializeModel(JSON.parse(model.fragment), JSON.parse(info.data))) }
     });

@@ -8,7 +8,7 @@ export default (state = {}, action) => {
     case "SUCCESS_DELETE_GROUP":
       return {
         ...state,
-        groups: action.result
+        cases: action.result
       }
     case "SUCCESS_LOAD_MODELS":
       return {
@@ -33,12 +33,17 @@ export default (state = {}, action) => {
     case "SUCCESS_CREATE_CASE":
       return {
         ...state,
-        ...action.result
+        cases: action.result
       }
     case "SUCCESS_LOAD_CASES":
       return {
         ...state,
         ...action.result
+      }
+    case "SUCCESS_DELETE_CASE":
+      return {
+        ...state,
+        cases: action.result
       }
     default:
       return state;

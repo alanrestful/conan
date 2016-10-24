@@ -114,7 +114,10 @@ export const createCase = (info, cases) => {
       method: "POST",
       headers: json,
       body: JSON.stringify(info)
-    }).then(result => dispatch(actionCreator("SUCCESS_CREATE_CASE", { result: [ ...cases.push(result.result) ]})));
+    }).then(result => {
+      cases.push(result.result);
+      dispatch(actionCreator("SUCCESS_CREATE_CASE", { result: [ ...cases ]}));
+    });
   }
 };
 
@@ -156,7 +159,7 @@ export const deleteCase = (c, cases) => {
           cases.splice(i, 1);
         }
       });
-      dispatch(actionCreator("SUCCESS_DELETE_GROUP", { result: cases }));
+      dispatch(actionCreator("SUCCESS_DELETE_CASE", { result: [ ...cases ]}));
     });
   }
 };
