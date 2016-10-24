@@ -46,6 +46,7 @@ function DriverEngine(browser, position, size){
 
         // 处理结束后返回结果数据信息
         this.driver.quit().then(function(){
+            dealRes["browser"] = browser;
             callback(dealRes);
         });
     };
