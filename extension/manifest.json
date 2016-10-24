@@ -2,7 +2,7 @@
   "name" : "Parana Conan",
   "version" : "1.0.0",
   "description" : "Parana Web Auto Tester",
-  "permissions": [ "cookies", "nativeMessaging", "storage", "tabs", "http://*/*", "https://*/*" ],
+  "permissions": [ "cookies", "nativeMessaging", "storage", "tabs", "webRequest", "webRequestBlocking", "http://*/*", "https://*/*" ],
   "icons": { "16": "assest/images/logo.png", "48": "assest/images/logo.png", "128": "assest/images/logo.png" },
   "browser_action": {
     "default_icon": "assest/images/logo.png"

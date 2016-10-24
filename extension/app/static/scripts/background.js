@@ -93,6 +93,7 @@ function __on_disconnected() {
 
 // 获取native返回的处理结果数据
 function __on_nativeMessage(message) {
+  console.log(message);
   __send_to_page({"event": "clientPlayRes", "data": message});
 }
 
@@ -206,3 +207,9 @@ function TesterArray(url , tester_obj){
   this.path = domainPath[1];
   this.tArray = new Array(new Array(tester_obj));
 }
+
+chrome.webRequest.onBeforeRequest.addListener(function(details) {
+  console.log(details.url);
+},{
+    urls: ["http://*/*", "https://*/*"]
+}, ["blocking"]);
