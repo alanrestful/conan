@@ -52,6 +52,12 @@ chrome.runtime.onMessage.addListener(
         request.tDeal["webDrivers"] = request.webDrivers ? request.webDrivers : ["chrome"];
         __on_sendToNative(request.tDeal);
         break;
+      case "clientPlays":
+        // 批量测试用例回归
+        console.log(request.tDeal);
+        request.tDeal["webDriver"] = request.webDriver ? request.webDriver : "phantomjs";
+        __on_sendToNative(request.tDeal);
+        break;
       default:
         // 错误请求类型
         console.log("Undefined request method "+request.method);

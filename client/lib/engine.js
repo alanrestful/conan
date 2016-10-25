@@ -11,8 +11,13 @@ function DriverEngine(browser, position, size){
     this.driver = new webdriver.Builder().forBrowser(browser).build();
     this.sequence = new webdriver.ActionSequence(this.driver);
 
-    this.driver.manage().window().setPosition(position[0], position[1]);
-    this.driver.manage().window().setSize(size[0], size[1]);
+    if(position){
+        this.driver.manage().window().setPosition(position[0], position[1]);
+    }
+
+    if(size){
+        this.driver.manage().window().setSize(size[0], size[1]);
+    }
 
     this.play = function(tCase, callback){
         /**

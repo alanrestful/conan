@@ -69,7 +69,6 @@ function messageHandler(msg, push, done) {
         logger.info(msg);
         switch(msg.method){
             case "play":
-                logger.info("fork");
 
                 var driverLoc = windowLocation(msg.webDrivers.length);
                 for(var i in msg.webDrivers){
@@ -88,6 +87,47 @@ function messageHandler(msg, push, done) {
                     worker.on('message', function(message) {
                         objectStream.write(message);
                     });
+                }
+                break;
+            case "plays":
+                if(msg.webDriver === "phantomjs"){
+                    //后台跑测试用例
+                    for(var i in msg.data){
+                        var worker = cluster.fork();
+                        worker.send({"data": msg.data[i], "driver": msg.webDriver});
+
+                        // 作为master的输出端到master
+                        var output = new nativeMessage.Output();
+                        var objectStream = through2.obj(function(chunk, encoding, callback) {
+                            this.push(chunk);
+                            callback();
+                        });
+                        objectStream.pipe(output).pipe(process.stdout);
+
+                        // master作为数据处理
+                        worker.on('message', function(message) {
+                            objectStream.write(message);
+                        });
+                    }
+                }else{
+                    var driverLoc = windowLocation(msg.data.length);
+                    for(var i in msg.data){
+                        var worker = cluster.fork();
+                        worker.send({"data": msg.data[i], "driver": msg.webDriver, "position": driverLoc[i].position, "size": driverLoc[i].size});
+
+                        // 作为master的输出端到master
+                        var output = new nativeMessage.Output();
+                        var objectStream = through2.obj(function(chunk, encoding, callback) {
+                            this.push(chunk);
+                            callback();
+                        });
+                        objectStream.pipe(output).pipe(process.stdout);
+
+                        // master作为数据处理
+                        worker.on('message', function(message) {
+                            objectStream.write(message);
+                        });
+                    }
                 }
                 break;
             default:

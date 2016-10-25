@@ -172,6 +172,20 @@ export const clientPlay = (tDeal, webDrivers) => {
 }
 
 /**
+ * 批量case的回归测试
+ * tDeal:测试数据内容（传递到native message的）
+ * webDriver:需要测试的webDriver（默认"phantomjs"）后台跑
+ * tDeal:
+ * {
+ *  "method": "plays",
+ *  "data": "[[tArray(测试用例JSON数据)],[tArray(测试用例JSON数据)]]"
+ * }
+ */
+export const clientPlays = (tDeal, webDrivers) => {
+  chrome.runtime.sendMessage({"method": "clientPlays", "tDeal": tDeal, "webDriver": webDriver});
+}
+
+/**
  * 与background的基本信息监听
  * initSuccess
  * 成功初始化本地node处理程序(由clientInit | clientPlay引起的回调)
