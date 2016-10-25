@@ -181,7 +181,7 @@ export const clientPlay = (tDeal, webDrivers) => {
  *  "data": "[[tArray(测试用例JSON数据)],[tArray(测试用例JSON数据)]]"
  * }
  */
-export const clientPlays = (tDeal, webDrivers) => {
+export const clientPlays = (tDeal, webDriver) => {
   chrome.runtime.sendMessage({"method": "clientPlays", "tDeal": tDeal, "webDriver": webDriver});
 }
 
