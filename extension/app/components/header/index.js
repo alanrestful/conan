@@ -9,13 +9,6 @@ import { Row, Col, Menu, Dropdown, Icon } from "antd";
 @pureRender
 export default class extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      avatar: require("images/avatar.png")
-    }
-  }
-
   dropdown() {
     return (
       <Menu>
@@ -27,6 +20,8 @@ export default class extends React.Component {
   }
 
   render() {
+    let name = "JSANN",
+        names = name.split("");
     return (
       <div className="header">
         <Row>
@@ -41,7 +36,7 @@ export default class extends React.Component {
               </ul>
             </nav>
             <Dropdown overlay={this.dropdown()}>
-              <a className="ant-dropdown-link user-menu"><img className="avatar" src={ this.state.avatar } alt="JSANN" /> JSANN <Icon type="down" /></a>
+              <a className="ant-dropdown-link user-menu"><img className="avatar" src={ require("images/avatar.png") || `data:image/png;base64, ${new Identicon(`\\x${ names.map((v, i) => name.charCodeAt(i).toString(16)).join("\\x") }`, 35).toString()}` } alt={ name } /> { name } <Icon type="down" /></a>
             </Dropdown>
           </Col>
         </Row>
