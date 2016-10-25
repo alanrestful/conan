@@ -14,7 +14,7 @@ import PlaySetting from "common/play_setting";
 import CreateCaseModal from "./modals/create_case";
 import ViewjsonModal from "../modals/viewjson";
 import { playback } from "actions/actions";
-import { checkedCase, editCase, deleteCase, createCase } from "actions/groups";
+import { checkedCase, editCase, deleteCase, createCase, exportCase } from "actions/groups";
 import { isEmpty } from "scripts/helpers";
 
 @pureRender
@@ -25,7 +25,7 @@ import { isEmpty } from "scripts/helpers";
   selectedModel: state.groups.selectedModel,
   checkedIds: state.groups.checkedIds,
   project: state.projects.project
-}), dispatch => bindActionCreators({ playback, checkedCase, editCase, deleteCase, createCase }, dispatch))
+}), dispatch => bindActionCreators({ playback, checkedCase, editCase, deleteCase, createCase, exportCase }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {
@@ -274,6 +274,11 @@ export default class extends React.Component {
     });
   }
 
+  exportCase() {
+    // open(`/api/cases/json/${this.state.selectedCase._id}`);
+    this.props.exportCase(this.props.selectedModel);
+  }
+
   viewJson(index, jsons) {
     if(index) {
       let actions = [ ...jsons ];
@@ -335,7 +340,7 @@ export default class extends React.Component {
                   <div className="group-item-title clearfix">
                     <h4>{ selectedCase.name }</h4>
                     <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, undefined, selectedCase) }>JSON</Button>
-                    <Button size="small">导出</Button>
+                    <Button size="small" onClick={ this.exportCase.bind(this) }>导出</Button>
                   </div>
                   {
                     fragment.map((m, i) => (

@@ -136,6 +136,19 @@ export const getCases = model => {
 };
 
 /**
+ * 获取用例列表
+ * @param  {Object} model 模板信息
+ * @return {[type]}    [description]
+ */
+export const exportCase = model => {
+  return dispatch => {
+    fetchUtil({
+      url: `/api/cases/json/${model._id}`
+    });
+  }
+};
+
+/**
  * 选择用例
  * @param  {Object} checkedIds 选择的用例Ids
  * @return {[type]}            [description]
