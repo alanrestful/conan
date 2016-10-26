@@ -169,7 +169,7 @@ function init_localStorage() {
         result.conan.needSyncTester = [];
       }
 
-      //测试结果本地数据
+      //测试结果本地化
       if(!result.conan.log_result){
         result.conan.log_result = [];
       }
@@ -177,6 +177,11 @@ function init_localStorage() {
       // 测试的webDriver设置
       if(!result.conan.webDrivers){
         result.conan.webDrivers = [];
+      }
+
+      //白名单（白名单内的url设置页面监听）
+      if(!result.conan.whiteLists){
+        result.conan.whiteLists = [];
       }
 
       chrome.storage.local.set(result);
@@ -215,8 +220,8 @@ function TesterArray(url , tester_obj){
   this.tArray = new Array(new Array(tester_obj));
 }
 
-chrome.webRequest.onBeforeRequest.addListener(function(details) {
-  console.log(details.url);
-},{
-    urls: ["http://*/*", "https://*/*"]
-}, ["blocking"]);
+// chrome.webRequest.onBeforeRequest.addListener(function(details) {
+//   console.log(details.url);
+// },{
+//     urls: ["http://*/*", "https://*/*"]
+// }, ["blocking"]);

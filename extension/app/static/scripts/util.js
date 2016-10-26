@@ -112,7 +112,7 @@ export const clientInit = () => {
 
 /**
  * 设置webDriver
- * driver: web引擎(chrome|firefox|ie|opera|safari|android|MicrosoftEdge|iPad|iPhone|phantomjs|htmlunit)
+ * driver: web引擎(chrome|firefox|opera|safari|phantomjs|android|iPad|iPhone)
  * path: webDriver地址
  */
 export const configWebDriver = (driver, path) => {
@@ -130,11 +130,12 @@ export const configWebDriver = (driver, path) => {
  *{
  *   "testerServer": "http://localhost:9024",
  *   "logLevel" : "log",
- *   "syncTester" : "true"
+ *   "syncTester" : "true",
+ *   "whiteLists" : "['http://wonly.dithub.com','http://mall.jidd.com.cn']"
  *}
  *
  */
-export const configClientDefault = config => {
+export const saveClientConfig = config => {
   chrome.storage.local.get('conan', function(result){
     var conanConfig = result.conan;
 

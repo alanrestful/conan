@@ -1,4 +1,79 @@
-jQuery("<div id='tester_wait_body_view' class='tester_wait_body_view'>Wait ready web by Conan!</div>").prependTo(jQuery(document.body));
+chrome.storage.local.get('conan', function(result){
+    var existWhite = false;
+    if(result.conan.whiteLists.length != 0){
+      var domainUrl = __local_domain(window.location.href);
+      for(var i=0; i<result.conan.whiteLists.length; i++){
+        if(domainUrl === result.conan.whiteLists[i]){
+          existWhite = true;
+        }
+      }
+    }else{
+      //默认情况下所有页面都可以访问
+      existWhite = true;
+    }
+
+    //加载页面处理
+    if(existWhite){
+      jQuery("<div id='tester_wait_body_view' class='tester_wait_body_view'>Wait ready web by Conan!</div>").prependTo(jQuery(document.body));
+
+      jQuery(document).ready(function($) {
+        $("#tester_wait_body_view").text("Conan加载页面成功!");
+
+        setTimeout(function(){
+          $("#tester_wait_body_view").hide();
+        }, 1000);
+
+        // alt|option + 鼠标左击(展示当前点击元素的信息)
+        $("<div class='tester_theme_auto_window' id='tester_show_element_view'>"
+          +"<div class='tester_theme_poptit'>"
+            +"<a href='javascript:;' id='tester_show_close' title='关闭' class='close'>×</a>"
+            +"<h3>Element Detail<span id='tester_element_tagName' style='color:red;margin-left:20px;'></span></h3>"
+          +"</div>"
+          +"<div class='tester_dform' style='text-align:left'>"
+            +"<form class='tester_contact_form' name='queue_form' method='post'></form>"
+          +"</div></div><div class='tester_theme_popover_mask'></div>").appendTo($(document.body));
+
+        $('#tester_show_close').click(function(){
+            $('.tester_theme_popover_mask').fadeOut(100);
+            $('#tester_show_element_view').slideUp(200);
+        });
+
+        // 监听元素事件
+        $(document).mousedown(function(e){
+          //show detail element info in window（alt|option + 鼠标左击）
+          var event_obj = $(e.target);
+          if(e.altKey && 1 == e.which){
+            //left click
+            $("#tester_element_tagName").text(event_obj[0].tagName);
+            $(".tester_contact_form").empty();
+
+            $(create_view(event_obj)).appendTo($(".tester_contact_form"));
+
+            $('.tester_theme_popover_mask').fadeIn(100);
+            $('#tester_show_element_view').slideDown(200);
+          }
+
+          //save element event for click（command + 鼠标左击）
+          if(e.metaKey && 1 == e.which){
+            create_t_obj(event_obj);
+          }
+        });
+
+        // option无法锁定click事件，而change事件有无法获取event情况下的key情况，即无法确定e.altKey是否按下
+        // 特意处理select情况
+        $(document).change(function(e){
+
+          var event_obj = $(e.target);
+
+          //select的数据要做特殊处理用于选择特定value
+          if(event_obj[0].tagName == "SELECT"){
+            create_t_obj(event_obj);
+          }
+        });
+      });
+    }
+});
+
 
 /**
  * xpath构造器
@@ -55,62 +130,6 @@ jQuery("<div id='tester_wait_body_view' class='tester_wait_body_view'>Wait ready
         return locator;
     };
 })(jQuery);
-
-jQuery(document).ready(function($) {
-  $("#tester_wait_body_view").text("Conan加载页面成功!");
-
-  setTimeout(function(){
-    $("#tester_wait_body_view").hide();
-  }, 1000);
-
-  // alt|option + 鼠标左击(展示当前点击元素的信息)
-  $("<div class='tester_theme_auto_window' id='tester_show_element_view'>"
-    +"<div class='tester_theme_poptit'>"
-      +"<a href='javascript:;' id='tester_show_close' title='关闭' class='close'>×</a>"
-      +"<h3>Element Detail<span id='tester_element_tagName' style='color:red;margin-left:20px;'></span></h3>"
-    +"</div>"
-    +"<div class='tester_dform' style='text-align:left'>"
-      +"<form class='tester_contact_form' name='queue_form' method='post'></form>"
-    +"</div></div><div class='tester_theme_popover_mask'></div>").appendTo($(document.body));
-
-  $('#tester_show_close').click(function(){
-      $('.tester_theme_popover_mask').fadeOut(100);
-      $('#tester_show_element_view').slideUp(200);
-  });
-
-  // 监听元素事件
-  $(document).mousedown(function(e){
-    //show detail element info in window（alt|option + 鼠标左击）
-    var event_obj = $(e.target);
-    if(e.altKey && 1 == e.which){
-      //left click
-      $("#tester_element_tagName").text(event_obj[0].tagName);
-      $(".tester_contact_form").empty();
-
-      $(create_view(event_obj)).appendTo($(".tester_contact_form"));
-
-      $('.tester_theme_popover_mask').fadeIn(100);
-      $('#tester_show_element_view').slideDown(200);
-    }
-
-    //save element event for click（command + 鼠标左击）
-    if(e.metaKey && 1 == e.which){
-      create_t_obj(event_obj);
-    }
-  });
-
-  // option无法锁定click事件，而change事件有无法获取event情况下的key情况，即无法确定e.altKey是否按下
-  // 特意处理select情况
-  $(document).change(function(e){
-
-    var event_obj = $(e.target);
-
-    //select的数据要做特殊处理用于选择特定value
-    if(event_obj[0].tagName == "SELECT"){
-      create_t_obj(event_obj);
-    }
-  });
-});
 
 // tagName为input&select的需要做特殊处理，设置Value其余的都作为click对象
 var property = ["tagName" , "type", "id", "className", "name", "value", "placeholder", "baseURI", "innerText", "href"];
@@ -366,4 +385,12 @@ function __init_back_obj(back_obj){
  */
 function __save_content(obj_val){
   chrome.extension.sendRequest({data:obj_val}, function(data) {});
+}
+
+function __local_domain(urlPath){
+  var reg = new RegExp('^(https?|ftp|file)://[-a-zA-Z0-9+&@#%?=~_|!:,.;]*[/]', 'gm');
+
+  var oldDomainP = urlPath.match(reg)[0];
+  var domain = oldDomainP.substring(0, oldDomainP.length-1);
+  return domain;
 }
