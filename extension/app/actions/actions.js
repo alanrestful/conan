@@ -1,5 +1,5 @@
 import moment from "moment";
-import { initConnect, allTArrays, listenerTarrayStorage, initNativeMessage, clientInit, clientPlay, clearAllTArray, setElExpect, fetchUtil, json, actionCreator } from "scripts/util";
+import { initConnect, allTArrays, listenerTarrayStorage, initNativeMessage, clientInit, clientPlay, clientPlays, clearAllTArray, setElExpect, fetchUtil, json, actionCreator } from "scripts/util";
 
 /**
  * 获取页面或者动作
@@ -84,12 +84,19 @@ export const pageActived = index => actionCreator("SET_ACTIVED_PAGE_INDEX", { re
  * @param  {Object} data    回放数据
  * @return {[type]}         [description]
  */
-export const playback  = (data, drivers) => {
+export const playback  = (data, drivers, background) => {
   return dispatch => {
-    clientPlay({
-      method: "play",
-      data
-    }, drivers);
+    if((data) instanceof Array || background) {
+      clientPlays({
+        method: "plays",
+        data
+      }, drivers);
+    } else {
+      clientPlay({
+        method: "play",
+        data
+      }, drivers)
+    }
   }
 };
 

@@ -1,4 +1,4 @@
-import { fetchUtil, json, actionCreator, clientPlay } from "scripts/util";
+import { fetchUtil, json, actionCreator, openUrl, clientPlay, clientPlays } from "scripts/util";
 
 /**
  * 获取分组
@@ -103,20 +103,72 @@ export const deleteGroup = (group, groups) => {
 
 /**
  * 创建用例
- * @param  {Object} info          用例信息
+ * @param  {Object} c          用例信息
  * @param  {Array} cases        用例列表
  * @return {[type]}               [description]
  */
-export const createCase = (info, cases) => {
+export const createCase = (c, cases) => {
   return dispatch => {
     fetchUtil({
       url: `/api/cases/data`,
       method: "POST",
       headers: json,
-      body: JSON.stringify(info)
+      body: JSON.stringify(c)
     }).then(result => {
       cases.push(result.result);
       dispatch(actionCreator("SUCCESS_CREATE_CASE", { result: [ ...cases ]}));
+    });
+  }
+};
+
+/**
+ * 编辑用例
+ * @param  {Object} c          用例信息
+ * @param  {Array} cases        用例列表
+ * @return {[type]}               [description]
+ */
+export const editCase = (c, cases) => {
+  return dispatch => {
+    fetchUtil({
+      url: `/api/cases/data`,
+      method: "PUT",
+      headers: json,
+      body: JSON.stringify(c)
+    }).then(result => {
+      cases.map(v => {
+        if(v._id == c._id) {
+          v = c;
+        }
+        return v;
+      });
+      dispatch(actionCreator("SUCCESS_EDIT_CASE", { result: [ ...cases ]}));
+    });
+  }
+};
+
+/**
+ * 编辑用例的预期
+ * @param  {Object} c          用例信息
+ * @param  {Array} cases        用例列表
+ * @return {[type]}               [description]
+ */
+export const editCaseExpect = (c, hash, data, cases) => {
+  return dispatch => {
+    fetchUtil({
+      url: `/api/cases/hdata`,
+      method: "PUT",
+      headers: json,
+      body: JSON.stringify({ did: c._id, hash, data })
+    }).then(result => {
+      cases.map(v => {
+        if(v._id == c._id) {
+          v.data = JSON.parse(v.data);
+          v.data[hash].export = data;
+          v.data = JSON.stringify(v.data);
+        }
+        return v;
+      });
+      dispatch(actionCreator("EDIT_CASE_EXPECT", { result: [ ...cases ]}));
     });
   }
 };
@@ -142,9 +194,7 @@ export const getCases = model => {
  */
 export const exportCase = model => {
   return dispatch => {
-    fetchUtil({
-      url: `/api/cases/json/${model._id}`
-    });
+    openUrl(`/api/cases/json/${model._id}`);
   }
 };
 
@@ -176,3 +226,17 @@ export const deleteCase = (c, cases) => {
     });
   }
 };
+
+export const getPleySetting = () => {
+  return dispatch => {
+    let setting = localStorage.getItem("play");
+    dispatch(actionCreator("GET_PLAY_SETTING", { result: setting ? JSON.parse(setting) : [ "chrome" ]}));
+  }
+}
+
+export const setPlaySetting = (data) => {
+  return dispatch => {
+    localStorage.setItem("play", JSON.stringify(data));
+    dispatch(actionCreator("SET_PLAY_SETTING", { result: data }));
+  }
+}

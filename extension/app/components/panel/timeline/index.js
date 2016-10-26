@@ -10,7 +10,7 @@ import { Card, Timeline, Icon, Popconfirm, Checkbox, Button, Tooltip, Popover, n
 
 import Spin from "common/spin";
 import EditInSitu from "common/edit_in_situ";
-import PlaySetting from "common/play_setting";
+import Play from "common/play";
 import CreatesModal from "./modals/creates";
 import ViewjsonModal from "../modals/viewjson";
 import ResultModal from "./modals/result";
@@ -25,6 +25,7 @@ const TimelineItem = Timeline.Item;
   selectedPageIndex: state.actions.selectedPageIndex,
   action: state.result.action,
   selectedActionIndexs: state.actions.selectedActionIndexs,
+  playSetting: state.groups.playSetting,
   project: state.projects.project,
   result: state.result.result
 }), dispatch => bindActionCreators({ playback, createGroups, deletePage, changeSelectedActions, editExpect }, dispatch))
@@ -32,14 +33,7 @@ export default class extends React.Component {
 
   constructor(props) {
     super(props);
-    let drivers = localStorage.getItem("drivers");
-    if(drivers) {
-      drivers = JSON.parse(drivers);
-    } else {
-      drivers = ["chrome"];
-    }
     this.state = {
-      drivers,
       jsons: "",
       pages: [],
       result: [],
@@ -109,7 +103,8 @@ export default class extends React.Component {
         actions = v;
       }
     });
-    this.props.playback({ ...actions, tArray: [actions.tArray] }, this.state.drivers);
+    let { drivers, background } = this.props.playSetting || {};
+    this.props.playback({ ...actions, tArray: [actions.tArray] }, drivers || [ "chrome" ], background);
     notification.success({
       message: "提示",
       description: "所选用例已经开始尝试执行，请耐心等待执行结果！"
@@ -333,7 +328,7 @@ export default class extends React.Component {
         actions = page.tArray ? page.tArray[0] : {};
     return (
       <div>
-        <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(this.state.selectedActionIndexs) ? null : <span><Popover title="回放选项" trigger="hover" placement="bottomRight" arrowPointAtCenter={ true } content={ <PlaySetting onChange={ this.playSettingChange.bind(this) } drivers={ this.state.drivers } /> }><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /></a></Popover><Tooltip title="创建模板"><a onClick={ this.showCreatesModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip></span> }<Tooltip title="预期"><a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /></a></Tooltip><Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deletePage.bind(this) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> } className="panel timeline">
+        <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(this.state.selectedActionIndexs) ? null : <span><Play callback={ this.playIt.bind(this) } /><Tooltip title="创建模板"><a onClick={ this.showCreatesModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip></span> }<Tooltip title="预期"><a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /></a></Tooltip><Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deletePage.bind(this) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> } className="panel timeline">
           {
             page.expectEditing ? <EditInSitu value={ page.expect } onEnter={ this.editOnEnter.bind(this, undefined) } onCancel={ this.editOnCancel.bind(this, undefined) } /> : page.expect ? (
               <div className="group-result clearfix">
