@@ -42,6 +42,7 @@ export default class extends React.Component {
    * @return {[type]}       [description]
    */
   configSubmit(event) {
+    event.preventDefault();
     this.setState({
       confirmLoading: true
     });

@@ -2,6 +2,9 @@ export const form = { 'Content-Type' : 'application/x-www-form-urlencoded; chars
 export const xhr = { 'x-requested-with': 'XMLHttpRequest', "Accept": "application/json" };
 export const json = { 'Content-Type' : 'application/json', 'x-requested-with': 'XMLHttpRequest', "Accept": "application/json" };
 
+let config = localStorage.getItem("config");
+config = config ? JSON.parse(config) : {};
+
 export const fetchCheckStatus = response => {
   if (response.status >= 200 && response.status < 300) {
     return response;
@@ -64,12 +67,6 @@ export const fetchUtil = options => {
   if(fetchOptions.method != "GET") {
     fetchOptions.body = options.body;
   }
-  let config = localStorage.getItem("config");
-  if(config) {
-    config = JSON.parse(config);
-  } else {
-    config = {};
-  }
   return fetch(`${config.testerServer}${url}`, fetchOptions)
   .then(fetchCheckStatus)
   .then(parseText)
@@ -85,6 +82,10 @@ export const fetchUtil = options => {
     otherErrorCallback instanceof Function && otherErrorCallback();
     return Promise.reject("end");
   })
+}
+
+export const openUrl = url => {
+  open(`${ config.testerServer }${ url }`);
 }
 
 export const actionCreator = (type, action) => {

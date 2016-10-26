@@ -35,6 +35,16 @@ export default (state = {}, action) => {
         ...state,
         cases: action.result
       }
+    case "SUCCESS_EDIT_CASE":
+      return {
+        ...state,
+        cases: action.result
+      }
+    case "EDIT_CASE_EXPECT":
+      return {
+        ...state,
+        cases: action.result
+      }
     case "SUCCESS_LOAD_CASES":
       return {
         ...state,
@@ -44,6 +54,16 @@ export default (state = {}, action) => {
       return {
         ...state,
         cases: action.result
+      }
+    case "GET_PLAY_SETTING":
+      return {
+        ...state,
+        playSetting: action.result
+      }
+    case "SET_PLAY_SETTING":
+      return {
+        ...state,
+        playSetting: action.result
       }
     default:
       return state;

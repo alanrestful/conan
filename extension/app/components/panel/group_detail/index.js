@@ -5,16 +5,16 @@ import moment from "moment";
 import pureRender from "pure-render-decorator";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox, Popover, Tooltip, notification, message } from "antd";
+import { Card, Icon, Popconfirm, Button, Row, Col, Checkbox, Tooltip, notification, message } from "antd";
 
 import Search from "common/search";
 import Spin from "common/spin";
 import EditInSitu from "common/edit_in_situ";
-import PlaySetting from "common/play_setting";
+import Play from "common/play";
 import CreateCaseModal from "./modals/create_case";
 import ViewjsonModal from "../modals/viewjson";
 import { playback } from "actions/actions";
-import { checkedCase, editCase, deleteCase, createCase, exportCase } from "actions/groups";
+import { checkedCase, deleteCase, createCase, editCase, editCaseExpect, exportCase } from "actions/groups";
 import { isEmpty } from "scripts/helpers";
 
 @pureRender
@@ -24,25 +24,20 @@ import { isEmpty } from "scripts/helpers";
   selectedGroup: state.groups.selectedGroup,
   selectedModel: state.groups.selectedModel,
   checkedIds: state.groups.checkedIds,
+  playSetting: state.groups.playSetting,
   project: state.projects.project
-}), dispatch => bindActionCreators({ playback, checkedCase, editCase, deleteCase, createCase, exportCase }, dispatch))
+}), dispatch => bindActionCreators({ playback, checkedCase, deleteCase, createCase, editCase, editCaseExpect, exportCase }, dispatch))
 export default class extends React.Component {
 
   constructor(props) {
     super(props);
-    let drivers = localStorage.getItem("drivers");
-    if(drivers) {
-      drivers = JSON.parse(drivers);
-    } else {
-      drivers = ["chrome"];
-    }
     this.state = {
-      drivers,
       jsons: "",
       checkedCases: [],
       selectedCase: {},
       createCaseModalVisible: false,
-      viewjsonModalVisible: false
+      viewjsonModalVisible: false,
+
     }
   }
 
@@ -68,6 +63,7 @@ export default class extends React.Component {
       expect: value,
       expectEditing: false
     });
+    this.props.editCaseExpect(this.state.selectedCase, hash, value, this.props.cases);
   }
 
   /**
@@ -91,6 +87,7 @@ export default class extends React.Component {
       expect: undefined,
       expectEditing: false
     });
+    this.props.editCaseExpect(this.state.selectedCase, hash, "", this.props.cases);
   }
 
   /**
@@ -121,16 +118,11 @@ export default class extends React.Component {
     });
   }
 
-  playSettingChange(drivers) {
+  playIt(drivers) {
     this.setState({
       drivers
     });
-  }
-
-  playIt() {
-    let selectedCase = this.state.selectedCase,
-        fragment = JSON.parse(selectedCase.fragment);
-    this.serializePlay(fragment);
+    this.serializePlay();
   }
 
   /**
@@ -171,15 +163,27 @@ export default class extends React.Component {
    * @return {[type]}          [description]
    */
   serializePlay(fragment) {
-    let actions = {};
-    fragment.map((v, i) => {
-      if(i) {
-        actions.tArray = [ ...actions.tArray, ...v.tArray ];
-      } else {
-        actions = v;
-      }
-    });
-    this.props.playback({ ...actions, tArray: [ actions.tArray ]}, this.state.drivers);
+    let actions;
+    if(fragment) {
+      actions = {};
+      fragment.map((v, i) => {
+        if(i) {
+          actions.tArray = [ ...actions.tArray, ...v.tArray ];
+        } else {
+          actions = v;
+        }
+      });
+      actions = { ...actions, tArray: [ actions.tArray ]};
+    } else {
+      actions = this.state.checkedCases.map(v => {
+        v.tArray = [ v.tArray ];
+        return v;
+      });
+      actions = actions.length == 1 ? actions[0] : actions;
+    }
+    let { drivers, background } = this.props.playSetting || {};
+    drivers = drivers || [ "chrome" ];
+    this.props.playback(actions, actions instanceof Array ? drivers[0] : drivers , background);
     notification.success({
       message: "提示",
       description: "所选用例已经开始尝试执行，请耐心等待执行结果！"
@@ -208,10 +212,12 @@ export default class extends React.Component {
     let checkedCases = this.state.checkedCases,
         checkedIds = this.props.checkedIds || {},
         groupId = this.props.selectedGroup._id,
-        modelId = this.props.selectedModel._id,
+        model = this.props.selectedModel,
+        modelId = model._id,
         current = checkedIds[groupId];
+    let _c = { ...c, ...this.serializeModel(JSON.parse(model.fragment), JSON.parse(c.data))[0] };
     if(current) {
-      current = current[modelId]
+      current = current[modelId];
       if(current) {
         if(current.includes(c._id)) {
           current.splice(current.indexOf(c._id), 1);
@@ -225,16 +231,16 @@ export default class extends React.Component {
           }
         } else {
           current.push(c._id);
-          checkedCases.push(c);
+          checkedCases.push(_c);
         }
       } else {
         current[modelId] = [c._id];
-        checkedCases.push(c);
+        checkedCases.push(_c);
       }
     } else {
       checkedIds[groupId] = {};
       checkedIds[groupId][modelId] = [c._id];
-      checkedCases.push(c);
+      checkedCases.push(_c);
     }
     this.setState({
       checkedCases
@@ -275,7 +281,6 @@ export default class extends React.Component {
   }
 
   exportCase() {
-    // open(`/api/cases/json/${this.state.selectedCase._id}`);
     this.props.exportCase(this.props.selectedModel);
   }
 
@@ -309,6 +314,7 @@ export default class extends React.Component {
   render() {
     let cases = this.props.cases || [],
         selectedCase = this.state.selectedCase,
+        checkedCases = this.state.checkedCases,
         model = this.props.selectedModel || {},
         fragment = isEmpty(selectedCase) ? [] : JSON.parse(selectedCase.fragment),
         checkedIds = this.props.checkedIds || {},
@@ -316,103 +322,108 @@ export default class extends React.Component {
         checkedCurrent = checkedIds[groupId] ? checkedIds[groupId][model._id] || [] : [];
     return (
       <div>
-        <Card title={ `${ model.name || "用例" } ${ isEmpty(cases) ? "" : `${ cases.length }个用例` }` } extra={ <span>{ isEmpty(selectedCase) ? null : <Popover title="回放选项" trigger="hover" placement="bottomRight" arrowPointAtCenter={ true } content={ <PlaySetting onChange={ this.playSettingChange.bind(this) } drivers={ this.state.drivers } /> }><a onClick={ this.playIt.bind(this) }><Icon type="play-circle-o" /></a></Popover>}{ isEmpty(model) ? null : <Tooltip title="创建用例"><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip> }{ isEmpty(selectedCase) ? null : <span><Tooltip title="编辑"><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /></a></Tooltip><Popconfirm title="此操作将不可恢复，您确定要删除此用例？" placement="bottom" onConfirm={ this.deleteCase.bind(this, selectedCase) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> }</span> } className="panel">
-          <Row className="group-detail">
-            <Col span={10} className="group-list-wrapper">
-              <div className="group-search"><Search /></div>
-              <ul className="group-list">
-              {
-                isEmpty(cases) ? <Spin done text="您还没有选择模板，或者所选模板暂无数据~" /> : cases.map((v, i) => {
-                  return (
-                    <li key={ i } className={ selectedCase._id == v._id ? "actived" : "" }>
-                      <Checkbox onChange={ this.checkedCase.bind(this, v) } checked={ checkedCurrent.includes(v._id) } />
-                      <p className="link" onClick={ this.selectedCase.bind(this, v) }>{ v.name }</p>
-                      <p className="time" onClick={ this.selectedCase.bind(this, v) }><Icon type="clock-circle-o" /> { moment(v.updated_at).format("YYYY-MM-DD HH:mm:ss") } &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
-                    </li>
-                  )
-                })
-              }
-              </ul>
-            </Col>
-            {
-              isEmpty(selectedCase) ? <Spin done text="您还没有选择用例，或者所选用例暂无数据~" /> : (
-                <Col span={ 14 } className="group-item">
-                  <div className="group-item-title clearfix">
-                    <h4>{ selectedCase.name }</h4>
-                    <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, undefined, selectedCase) }>JSON</Button>
-                    <Button size="small" onClick={ this.exportCase.bind(this) }>导出</Button>
-                  </div>
+        <Card title={ `${ model.name || "用例" } ${ isEmpty(cases) ? "" : `${ cases.length }个用例` }` } extra={ <span>{ isEmpty(checkedCases) ? null : <Play callback={ this.playIt.bind(this) } /> }{ isEmpty(model) ? null : <Tooltip title="创建用例"><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip> }{ isEmpty(selectedCase) ? null : <span><Tooltip title="编辑"><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /></a></Tooltip><Popconfirm title="此操作将不可恢复，您确定要删除此用例？" placement="bottom" onConfirm={ this.deleteCase.bind(this, selectedCase) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> }</span> } className="panel">
+          {
+            isEmpty(cases) ? <Spin done text="您还没有选择模板，或者所选模板暂无数据~" /> : (
+              <Row className="group-detail">
+                <Col span={10} className="group-list-wrapper">
+                  <div className="group-search"><Search /></div>
+                  <ul className="group-list">
                   {
-                    fragment.map((m, i) => (
-                      <div key={ i }>
-                        <div className="page-title">{ m.url }</div>
-                        {
-                          m.expectEditing ? <EditInSitu value={ m.expect } onEnter={ this.editOnEnter.bind(this, m.hash) } onCancel={ this.editOnCancel.bind(this, m.hash) } /> : m.expect ? (
-                            <div className="group-result clearfix">
-                              <span className="group-result-info">预期结果：{ m.expect }</span>
-                              <span className="group-result-control">
-                                <a onClick={ this.showEditInSitu.bind(this, m.hash) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteExpect.bind(this, m.hash) }>
-                                  <a><Icon type="cross-circle-o" /> 删除</a>
-                                </Popconfirm>
-                              </span>
-                            </div>
-                          ) : (
-                            <div className="page-control">
-                              <Button size="small" onClick={ this.showEditInSitu.bind(this, m.hash) }>预期</Button>
-                              {
-                                m.isFormEl ? null : <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, undefined, m) }>JSON</Button>
-                              }
-                            </div>
-                          )
-                        }
-                        <ul className="action-line">
-                        {
-                          m.tArray.map((v, i) => (
-                            <li className="clearfix" key={ i }>
-                              <span className="index">{ i + 1 }.</span>
-                              <span className="action-content-wrap">
-                                <span className="action-content">
-                                  <div>
-                                    <span className="address" title={ `xPath: ${ v.xPath }` }><Icon type="environment-o" /> { v.xPath }</span>
-                                    { v.className ? <span className="action" title={ `Class Name: ${ v.className }` }><Icon type="tag-o" /> { v.className }</span> : null }
-                                    { v.id ? <span className="action" title={ `ID: ${ v.id }` }><Icon type="tags-o" /> { v.id }</span> : null }
-                                    { v.name ? <span className="action" title={ `Name: ${ v.name }` }><Icon type="eye-o" /> { v.name }</span> : null }
-                                    { v.type ? <span className="action" title={ `Type: ${ v.type }` }><Icon type="file-unknown" /> { v.type }</span> : null }
-                                    { v.tagName ? <span className="action" title={ `Tag Name: ${ v.tagName }` }><Icon type="setting" /> { v.tagName }</span> : null }
-                                    { v.value ? <span className="address" title={ `Value: ${ v.type == "password" ? v.value.replace(/./g, "*") : v.value }` }><Icon type="book" /> { v.type == "password" ? v.value.replace(/./g, "*") : v.value }</span> : null }
-                                  </div>
-                                  {
-                                    v.expectEditing ? <EditInSitu value={ v.expect } onEnter={ this.editOnEnter.bind(this, v.hash) } onCancel={ this.editOnCancel.bind(this, v.hash) } /> : v.expect ? (
-                                      <div className="group-result small error clearfix">
-                                        <span className="group-result-info">预期结果：{ v.expect }</span>
-                                        <span className="group-result-control">
-                                          <a onClick={ this.showEditInSitu.bind(this, v.hash) }><Icon type="edit" /> 编辑</a>
-                                          &nbsp;&nbsp;&nbsp;&nbsp;
-                                          <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteExpect.bind(this, v.hash) }>
-                                            <a><Icon type="cross-circle-o" /> 删除</a>
-                                          </Popconfirm>
-                                        </span>
-                                      </div>
-                                    ) : (
-                                      <div>
-                                        <Button size="small" onClick={ this.showEditInSitu.bind(this, v.hash) }>预期</Button> { v.isFormEl ? null : <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, i, m.tArray) }>JSON</Button> }
-                                      </div>
-                                    )
-                                  }
-                                </span>
-                              </span>
-                            </li>
-                          ))
-                        }
-                        </ul>
-                      </div>
-                    ))
+                    cases.map((v, i) => {
+                      return (
+                        <li key={ i } className={ selectedCase._id == v._id ? "actived" : "" }>
+                          <Checkbox onChange={ this.checkedCase.bind(this, v) } checked={ checkedCurrent.includes(v._id) } />
+                          <p className="link" onClick={ this.selectedCase.bind(this, v) }>{ v.name }</p>
+                          <p className="time" onClick={ this.selectedCase.bind(this, v) }><Icon type="clock-circle-o" /> { moment(v.updated_at).format("YYYY-MM-DD HH:mm:ss") } &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
+                        </li>
+                      )
+                    })
                   }
+                  </ul>
                 </Col>
-              )
-            }
-          </Row>
+                {
+                  isEmpty(selectedCase) ? <Spin done text="您还没有选择用例，或者所选用例暂无数据~" /> : (
+                    <Col span={ 14 } className="group-item">
+                      <div className="group-item-title clearfix">
+                        <h4>{ selectedCase.name }</h4>
+                        <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, undefined, selectedCase) }>JSON</Button>
+                        <Button size="small" onClick={ this.exportCase.bind(this) }>导出</Button>
+                      </div>
+                      {
+                        fragment.map((m, i) => (
+                          <div key={ i }>
+                            <div className="page-title">{ m.url }</div>
+                            {
+                              m.expectEditing ? <EditInSitu value={ m.expect } onEnter={ this.editOnEnter.bind(this, m.hash) } onCancel={ this.editOnCancel.bind(this, m.hash) } /> : m.expect ? (
+                                <div className="group-result clearfix">
+                                  <span className="group-result-info">预期结果：{ m.expect }</span>
+                                  <span className="group-result-control">
+                                    <a onClick={ this.showEditInSitu.bind(this, m.hash) }><Icon type="edit" /> 编辑</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteExpect.bind(this, m.hash) }>
+                                      <a><Icon type="cross-circle-o" /> 删除</a>
+                                    </Popconfirm>
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="page-control">
+                                  <Button size="small" onClick={ this.showEditInSitu.bind(this, m.hash) }>预期</Button>
+                                  {
+                                    m.isFormEl ? null : <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, undefined, m) }>JSON</Button>
+                                  }
+                                </div>
+                              )
+                            }
+                            <ul className="action-line">
+                            {
+                              m.tArray.map((v, i) => (
+                                <li className="clearfix" key={ i }>
+                                  <span className="index">{ i + 1 }.</span>
+                                  <span className="action-content-wrap">
+                                    <span className="action-content">
+                                      <div>
+                                        <span className="address" title={ `xPath: ${ v.xPath }` }><Icon type="environment-o" /> { v.xPath }</span>
+                                        { v.className ? <span className="action" title={ `Class Name: ${ v.className }` }><Icon type="tag-o" /> { v.className }</span> : null }
+                                        { v.id ? <span className="action" title={ `ID: ${ v.id }` }><Icon type="tags-o" /> { v.id }</span> : null }
+                                        { v.name ? <span className="action" title={ `Name: ${ v.name }` }><Icon type="eye-o" /> { v.name }</span> : null }
+                                        { v.type ? <span className="action" title={ `Type: ${ v.type }` }><Icon type="file-unknown" /> { v.type }</span> : null }
+                                        { v.tagName ? <span className="action" title={ `Tag Name: ${ v.tagName }` }><Icon type="setting" /> { v.tagName }</span> : null }
+                                        { v.value ? <span className="address" title={ `Value: ${ v.type == "password" ? v.value.replace(/./g, "*") : v.value }` }><Icon type="book" /> { v.type == "password" ? v.value.replace(/./g, "*") : v.value }</span> : null }
+                                      </div>
+                                      {
+                                        v.expectEditing ? <EditInSitu value={ v.expect } onEnter={ this.editOnEnter.bind(this, v.hash) } onCancel={ this.editOnCancel.bind(this, v.hash) } /> : v.expect ? (
+                                          <div className="group-result small error clearfix">
+                                            <span className="group-result-info">预期结果：{ v.expect }</span>
+                                            <span className="group-result-control">
+                                              <a onClick={ this.showEditInSitu.bind(this, v.hash) }><Icon type="edit" /> 编辑</a>
+                                              &nbsp;&nbsp;&nbsp;&nbsp;
+                                              <Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deleteExpect.bind(this, v.hash) }>
+                                                <a><Icon type="cross-circle-o" /> 删除</a>
+                                              </Popconfirm>
+                                            </span>
+                                          </div>
+                                        ) : (
+                                          <div>
+                                            <Button size="small" onClick={ this.showEditInSitu.bind(this, v.hash) }>预期</Button> { v.isFormEl ? null : <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, i, m.tArray) }>JSON</Button> }
+                                          </div>
+                                        )
+                                      }
+                                    </span>
+                                  </span>
+                                </li>
+                              ))
+                            }
+                            </ul>
+                          </div>
+                        )
+                      )
+                    }
+                  </Col>
+                )
+              }
+            </Row>
+          )
+        }
         </Card>
         <CreateCaseModal visible={ this.state.createCaseModalVisible } cases={ selectedCase } model={ model } onSubmit={ this.createCaseModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
         <ViewjsonModal jsons={ this.state.jsons } visible={ this.state.viewjsonModalVisible } onClose={ this.closeViewjsonModal.bind(this) } />
