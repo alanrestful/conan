@@ -127,6 +127,17 @@ export const configWebDriver = (driver, path) => {
 }
 
 /**
+ * 获取webDriver
+ * @param callback获取数据后回调
+ */
+export const getWebDriver = (callback) => {
+  chrome.storage.local.get('conan', function(result){
+    var conanConfig = result.conan;
+    callback instanceof Function && callback(conanConfig.webDrivers); 
+  });
+}
+
+/**
  * 设置Client配置(默认)
  *{
  *   "testerServer": "http://localhost:9024",
@@ -155,7 +166,28 @@ export const saveClientConfig = config => {
       conanConfig.syncTester = config.syncTester;
     }
 
+    if(!config.whiteLists){
+      conanConfig.whiteLists = config.whiteLists;
+    }
+
     chrome.storage.local.set(result);
+  });
+}
+
+/**
+ * 获取Client基础配置信息
+ * @param callback获取数据后回调
+ */
+export const getClientConfig = (callback) => {
+  chrome.storage.local.get('conan', function(result){
+    var conanConfig = result.conan;
+    var clientConfig;
+    clientConfig["testerServer"] = conanConfig.testerServer;
+    clientConfig["logLevel"] = conanConfig.logLevel;
+    clientConfig["syncTester"] = conanConfig.syncTester;
+    clientConfig["whiteLists"] = conanConfig.whiteLists;
+
+    callback instanceof Function && callback(clientConfig); 
   });
 }
 
