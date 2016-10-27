@@ -175,8 +175,15 @@ function init_localStorage() {
       }
 
       // 测试的webDriver设置
-      if(!result.conan.webDrivers){
-        result.conan.webDrivers = [];
+      if(!result.conan.webDrivers || result.conan.webDrivers.length === 0){
+        result.conan.webDrivers["chrome"] = "/usr/local/bin/";
+        result.conan.webDrivers["firefox"] = "/usr/local/bin/";
+        result.conan.webDrivers["opera"] = "/usr/local/bin/";
+        result.conan.webDrivers["safari"] = "/usr/local/bin/";
+        result.conan.webDrivers["phantomjs"] = "/usr/local/bin/";
+        result.conan.webDrivers["android"] = "/usr/local/bin/";
+        result.conan.webDrivers["iPad"] = "/usr/local/bin/";
+        result.conan.webDrivers["iPhone"] = "/usr/local/bin/";
       }
 
       //白名单（白名单内的url设置页面监听）
