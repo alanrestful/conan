@@ -217,8 +217,8 @@ export default class extends React.Component {
         current = checkedIds[groupId];
     let _c = { ...c, ...this.serializeModel(JSON.parse(model.fragment), JSON.parse(c.data))[0] };
     if(current) {
-      current = current[modelId];
-      if(current) {
+      if(current[modelId]) {
+        current = current[modelId];
         if(current.includes(c._id)) {
           current.splice(current.indexOf(c._id), 1);
           checkedCases.map((v, i) => {
@@ -226,9 +226,6 @@ export default class extends React.Component {
               checkedCases.splice(i, 1);
             }
           })
-          if(isEmpty(current)) {
-            delete checkedIds[groupId];
-          }
         } else {
           current.push(c._id);
           checkedCases.push(_c);
@@ -245,7 +242,29 @@ export default class extends React.Component {
     this.setState({
       checkedCases
     });
-    this.props.checkedCase({ ...checkedIds });
+    this.props.checkedCase({ ...this.eliminateIds(checkedIds) });
+  }
+
+  /**
+   * 清除空的id
+   * @param  {Array} ids [description]
+   * @return {[type]}     [description]
+   */
+  eliminateIds(ids) {
+    Object.keys(ids).map(k => {
+      if(isEmpty(ids[k])) {
+        delete ids[k];
+      } else {
+        if(ids[k] instanceof Array) {
+          if(isEmpty(ids[k])) {
+            delete ids[k];
+          }
+        } else {
+          ids[k] = this.eliminateIds(ids[k]);
+        }
+      }
+    });
+    return ids;
   }
 
   /**

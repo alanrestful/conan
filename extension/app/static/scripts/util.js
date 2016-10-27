@@ -56,7 +56,6 @@ export const toastFunction = (toast, type, msg) => {
   toast.setState({ type: type, msg: msg });
 }
 
-
 export const fetchUtil = options => {
   let { url, method, body, headers, history, hrefCallback, otherErrorCallback } = options;
   let fetchOptions = {

@@ -199,10 +199,11 @@ export default class extends React.Component {
         model = this.state.selectedModel,
         models = this.props.models || [],
         checkedIds = this.props.checkedIds || {},
-        checkedCurrent = checkedIds[group._id] || {};
+        checkedCurrent = checkedIds[group._id] || {},
+        ids = this.state.checkedIds;
     return groups ? isEmpty(groups) ? <Spin done /> : groups.map((v, i) => {
       return (
-        <Panel header={ <div>{ v.name } <Checkbox className="checkbox" onChange={ this.changeSelectedActions.bind(this) } checked={ !isEmpty(this.state.checkedIds[v._id]) } /></div> } key={ i } className={ v._id == group._id ? "actived" : "" }>
+        <Panel header={ <div>{ v.name }<Checkbox className="checkbox" onChange={ this.changeSelectedActions.bind(this) } checked={ !isEmpty(ids[v._id]) } /></div> } key={ i } className={ v._id == group._id ? "actived" : "" }>
           <ul className="group-list">
           {
             isEmpty(models) ? <Spin done /> : models.map((v, i) => {

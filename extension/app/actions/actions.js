@@ -86,7 +86,7 @@ export const pageActived = index => actionCreator("SET_ACTIVED_PAGE_INDEX", { re
  */
 export const playback  = (data, drivers, background) => {
   return dispatch => {
-    if((data) instanceof Array || background) {
+    if(data instanceof Array || background) {
       clientPlays({
         method: "plays",
         data
