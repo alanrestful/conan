@@ -101,6 +101,14 @@ function __on_disconnected() {
 // 获取native返回的处理结果数据
 function __on_nativeMessage(message) {
   console.log(message);
+  //记录测试结果到本地
+  chrome.storage.local.get('conan', function(result){
+    var conanValue = result.conan;
+    conanValue.expectRes.push(message);
+
+    chrome.storage.local.set(result);
+  });
+
   __send_to_page({"event": "clientPlayRes", "data": message});
 }
 
@@ -170,8 +178,8 @@ function init_localStorage() {
       }
 
       //测试结果本地化
-      if(!result.conan.log_result){
-        result.conan.log_result = [];
+      if(!result.conan.expectRes){
+        result.conan.expectRes = [];
       }
 
       // 测试的webDriver设置

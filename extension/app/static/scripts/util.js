@@ -326,6 +326,33 @@ export const setElExpect = (tIndex, arrayIndex, objIndex, expect) => {
 }
 
 /**
+ * 获取conan的测试结果信息
+ * callback: 获取数据后回调
+ */
+export const getExpectRes = (callback) => {
+  chrome.storage.local.get('conan', function(result){
+    var conanConfig = result.conan;
+
+    var expectRes = conanValue.expectRes;
+    callback instanceof Function && callback(expectRes);
+  });
+}
+
+/**
+ * 清空conan的测试结果信息
+ * callback: 清空数据后回调
+ */
+export const clearExpectRes = (callback) => {
+  chrome.storage.local.get('conan', function(result){
+    var conanConfig = result.conan;
+
+    conanValue.expectRes = [];
+    chrome.storage.local.set(result);
+    callback instanceof Function && callback();
+  });
+}
+
+/**
  * 判断两个对象是否相同
  */
 const __is_diff = (old_obj, new_obj) => {
