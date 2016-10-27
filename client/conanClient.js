@@ -35,12 +35,12 @@ if (cluster.isMaster) {
             var driver = new engine.DriverEngine(msg.driver, msg.position, msg.size);
 
             driver.play(msg.data, function(result){
+                result["_id"] = msg.data["_id"];
                 process.send(result);
                 process.exit();
             });
         }catch(err){
-            var dealRes = new engine.DealResult();
-            dealRes["browser"] = msg.driver;
+            var dealRes = new engine.DealResult(msg.driver, msg.data._id, msg.data.name, msg.data.url);
             dealRes.sysError(err.stack);
             
             process.send(dealRes);

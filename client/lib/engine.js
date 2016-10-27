@@ -23,7 +23,7 @@ function DriverEngine(browser, position, size){
         /**
          * 解决Node的异步io问题,需要将设置element的等待时间和每次执行处理时的driver的sleep时间相同
          */
-        var dealRes = new DealResult();
+        var dealRes = new DealResult(browser, tCase._id, tCase.name, tCase.url);
         this.driver.get(tCase.url).then(function(value){
             logger.info(value);
         }, function (err) {
@@ -51,7 +51,6 @@ function DriverEngine(browser, position, size){
 
         // 处理结束后返回结果数据信息
         this.driver.quit().then(function(){
-            dealRes["browser"] = browser;
             callback(dealRes);
         });
     };
@@ -123,7 +122,7 @@ function DriverEngine(browser, position, size){
             logger.info(xPath);
             driver.wait(function() {
                 return driver.findElement(webdriver.By.xpath(xPath)).then(function (webElement) {
-                    dealRes.expectRes(true);
+                    dealRes.expectRes(true, expect);
                     return true;
                 }, function (err) {
                     // 为查找到元素继续等待
@@ -133,7 +132,7 @@ function DriverEngine(browser, position, size){
                 });
             }, 2000).catch(function(err){
                 //元素查找失败(在设定时间未找到元素,将结果返回给Client端)
-                dealRes.expectRes(false, err.stack);
+                dealRes.expectRes(false, expect, err.stack);
                 logger.error(err);
             });
         };
@@ -173,7 +172,14 @@ function DriverEngine(browser, position, size){
     }
 }
 
-function DealResult(){
+function DealResult(browser, _id, name, url){
+    // 测试用例基本数据
+    this.browser = browser;
+    this._id = _id;
+    this.name = name;
+    this.url = url;
+
+    // 测试结果信息
     this.pass = true;
     this.error = [];
     this.expectResult = [];
@@ -185,11 +191,11 @@ function DealResult(){
     };
 
     //pass = false时会存在error
-    this.expectRes = function(pass, error){
+    this.expectRes = function(pass, expect, error){
         if(!pass){
             this.pass = false;
         }
-        this.expectResult.push({"pass": pass, "error": error, "date": moment().format('YYYY-MM-DD HH:mm:ss')});
+        this.expectResult.push({"pass": pass, "expect": expect, "error": error, "date": moment().format('YYYY-MM-DD HH:mm:ss')});
     };
 }
 
