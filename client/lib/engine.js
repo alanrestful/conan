@@ -32,21 +32,16 @@ function DriverEngine(browser, position, size){
         });
         var tArrays = tCase.tArray;
         for(var n in tArrays) {
-            for (var i in tArrays[n]) {
-                // 解决node异步io处理速度太快
-                var tObj = tArrays[n][i];
-                if (tObj.isFormEl) {
-                    __formElement()(this.driver, this.sequence, tObj, dealRes);
-                    this.driver.sleep(1000);
-                } else {
-                    __actionElement()(this.driver, this.sequence, tObj, dealRes);
-                    this.driver.sleep(1000);
-                }
+            // 解决node异步io处理速度太快
+            var tObj = tArrays[n];
+            if (tObj.isFormEl) {
+                __formElement()(this.driver, this.sequence, tObj, dealRes);
+                this.driver.sleep(1000);
+            } else {
+                __actionElement()(this.driver, this.sequence, tObj, dealRes);
+                this.driver.sleep(1000);
+                __currentWin()(this.driver);
             }
-
-            // action处理后跳转到一个新页面
-            this.driver.sleep(1000);
-            __currentWin()(this.driver);
         }
 
         // 处理结束后返回结果数据信息
