@@ -1,7 +1,26 @@
 @import "../../../static/styles/theme";
 
-.result-list {
+.results-list {
+  margin: -24px;
+  color: $color-primary;
   li {
+    padding: 8px 12px;
+    line-height: 2em;
     border-bottom: $color-secondary solid 1px;
+    &:last-child {
+      border-bottom: none;
+    }
+    span {
+      margin-right: 20px;
+      &.success {
+        color: $color-success;
+      }
+      &.error {
+        color: $color-error;
+      }
+      i {
+        color: $color-primary;
+      }
+    }
   }
 }

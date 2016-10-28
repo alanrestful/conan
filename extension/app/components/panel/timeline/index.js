@@ -104,7 +104,7 @@ export default class extends React.Component {
       }
     });
     let { drivers, background } = this.props.playSetting || {};
-    this.props.playback({ ...actions, tArray: [actions.tArray] }, drivers || [ "chrome" ], background);
+    this.props.playback(actions, drivers || [ "chrome" ], background);
     notification.success({
       message: "提示",
       description: "所选用例已经开始尝试执行，请耐心等待执行结果！"

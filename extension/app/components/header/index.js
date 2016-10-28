@@ -3,11 +3,20 @@ require("./index.scss");
 import React from "react";
 import Identicon from "identicon.js";
 import pureRender from "pure-render-decorator";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
 import { Link } from "react-router";
 import { Row, Col, Menu, Dropdown, Icon } from "antd";
 
+import { init } from "actions/actions";
+
 @pureRender
+@connect(state => ({}), dispatch => bindActionCreators({ init }, dispatch))
 export default class extends React.Component {
+
+  componentWillMount() {
+    this.props.init();
+  }
 
   dropdown() {
     return (

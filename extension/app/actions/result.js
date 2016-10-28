@@ -12,7 +12,6 @@ export const getAllResult = () => {
 export const clearAllResult = () => {
   return dispatch => {
     clearExpectRes(data => {
-      console.log(data)
       dispatch({ type: "CLEAR_ALL_RESULTS", results: [] });
     });
   }

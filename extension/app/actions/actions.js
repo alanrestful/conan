@@ -1,24 +1,11 @@
 import moment from "moment";
 import { initConnect, allTArrays, listenerTarrayStorage, initNativeMessage, clientInit, clientPlay, clientPlays, clearAllTArray, setElExpect, fetchUtil, json, actionCreator } from "scripts/util";
 
-/**
- * 获取页面或者动作
- * @return {[type]}         [description]
- */
-export const getActionData = () => {
+
+export const init = () => {
   return dispatch => {
     // 这个需要在页面加载时候就调用
     initConnect();
-
-    allTArrays(result => {
-      dispatch(actionCreator("SUCCESS_LOAD_PAGES", { result }));
-    });
-
-    listenerTarrayStorage(result => {
-      dispatch(actionCreator("PRODUCE_NEW_PAGE", { result: { ...result, createAt: moment().format("YYYY-MM-DD HH:mm:ss") } }));
-    }, result => {
-      dispatch(actionCreator("PRODUCE_NEW_ACTION", { result: { ...result, createAt: moment().format("YYYY-MM-DD HH:mm:ss") } }));
-    });
 
     //数据回调
     initNativeMessage(() => {
@@ -33,11 +20,27 @@ export const getActionData = () => {
       console.log("clientPlayRes");
       console.log(result)
       dispatch(actionCreator("SUCCESS_LOAD_RESULT", { result }));
+      dispatch(actionCreator("SUCCESS_LOAD_RESULT", { result: undefined }));
     });
 
     clientInit();
+  }
+}
+/**
+ * 获取页面或者动作
+ * @return {[type]}         [description]
+ */
+export const getActionData = () => {
+  return dispatch => {
+    allTArrays(result => {
+      dispatch(actionCreator("SUCCESS_LOAD_PAGES", { result }));
+    });
 
-    // clientPlay({"method":"play","data":{"domain":"http://mallt.jidd.com.cn:8888","path":"/","tArray":[[{"baseURI":"http://mallt.jidd.com.cn:8888/","className":"form-control","id":"loginId","isFormEl":true,"name":"loginBy","placeholder":"请输入用户名","tagName":"INPUT","type":"text","value":"滦县鹏大商贸有限公司","xPath":"//*[@id='loginId']"},{"baseURI":"http://mallt.jidd.com.cn:8888/","className":"form-control","id":"password","isFormEl":true,"name":"password","placeholder":"请输入密码","tagName":"INPUT","type":"password","value":"123456","xPath":"//*[@id='password']"},{"baseURI":"http://mallt.jidd.com.cn:8888/","className":"btn","innerText":"登录","isFormEl":false,"tagName":"BUTTON","type":"submit","xPath":"//*[@class='user-login-form']/button[1]"}]],"url":"http://mallt.jidd.com.cn:8888/"}});
+    listenerTarrayStorage(result => {
+      dispatch(actionCreator("PRODUCE_NEW_PAGE", { result: { ...result, createAt: moment().format("YYYY-MM-DD HH:mm:ss") } }));
+    }, result => {
+      dispatch(actionCreator("PRODUCE_NEW_ACTION", { result: { ...result, createAt: moment().format("YYYY-MM-DD HH:mm:ss") } }));
+    });
   }
 };
 
