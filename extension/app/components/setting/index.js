@@ -2,6 +2,7 @@ import React from "react";
 import { Row, Col } from "antd";
 
 import Header from "header";
+import Footer from "footer";
 import Setting from "panel/setting";
 
 export default class extends React.Component {
@@ -15,6 +16,7 @@ export default class extends React.Component {
             <Setting />
           </Col>
         </Row>
+        <Footer />
       </div>
     )
   }

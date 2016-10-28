@@ -1,0 +1,12 @@
+@import "../../static/styles/theme";
+
+.footer {
+  margin: 0 -60px;
+  padding: 12px 0;
+  color: #fff;
+  text-align: center;
+  background-color: $color-primary;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}

@@ -2,6 +2,7 @@ import React from "react";
 import { Row, Col } from "antd";
 
 import Header from "header";
+import Footer from "footer";
 import Setting from "panel/project_setting";
 import Group from "panel/group";
 import GroupDetail from "panel/group_detail";
@@ -21,6 +22,7 @@ export default class extends React.Component {
             <GroupDetail />
           </Col>
         </Row>
+        <Footer />
       </div>
     )
   }
