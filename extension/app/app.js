@@ -7,6 +7,7 @@ import { Router, Route, hashHistory } from "react-router";
 
 import Index from "index";
 import Playback from "playback";
+import Result from "result";
 import Setting from "setting";
 import NoMatch from "no_match";
 
@@ -17,6 +18,7 @@ const AppRouter = () => {
     <Router history={ hashHistory }>
       <Route path="/" component={ Index } />
       <Route path="/playback" component={ Playback } />
+      <Route path="/result" component={ Result } />
       <Route path="/setting" component={ Setting } />
       <Route path="*" component={ NoMatch } />
     </Router>

@@ -48,7 +48,7 @@ export default class extends React.Component {
     return (
       <div className="edit-in-situ">
         <Input placeholder={ this.props.placeholder || "请输入..." } autoFocus={true} defaultValue={ this.props.value } onBlur={ this.handleBlur.bind(this) } onKeyUp={ this.handleKeyUp.bind(this) } onPressEnter={ this.handleEnter.bind(this) }/>
-        <Tooltip title="确定请按 Enter 键，取消请按 ESC 键。">
+        <Tooltip title="确定请按Enter，取消请按ESC。">
           <Icon type="question-circle-o" />
         </Tooltip>
       </div>

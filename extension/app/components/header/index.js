@@ -26,11 +26,12 @@ export default class extends React.Component {
       <div className="header">
         <Row>
           <Col span={5}><Link to="/" className="logo"><img src={ require("images/parana.png") } alt="Parana" /><span>Conan</span></Link></Col>
-          <Col span={8} offset={11}>
+          <Col span={10} offset={9}>
             <nav>
               <ul>
                 <li><Link to="/" activeClassName="actived">录制</Link></li>
                 <li><Link to="/playback" activeClassName="actived">回放</Link></li>
+                <li><Link to="/result" activeClassName="actived">结果</Link></li>
                 <li style={{ display: "none" }}><Link to="/dashboard" activeClassName="actived">统计</Link></li>
                 <li><Link to="/setting" activeClassName="actived">设置</Link></li>
               </ul>

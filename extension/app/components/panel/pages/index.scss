@@ -29,6 +29,21 @@
       top: 50%;
       margin-top: -12px;
       right: 8px;
+      /***/
+      .ant-checkbox-checked {
+        .ant-checkbox-inner {
+          background-color: $color-success;
+          border-color: $color-success;
+        }
+      }
+      .ant-checkbox-inner {
+        border-radius: 50%;
+        border-color: $color-secondary;
+      }
+      input {
+        cursor: default;
+      }
+      /***/
     }
   }
 }

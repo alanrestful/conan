@@ -124,11 +124,13 @@ export default class extends React.Component {
    * @return {[type]}       [description]
    */
   selectedGroup(index) {
-    let group = this.props.groups[index];
-    this.props.getModels(group);
-    this.setState({
-      selectedGroup: group
-    });
+    if(index != undefined) {
+      let group = this.props.groups[index];
+      this.props.getModels(group);
+      this.setState({
+        selectedGroup: group
+      });
+    }
   }
 
   changeSelectedActions() {}

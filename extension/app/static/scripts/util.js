@@ -132,7 +132,7 @@ export const configWebDriver = (driver, path) => {
 export const getWebDriver = (callback) => {
   chrome.storage.local.get('conan', function(result){
     var conanConfig = result.conan;
-    callback instanceof Function && callback(conanConfig.webDrivers); 
+    callback instanceof Function && callback(conanConfig.webDrivers);
   });
 }
 
@@ -186,7 +186,7 @@ export const getClientConfig = (callback) => {
     clientConfig["syncTester"] = conanConfig.syncTester;
     clientConfig["whiteLists"] = conanConfig.whiteLists;
 
-    callback instanceof Function && callback(clientConfig); 
+    callback instanceof Function && callback(clientConfig);
   });
 }
 
@@ -331,7 +331,7 @@ export const setElExpect = (tIndex, arrayIndex, objIndex, expect) => {
  */
 export const getExpectRes = (callback) => {
   chrome.storage.local.get('conan', function(result){
-    var conanConfig = result.conan;
+    var conanValue = result.conan;
 
     var expectRes = conanValue.expectRes;
     callback instanceof Function && callback(expectRes);
@@ -344,7 +344,7 @@ export const getExpectRes = (callback) => {
  */
 export const clearExpectRes = (callback) => {
   chrome.storage.local.get('conan', function(result){
-    var conanConfig = result.conan;
+    var conanValue = result.conan;
 
     conanValue.expectRes = [];
     chrome.storage.local.set(result);

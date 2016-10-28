@@ -175,10 +175,12 @@ export default class extends React.Component {
       });
       actions = { ...actions, tArray: [ actions.tArray ]};
     } else {
-      actions = this.state.checkedCases.map(v => {
+      let checkedCases = [ ...this.state.checkedCases ];
+      actions = checkedCases.map(v => {
         v.tArray = [ v.tArray ];
         return v;
       });
+      console.log(21, actions)
       actions = actions.length == 1 ? actions[0] : actions;
     }
     let { drivers, background } = this.props.playSetting || {};

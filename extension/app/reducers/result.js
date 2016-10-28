@@ -21,6 +21,16 @@ export default (state = {}, action) => {
         action: null,
         page: null
       }
+    case "GET_ALL_RESULTS":
+      return {
+        ...state,
+        results: action.results
+      }
+    case "CLEAR_ALL_RESULTS":
+      return {
+        ...state,
+        results: action.results
+      }
     default:
       return state;
   }
