@@ -44,13 +44,6 @@ export default class extends React.Component {
     this.props.clearAllResult();
   }
 
-  renderExpect(expect) {
-    expect = expect ? JSON.parse(expect) : "";
-    return (
-      <div>值：{ expect.text }</div>
-    )
-  }
-
   render() {
     let results = this.state.results;
     return (
@@ -79,7 +72,11 @@ export default class extends React.Component {
                       v.expectResult ? (
                         <ul>
                         {
-                          v.expectResult.map((v, i) => <li key={ i }>{ this.renderExpect(v.expect) }<div>{ v.pass ? <span className="success"><Icon type="smile-o" /> 通过</span> : <span className="error"><Icon type="frown-o" /> 不通过</span> }</div></li>)
+                          v.expectResult.map((v, i) => <li key={ i }>
+                              <div>v.expect</div>
+                              <div>{ v.pass ? <span className="success"><Icon type="smile-o" /> 通过</span> : <span className="error"><Icon type="frown-o" /> 不通过</span> }</div>
+                            </li>
+                          )
                         }
                         </ul>
                       ) : null
