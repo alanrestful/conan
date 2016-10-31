@@ -59,6 +59,24 @@ export default class extends React.Component {
                       <span><Icon type="chrome" /> { v.browser }</span>
                       <span><Icon type="clock-circle-o" /> { v.start }</span>
                     </div>
+                    {
+                      v.error ? (
+                        <ul>
+                        {
+                          v.error.map((v, i) => <li key={ i }>{ v }</li>)
+                        }
+                        </ul>
+                      ) : null
+                    }
+                    {
+                      v.expectResult ? (
+                        <ul>
+                        {
+                          v.expectResult.map((v, i) => <li key={ i }>{ v }</li>)
+                        }
+                        </ul>
+                      ): null
+                    }
                     <div>{ v.pass ? <span className="success"><Icon type="smile-o" /> 通过</span> : <span className="error"><Icon type="frown-o" /> 不通过</span> }</div>
                   </li>
                 )

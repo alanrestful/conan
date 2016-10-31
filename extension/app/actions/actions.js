@@ -24,6 +24,8 @@ export const init = () => {
     });
 
     clientInit();
+
+    dispatch(actionCreator("SUCCESS_INIT_CONNECT", { result: true }));
   }
 }
 /**
