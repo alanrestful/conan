@@ -79,7 +79,7 @@ export default class extends React.Component {
                       v.expectResult ? (
                         <ul>
                         {
-                          result.expectResult.map((v, i) => <li key={ i }>{ this.renderExpect(v.expect) }<div>{ v.pass ? <span className="success"><Icon type="smile-o" /> 通过</span> : <span className="error"><Icon type="frown-o" /> 不通过</span> }</div></li>)
+                          v.expectResult.map((v, i) => <li key={ i }>{ this.renderExpect(v.expect) }<div>{ v.pass ? <span className="success"><Icon type="smile-o" /> 通过</span> : <span className="error"><Icon type="frown-o" /> 不通过</span> }</div></li>)
                         }
                         </ul>
                       ) : null
