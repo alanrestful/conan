@@ -73,7 +73,7 @@ export default class extends React.Component {
                         <ul>
                         {
                           v.expectResult.map((v, i) => <li key={ i }>
-                              <div>v.expect</div>
+                              <div>{ v.expect }</div>
                               <div>{ v.pass ? <span className="success"><Icon type="smile-o" /> 通过</span> : <span className="error"><Icon type="frown-o" /> 不通过</span> }</div>
                             </li>
                           )
