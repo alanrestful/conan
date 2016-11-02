@@ -25,7 +25,6 @@ const TimelineItem = Timeline.Item;
   selectedPageIndex: state.actions.selectedPageIndex,
   action: state.result.action,
   selectedActionIndexs: state.actions.selectedActionIndexs,
-  playSetting: state.groups.playSetting,
   project: state.projects.project,
   result: state.result.result
 }), dispatch => bindActionCreators({ playback, createGroups, deletePage, changeSelectedActions, editExpect }, dispatch))
@@ -93,7 +92,7 @@ export default class extends React.Component {
    * 回放
    * @return {[type]} [description]
    */
-  playIt() {
+  playIt(playSetting) {
     let selectedActions = this.convertSelectedActions(),
         actions;
     selectedActions.map((v, i) => {
@@ -103,8 +102,13 @@ export default class extends React.Component {
         actions = v;
       }
     });
-    let { drivers, background } = this.props.playSetting || {};
-    this.props.playback(actions, drivers || [ "chrome" ], background);
+    let { drivers, background } = playSetting || {};
+    if(background) {
+      drivers = "";
+    } else if(isEmpty(drivers)){
+      drivers = [ "chrome" ];
+    }
+    this.props.playback(actions, drivers, background);
     notification.success({
       message: "提示",
       description: "所选用例已经开始尝试执行，请耐心等待执行结果！"

@@ -118,11 +118,8 @@ export default class extends React.Component {
     });
   }
 
-  playIt(drivers) {
-    this.setState({
-      drivers
-    });
-    this.serializePlay();
+  playIt(playSetting) {
+    this.serializePlay(undefined, playSetting);
   }
 
   /**
@@ -160,9 +157,10 @@ export default class extends React.Component {
   /**
    * 整理回放数据并回放
    * @param  {Object} fragment 回访数据
+   * @param  {Object} playSetting 回放参数
    * @return {[type]}          [description]
    */
-  serializePlay(fragment) {
+  serializePlay(fragment, playSetting) {
     let actions;
     if(fragment) {
       actions = {};
@@ -178,8 +176,12 @@ export default class extends React.Component {
       actions = [ ...this.state.checkedCases ];
       actions = actions.length == 1 ? actions[0] : actions;
     }
-    let { drivers, background } = this.props.playSetting || {};
-    drivers = drivers || [ "chrome" ];
+    let { drivers, background } = playSetting || this.props.playSetting || {};
+    if(background) {
+      drivers = "";
+    } else if(isEmpty(drivers)){
+      drivers = [ "chrome" ];
+    }
     this.props.playback(actions, actions instanceof Array ? drivers[0] : drivers , background);
     notification.success({
       message: "提示",

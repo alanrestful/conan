@@ -14,18 +14,17 @@ export default class extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
+    let { drivers, defaults, background } = this.props.playSetting || {
       drivers: [],
       defaults: false,
-      background: false,
+      background: false
+    }
+    this.state = {
+      drivers,
+      defaults,
+      background,
       visible: false
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      ...this.props.playSetting
-    });
   }
 
   onChange(name, checked) {
@@ -57,9 +56,10 @@ export default class extends React.Component {
 
   saveSetting() {
     let { drivers, defaults, background } = this.state;
-    if(defaults) {
-      this.props.setPlaySetting({ drivers, defaults, background });
+    if(background) {
+      drivers = [];
     }
+    this.props.setPlaySetting({ drivers, defaults, background });
   }
 
   renderSetting() {
@@ -71,7 +71,7 @@ export default class extends React.Component {
         <li>Safari<Switch size="small" onChange={ this.onChange.bind(this, "safari") } checked={ this.state.background ? false : drivers.includes("safari") } disabled={ this.state.background } /></li>
         <li className="hr"></li>
         <li>静默执行<Switch size="small" onChange={ this.backgroundChange.bind(this) } checked={ this.state.background } /></li>
-        <li>以此为默认选项<Switch size="small" onChange={ this.defaultChange.bind(this) } checked={ this.state.default } /></li>
+        <li>以此为默认选项<Switch size="small" onChange={ this.defaultChange.bind(this) } checked={ this.state.defaults } /></li>
       </ul>
     )
   }
@@ -79,7 +79,7 @@ export default class extends React.Component {
   playIt() {
     clearTimeout(this.state.timeout);
     let callback = this.props.callback;
-    callback instanceof Function && callback(this.state.drivers);
+    callback instanceof Function && callback(this.state);
   }
 
   showPopover() {
