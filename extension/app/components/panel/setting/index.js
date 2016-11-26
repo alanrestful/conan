@@ -9,9 +9,9 @@ import { Card, Form, Input, Select, Button, message } from "antd";
 const FormItem = Form.Item,
       Option = Select.Option;
 
-@pureRender
 @Form.create()
 @connect(state => ({}), dispatch => bindActionCreators({}, dispatch))
+@pureRender
 export default class extends React.Component {
 
   constructor(props) {

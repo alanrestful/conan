@@ -19,7 +19,6 @@ import { isEmpty } from "scripts/helpers";
 
 const TimelineItem = Timeline.Item;
 
-@pureRender
 @connect(state => ({
   pages: state.actions.pages,
   selectedPageIndex: state.actions.selectedPageIndex,
@@ -28,6 +27,7 @@ const TimelineItem = Timeline.Item;
   project: state.projects.project,
   result: state.result.result
 }), dispatch => bindActionCreators({ playback, createGroups, deletePage, changeSelectedActions, editExpect }, dispatch))
+@pureRender
 export default class extends React.Component {
 
   constructor(props) {

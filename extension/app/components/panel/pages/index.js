@@ -12,7 +12,6 @@ import Spin from "common/spin";
 import { getActionData, clearAllPages, pageActived } from "actions/actions";
 import { isEmpty } from "scripts/helpers";
 
-@pureRender
 @connect(state => {
   let pages = state.actions.pages || [],
       page = state.result.page,
@@ -38,6 +37,7 @@ import { isEmpty } from "scripts/helpers";
     selectedActionIndexs: state.actions.selectedActionIndexs
   }
 }, dispatch => bindActionCreators({ getActionData, clearAllPages, pageActived }, dispatch))
+@pureRender
 export default class extends React.Component {
 
   constructor(props) {

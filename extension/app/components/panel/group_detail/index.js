@@ -17,7 +17,6 @@ import { playback } from "actions/actions";
 import { checkedCase, deleteCase, createCase, editCase, editCaseExpect, exportCase } from "actions/groups";
 import { isEmpty } from "scripts/helpers";
 
-@pureRender
 @connect(state => ({
   models: state.groups.models,
   cases: state.groups.cases,
@@ -27,6 +26,7 @@ import { isEmpty } from "scripts/helpers";
   playSetting: state.groups.playSetting,
   project: state.projects.project
 }), dispatch => bindActionCreators({ playback, checkedCase, deleteCase, createCase, editCase, editCaseExpect, exportCase }, dispatch))
+@pureRender
 export default class extends React.Component {
 
   constructor(props) {
