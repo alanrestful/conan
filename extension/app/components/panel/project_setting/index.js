@@ -10,11 +10,11 @@ import Spin from "common/spin";
 import SettingModal from "./modals/setting";
 import { getAllProjects, getProjectInfo } from "actions/projects";
 
-@pureRender
 @connect(state => ({
   projects: state.projects.projects,
   project: state.projects.project
 }), dispatch => bindActionCreators({ getAllProjects, getProjectInfo }, dispatch))
+@pureRender
 export default class extends React.Component {
 
   constructor(props) {

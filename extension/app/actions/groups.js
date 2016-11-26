@@ -236,7 +236,7 @@ export const getPleySetting = () => {
 
 export const setPlaySetting = (data) => {
   return dispatch => {
-    localStorage.setItem("play", JSON.stringify(data));
+    data.defaults && localStorage.setItem("play", JSON.stringify(data));
     dispatch(actionCreator("SET_PLAY_SETTING", { result: data }));
   }
 }

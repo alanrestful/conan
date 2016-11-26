@@ -16,7 +16,6 @@ import { isEmpty } from "scripts/helpers";
 
 const Panel = Collapse.Panel;
 
-@pureRender
 @connect(state => ({
   groups: state.groups.groups,
   models: state.groups.models,
@@ -24,6 +23,7 @@ const Panel = Collapse.Panel;
   checkedIds: state.groups.checkedIds,
   project: state.projects.project
 }), dispatch => bindActionCreators({ getGroup, getModels, editModel, deleteModel, checkedModel, getCases }, dispatch))
+@pureRender
 export default class extends React.Component {
 
   constructor(props) {

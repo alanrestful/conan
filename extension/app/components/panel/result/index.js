@@ -11,11 +11,11 @@ import Spin from "common/spin";
 import { getAllResult, clearAllResult } from "actions/result";
 import { isEmpty } from "scripts/helpers";
 
-@pureRender
 @connect(state => ({
   results: state.result.results,
   result: state.result.result
 }), dispatch => bindActionCreators({ getAllResult, clearAllResult }, dispatch))
+@pureRender
 export default class extends React.Component {
 
   constructor(props) {

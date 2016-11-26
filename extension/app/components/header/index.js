@@ -10,10 +10,10 @@ import { Row, Col, Menu, Dropdown, Icon } from "antd";
 
 import { init } from "actions/actions";
 
-@pureRender
 @connect(state => ({
   initStatus: state.projects.init
 }), dispatch => bindActionCreators({ init }, dispatch))
+@pureRender
 export default class extends React.Component {
 
   componentWillMount() {
