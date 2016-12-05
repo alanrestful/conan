@@ -67,6 +67,7 @@ export default class extends React.Component {
   render() {
     let getFieldDecorator = this.props.form.getFieldDecorator,
         fragment = this.props.model.fragment,
+        isEdit = this.props.isEdit,
         hash = {};
     const formItemLayout = {
       labelCol: { span: 6 },
@@ -89,7 +90,7 @@ export default class extends React.Component {
       });
     });
     return (
-      <Modal title="创建用例" visible={ this.state.visible } onCancel={ this.handleCancel.bind(this) } footer={ [<Button key="back" type="ghost" size="large" onClick={ this.handleCancel.bind(this) }>取 消</Button>, <Button key="submit" type="primary" size="large" loading={ this.state.confirmLoading } onClick={ this.handleOk.bind(this) }>创 建</Button>, <Button key="continue" type="primary" size="large" loading={ this.state.continueLoading } onClick={ this.handleContinue.bind(this) }>创建并执行</Button>] }>
+      <Modal title={ `${ isEdit ? "编辑" : "创建" }用例` } visible={ this.state.visible } onCancel={ this.handleCancel.bind(this) } footer={ [<Button key="back" type="ghost" size="large" onClick={ this.handleCancel.bind(this) }>取 消</Button>, <Button key="submit" type="primary" size="large" loading={ this.state.confirmLoading } onClick={ this.handleOk.bind(this) }>{ isEdit ? "保 存" : "创 建" }</Button>, <Button key="continue" type="primary" size="large" loading={ this.state.continueLoading } onClick={ this.handleContinue.bind(this) }>{ `${ isEdit ? "保存" : "创建" }并执行` }</Button>] }>
         <Form horizontal>
           <FormItem { ...formItemLayout } label="用例名称">
             { getFieldDecorator("name", {

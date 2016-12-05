@@ -152,7 +152,7 @@ export default class extends React.Component {
     if(!this.state.isEditCaseModelVisible) {
       this.props.createCase(this.props.groups, { ...data, pid: this.props.project.id });
     } else {
-      this.props.editCase(this.props.groups, { ...data, pid: this.props.project.id });
+      this.props.editCase(this.props.groups, { ...data, pid: this.props.project.id, did: this.getSelectedCase()._id });
     }
     tag && this.serializePlay(this.serializeModel(JSON.parse(models.model.fragment), data));
     message.success("用例创建成功！");
@@ -177,7 +177,31 @@ export default class extends React.Component {
       });
       actions = { ...actions, tArray: [ actions.tArray ]};
     } else {
-      actions = this.getCheckedCases(this.props.groups).map(v => this.serializeModel(JSON.parse(this.getCases().model.fragment), JSON.parse(v.data)));
+      actions = [];
+      this.props.groups.map(v => {
+        if(v.current.checked || v.current.indeterminate) {
+          v.children.map(model => {
+            if(model.current.checked || model.current.indeterminate) {
+              model.children.map(v => {
+                if(v.checked) {
+                  let action = this.serializeModel(JSON.parse(model.current.fragment), JSON.parse(v.data)),
+                      tArray = [];
+                  action.slice(1, action.length).map(v => {
+                    tArray = [ ...tArray, ...v.tArray ];
+                  });
+                  action = {
+                    ...action[0],
+                    tArray: [ ...action[0].tArray, ...tArray ]
+                  }
+                  actions.push(action);
+                }
+              });
+            }
+          });
+        }
+      });
+      // actions = this.getCheckedCases(this.props.groups).map(v => this.serializeModel(JSON.parse(this.getCases().model.fragment), JSON.parse(v.data)));
+
       actions = actions.length == 1 ? actions[0] : actions;
     }
     let { drivers, background } = playSetting || this.props.playSetting || {};
@@ -226,7 +250,7 @@ export default class extends React.Component {
         v.children.map(v => {
           if(v.current.indeterminate || v.current.checked) {
             v.children.map(v => {
-              if(v.selected) {
+              if(v.checked) {
                 cases.push(v);
               }
             });
@@ -473,7 +497,7 @@ export default class extends React.Component {
           )
         }
         </Card>
-        <CreateCaseModal visible={ this.state.createCaseModalVisible } cases={ selectedCases } model={ model } onSubmit={ this.createCaseModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
+        <CreateCaseModal visible={ this.state.createCaseModalVisible } isEdit={ this.state.isEditCaseModelVisible } cases={ selectedCases } model={ model } onSubmit={ this.createCaseModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
         <ViewjsonModal jsons={ this.state.jsons } visible={ this.state.viewjsonModalVisible } onClose={ this.closeViewjsonModal.bind(this) } />
       </div>
     )

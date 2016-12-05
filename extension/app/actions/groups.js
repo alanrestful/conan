@@ -181,8 +181,9 @@ export const editCase = (groups, cases) => {
           v.children.map(v => {
             if(v.current.selected) {
               v.children.map(v => {
-                if(v._id == cases._id) {
-                  v = cases;
+                if(v._id == cases.did) {
+                  v.data = cases.data;
+                  v.name = cases.name;
                 }
               });
             }
@@ -266,6 +267,7 @@ export const checkedModels = (groups, modelId, checked) => {
         v.children.map(v => {
           if(v.current._id == modelId) {
             v.current.checked = checked;
+            v.current.indeterminate = false;
             v.children.map(v => {
               v.checked = checked;
             })

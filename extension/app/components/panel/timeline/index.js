@@ -253,7 +253,7 @@ export default class extends React.Component {
     pages.map(v => {
       if(v.indeterminate || v.checked) {
         let tArray = [];
-        v.tArray[0].map(v => tArray.push(v));
+        v.tArray[0].map(v => v.checked && tArray.push(v));
         actions.push({ ...v, tArray });
       }
     });
@@ -289,6 +289,7 @@ export default class extends React.Component {
         page = pages[this.getSelectedPageIndex()] || {},
         actions = page.tArray ? page.tArray[0] : {},
         selectedActions = this.getSelectedActions(pages);
+        console.log(selectedActions)
     return (
       <div>
         <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(selectedActions) ? null : <span><Play callback={ this.playIt.bind(this) } /><Tooltip title="创建模板"><a onClick={ this.showCreatesModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip></span> }<Tooltip title="预期"><a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /></a></Tooltip><Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deletePage.bind(this) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> } className="panel timeline">
