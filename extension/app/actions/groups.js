@@ -103,7 +103,36 @@ export const deleteGroup = (group, groups) => {
  * @param  {Boolean} byName        是否根据名字来查找分组
  * @return {[type]}               [description]
  */
-export const createCase = (groups, cases, byName) => {
+export const createModel = (groups, model) => {
+  return dispatch => {
+    console.log(222, groups, model)
+    fetchUtil({
+      url: `/api/cases`,
+      method: "POST",
+      headers: json,
+      body: JSON.stringify(model)
+    }).then(result => {
+      groups.map(v => {
+        if(v.current.selected) {
+          v.children.map(v => {
+            if(v.current.selected) {
+              v.children.push(result.result);
+            }
+          })
+        }
+      });
+      dispatch(actionCreator("SUCCESS_LOAD_GROUPS", { result: [ ...groups ]}));
+    });
+  }
+};
+
+/**
+ * 创建用例
+ * @param  {Array} groups          用例信息
+ * @param  {Array} cases        用例列表
+ * @return {[type]}               [description]
+ */
+export const createCase = (groups, cases) => {
   return dispatch => {
     fetchUtil({
       url: `/api/cases/data`,
@@ -112,7 +141,7 @@ export const createCase = (groups, cases, byName) => {
       body: JSON.stringify(cases)
     }).then(result => {
       groups.map(v => {
-        if(v.current.selected) { // (byName && v.current.name == cases.tempGroup) ||
+        if(v.current.selected) {
           v.children.map(v => {
             if(v.current.selected) {
               v.children.push(result.result);

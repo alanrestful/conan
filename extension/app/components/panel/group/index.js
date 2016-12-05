@@ -11,7 +11,7 @@ import { Card, Collapse, Icon, Checkbox, Popconfirm, Tooltip, message } from 'an
 import Spin from "common/spin";
 import CreateCaseModal from "./modals/create_case";
 import EditModelModal from "./modals/edit_model";
-import { getAllDatas, editModel, deleteModel, checkedModel, getCases, checkedGroups, checkedModels, selectedGroup, selectedModel, createCase } from "actions/groups";
+import { getAllDatas, createModel, editModel, deleteModel, checkedModel, getCases, checkedGroups, checkedModels, selectedGroup, selectedModel, createCase } from "actions/groups";
 import { isEmpty } from "scripts/helpers";
 
 const Panel = Collapse.Panel;
@@ -19,7 +19,7 @@ const Panel = Collapse.Panel;
 @connect(state => ({
   groups: state.groups.groups,
   project: state.projects.project
-}), dispatch => bindActionCreators({ getAllDatas, editModel, deleteModel, checkedModel, getCases, checkedGroups, checkedModels, selectedGroup, selectedModel, createCase }, dispatch))
+}), dispatch => bindActionCreators({ getAllDatas, createModel, editModel, deleteModel, checkedModel, getCases, checkedGroups, checkedModels, selectedGroup, selectedModel, createCase }, dispatch))
 @pureRender
 export default class extends React.Component {
 
@@ -32,7 +32,7 @@ export default class extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.project && !this.props.project) {
+    if(nextProps.project && !this.props.groups) {
       this.props.getAllDatas(nextProps.project.id);
     }
   }
@@ -64,7 +64,7 @@ export default class extends React.Component {
    * @return {[type]}      [description]
    */
   createCaseModalSubmit(data, tag) {
-    this.props.createCase(this.props.groups, { ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id });
+    this.props.createModel(this.props.groups, { ...data, fragment: JSON.stringify(data.fragment), pid: this.props.project.id });
     tag && this.serializePlay(data.fragment);
     message.success("用例创建成功！");
   }
