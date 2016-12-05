@@ -177,7 +177,7 @@ export default class extends React.Component {
       });
       actions = { ...actions, tArray: [ actions.tArray ]};
     } else {
-      actions = this.getCheckedCases(this.props.groups);
+      actions = this.getCheckedCases(this.props.groups).map(v => this.serializeModel(JSON.parse(this.getCases().model.fragment), JSON.parse(v.data)));
       actions = actions.length == 1 ? actions[0] : actions;
     }
     let { drivers, background } = playSetting || this.props.playSetting || {};
