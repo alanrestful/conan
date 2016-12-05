@@ -18,6 +18,17 @@
       margin-left: 15px;
     }
   }
+  /***/
+  .ant-checkbox-checked {
+    .ant-checkbox-inner {
+      // background-color: $color-success;
+      // border-color: $color-success;
+    }
+  }
+  .ant-checkbox-inner {
+    // border-radius: 50%;
+  }
+  /***/
 }
 
 .panel {

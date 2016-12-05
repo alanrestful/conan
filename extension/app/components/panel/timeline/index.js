@@ -13,20 +13,15 @@ import EditInSitu from "common/edit_in_situ";
 import Play from "common/play";
 import CreatesModal from "./modals/creates";
 import ViewjsonModal from "../modals/viewjson";
-import ResultModal from "./modals/result";
-import { playback, createGroups, deletePage, changeSelectedActions, editExpect } from "actions/actions";
+import { playback, createGroups, setPages, deletePage, checkedActions, editExpect } from "actions/actions";
 import { isEmpty } from "scripts/helpers";
 
 const TimelineItem = Timeline.Item;
 
 @connect(state => ({
   pages: state.actions.pages,
-  selectedPageIndex: state.actions.selectedPageIndex,
-  action: state.result.action,
-  selectedActionIndexs: state.actions.selectedActionIndexs,
-  project: state.projects.project,
-  result: state.result.result
-}), dispatch => bindActionCreators({ playback, createGroups, deletePage, changeSelectedActions, editExpect }, dispatch))
+  project: state.projects.project
+}), dispatch => bindActionCreators({ playback, createGroups, setPages, deletePage, checkedActions, editExpect }, dispatch))
 @pureRender
 export default class extends React.Component {
 
@@ -34,52 +29,9 @@ export default class extends React.Component {
     super(props);
     this.state = {
       jsons: "",
-      pages: [],
-      result: [],
-      selectedActionIndexs: {},
       createsModalVisible: false,
-      viewjsonModalVisible: false,
-      resultModalVisible: false
+      viewjsonModalVisible: false
     }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if(nextProps.selectedPageIndex != undefined) {
-      this.setState({
-        pages: nextProps.pages,
-        selectedActionIndexs: nextProps.selectedActionIndexs || {}
-      });
-    }
-    if(nextProps.result) {
-      this.renderResult(nextProps.result);
-    }
-  }
-
-  renderResult(result) {
-    let r = this.state.result;
-    if(!r.length) {
-      notification.open({
-        duration: 0,
-        message: "执行结果",
-        description: <div>屠龙宝刀，<a onClick={ this.showResultModal.bind(this) }>点击</a>就送。</div>
-      });
-    }
-    r.push(result);
-    this.setState({
-      result: r
-    });
-  }
-
-  showResultModal() {
-    this.setState({
-      resultModalVisible: true
-    });
-  }
-
-  closeResultModal() {
-    this.setState({
-      resultModalVisible: false
-    });
   }
 
   playSettingChange(drivers) {
@@ -111,7 +63,7 @@ export default class extends React.Component {
     this.props.playback(actions, drivers, background);
     notification.success({
       message: "提示",
-      description: "所选用例已经开始尝试执行，请耐心等待执行结果！"
+      description: "所选用例已经开始尝试执行，请稍后去 结果 页面查看执行结果！"
     });
   }
 
@@ -133,7 +85,7 @@ export default class extends React.Component {
    * @return {[type]}       [description]
    */
   editOnEnter(index, value) {
-    this.props.editExpect(this.props.selectedPageIndex, 0, index, value);
+    this.props.editExpect(this.getSelectedPageIndex(), 0, index, value);
     this.expectCommon(index, {
       expect: value,
       expectEditing: false
@@ -157,7 +109,7 @@ export default class extends React.Component {
    * @return {[type]}       [description]
    */
   deleteExpect(index) {
-    this.props.editExpect(this.props.selectedPageIndex, 0, index, "");
+    this.props.editExpect(this.getSelectedPageIndex(), 0, index, "");
     this.expectCommon(index, {
       expect: undefined,
       expectEditing: false
@@ -171,17 +123,15 @@ export default class extends React.Component {
    * @return {[type]}        [description]
    */
   expectCommon(index, expect) {
-    let pageIndex = this.props.selectedPageIndex,
-        pages = this.state.pages,
+    let pageIndex = this.getSelectedPageIndex(),
+        pages = this.props.pages,
         currentPage = pages[pageIndex];
     if(index === undefined) {
        pages[pageIndex] = { ...currentPage, ...expect }
     } else {
       pages[pageIndex].tArray = [ currentPage.tArray[0].map((v, i) => i == index ? { ...v, ...expect } : v) ];
     }
-    this.setState({
-      pages
-    });
+    this.props.setPages(pages);
   }
 
   /**
@@ -223,13 +173,12 @@ export default class extends React.Component {
    * @return {[type]} [description]
    */
   deletePage() {
-    this.props.deletePage(this.props.selectedPageIndex, this.state.pages, () => message.success("页面删除成功！"));
+    this.props.deletePage(this.getSelectedPageIndex(), this.state.pages, () => message.success("页面删除成功！"));
   }
 
   viewJson(index) {
-    let pageIndex = this.props.selectedPageIndex,
-        pages = this.state.pages,
-        actions = [ ...pages[pageIndex].tArray[0] ],
+    let pageIndex = this.getSelectedPageIndex(),
+        actions = [ ...this.props.pages[pageIndex].tArray[0] ],
         jsons = [];
     actions = actions.splice(0, 1 + index).reverse();
     for(let i = 0; i < actions.length; i ++) {
@@ -253,10 +202,9 @@ export default class extends React.Component {
   }
 
   timelineItem(actions) {
-    let actionIndexs = this.state.selectedActionIndexs[this.props.selectedPageIndex] || [];
     return actions.map((v, i) => {
       return (
-        <TimelineItem key={ i } dot={ <Checkbox onChange={ this.selectedAction.bind(this, v, i) } checked={ actionIndexs.includes(i) } /> }>
+        <TimelineItem key={ i } dot={ <Checkbox onChange={ this.checkedActions.bind(this, i) } checked={ v.checked } /> }>
           <div className="time"><Icon type="clock-circle-o" /> { moment(v.inDate).format("YYYY-MM-DD HH:mm:ss") }</div>
           <div className="action">
             <span className="address" title={ `xPath: ${ v.xPath }` }><Icon type="environment-o" /> { v.xPath }</span>
@@ -287,25 +235,12 @@ export default class extends React.Component {
 
   /**
    * 选择动作
-   * @param  {Object} action 动作数据（暂时无用）
    * @param  {Int} index  动作所在的索引
+   * @param  {[type]} event  [description]
    * @return {[type]}        [description]
    */
-  selectedAction(action, index) {
-    let selectedPageIndex = this.props.selectedPageIndex,
-        selectedActionIndexs = this.state.selectedActionIndexs,
-        actions = selectedActionIndexs[ selectedPageIndex ] || [];
-    if(actions.includes(index)) {
-      actions.splice(actions.indexOf(index), 1);
-    } else {
-      actions = [ ...actions, index ]
-    }
-    if(isEmpty(actions)) {
-      delete selectedActionIndexs[ selectedPageIndex ];
-    } else {
-      selectedActionIndexs[ selectedPageIndex ] = actions;
-    }
-    this.props.changeSelectedActions({ ...selectedActionIndexs });
+  checkedActions(index, event) {
+    this.props.checkedActions(this.props.pages, index, event.target.checked);
   }
 
   /**
@@ -313,26 +248,50 @@ export default class extends React.Component {
    * @return {Array} 转换好的动作数据
    */
   convertSelectedActions() {
-    let pages = this.state.pages,
-        selectedActionIndexs = this.state.selectedActionIndexs,
+    let pages = this.props.pages,
         actions = [];
-    Object.keys(selectedActionIndexs).map(k => {
-      let page = pages[k],
-          tArray = [];
-      selectedActionIndexs[k].map(v => tArray.push(page.tArray[0][v]));
-      actions.push({ ...page, tArray });
+    pages.map(v => {
+      if(v.indeterminate || v.checked) {
+        let tArray = [];
+        v.tArray[0].map(v => tArray.push(v));
+        actions.push({ ...v, tArray });
+      }
+    });
+    return actions;
+  }
+
+  getSelectedPageIndex() {
+    let index;
+    (this.props.pages || []).map((v, i) => {
+      if(v.selected) {
+        index = i;
+      }
+    });
+    return index;
+  }
+
+  getSelectedActions(pages) {
+    let actions = [];
+    pages.map(v => {
+      if(v.checked || v.indeterminate) {
+        v.tArray[0].map(v => {
+          if(v.checked) {
+            actions.push(v);
+          }
+        });
+      }
     });
     return actions;
   }
 
   render() {
-    let pages = this.state.pages,
-        index = this.props.selectedPageIndex,
-        page = pages[index] || {},
-        actions = page.tArray ? page.tArray[0] : {};
+    let pages = this.props.pages || [],
+        page = pages[this.getSelectedPageIndex()] || {},
+        actions = page.tArray ? page.tArray[0] : {},
+        selectedActions = this.getSelectedActions(pages);
     return (
       <div>
-        <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(this.state.selectedActionIndexs) ? null : <span><Play callback={ this.playIt.bind(this) } /><Tooltip title="创建模板"><a onClick={ this.showCreatesModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip></span> }<Tooltip title="预期"><a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /></a></Tooltip><Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deletePage.bind(this) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> } className="panel timeline">
+        <Card title={ page.url || "动作" } extra={ isEmpty(page) ? null : <span>{ isEmpty(selectedActions) ? null : <span><Play callback={ this.playIt.bind(this) } /><Tooltip title="创建模板"><a onClick={ this.showCreatesModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip></span> }<Tooltip title="预期"><a onClick={ this.showEditInSitu.bind(this, undefined) }><Icon type="exclamation-circle-o" /></a></Tooltip><Popconfirm title="您确定要删除此记录？" placement="bottom" onConfirm={ this.deletePage.bind(this) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> } className="panel timeline">
           {
             page.expectEditing ? <EditInSitu value={ page.expect } onEnter={ this.editOnEnter.bind(this, undefined) } onCancel={ this.editOnCancel.bind(this, undefined) } /> : page.expect ? (
               <div className="group-result clearfix">
@@ -352,9 +311,8 @@ export default class extends React.Component {
           }
           </Timeline>
         </Card>
-        <CreatesModal selectedActionIndexs={ this.state.selectedActionIndexs } visible={ this.state.createsModalVisible } onSubmit={ this.createsModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
+        <CreatesModal selectedActions={ selectedActions } visible={ this.state.createsModalVisible } onSubmit={ this.createsModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
         <ViewjsonModal jsons={ this.state.jsons } visible={ this.state.viewjsonModalVisible } onClose={ this.closeViewjsonModal.bind(this) } />
-        <ResultModal result={ this.state.result } visible={ this.state.resultModalVisible } onClose={ this.closeResultModal.bind(this) } />
       </div>
     )
   }

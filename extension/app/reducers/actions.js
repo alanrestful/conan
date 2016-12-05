@@ -5,11 +5,6 @@ export default (state = {}, action) => {
         ...state,
         pages: action.result
       }
-    case "SET_ACTIVED_PAGE_INDEX":
-      return {
-        ...state,
-        selectedPageIndex: action.result
-      }
     case "DELETE_PAGE_BY_INDEX":
       return {
         ...state,
@@ -19,11 +14,6 @@ export default (state = {}, action) => {
       return {
         ...state,
         pages: action.result
-      }
-    case "CHANGE_SELECTED_ACTIONS":
-      return {
-        ...state,
-        selectedActionIndexs: action.result
       }
     default:
       return state;

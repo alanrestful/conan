@@ -14,16 +14,12 @@
         /***/
         .ant-checkbox-checked {
           .ant-checkbox-inner {
-            background-color: $color-success;
-            border-color: $color-success;
+            // background-color: $color-success;
+            // border-color: $color-success;
           }
         }
         .ant-checkbox-inner {
           border-radius: 50%;
-          border-color: $color-secondary;
-        }
-        input {
-          cursor: default;
         }
         /***/
       }
@@ -37,21 +33,6 @@
         }
         .ant-checkbox-wrapper {
           float: right;
-          /***/
-          .ant-checkbox-checked {
-            .ant-checkbox-inner {
-              background-color: $color-success;
-              border-color: $color-success;
-            }
-          }
-          .ant-checkbox-inner {
-            border-radius: 50%;
-            border-color: $color-secondary;
-          }
-          input {
-            cursor: default;
-          }
-          /***/
         }
         p {
           margin-left: 5px;

@@ -49,15 +49,13 @@ export default class extends React.Component {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 }
     };
-    let selectedActionIndexs = this.props.selectedActionIndexs || {},
-        actionLength = 0;
-    Object.keys(selectedActionIndexs).map(k => selectedActionIndexs[k].map(v => actionLength ++));
+    let selectedActions = this.props.selectedActions || [];
     let getFieldDecorator = this.props.form.getFieldDecorator;
     return (
       <Modal title="创建模板" visible={ this.state.visible } onOk={ this.handleOk.bind(this) } confirmLoading={ this.state.confirmLoading } onCancel={ this.handleCancel.bind(this) }>
         <Form horizontal>
           <FormItem labelCol={{ span: 0 }} wrapperCol={{ span: 14, offset: 6 }} help=" ">
-            <Alert message={ `当前有${ actionLength }个选项被选中！` } type="info" showIcon />
+            <Alert message={ `当前有${ selectedActions.length }个选项被选中！` } type="info" showIcon />
           </FormItem>
           <FormItem { ...formItemLayout } label="模板组">
             { getFieldDecorator("tempGroup", {

@@ -1,6 +1,6 @@
 {
   "name": "Conan",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Parana Conan",
   "main": "app.js",
   "repository": {

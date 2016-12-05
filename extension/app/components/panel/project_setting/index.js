@@ -51,7 +51,7 @@ export default class extends React.Component {
   }
 
   getRandomColor() {
-    return ["", "red", "yellow", "blue", "green"][Math.round(Math.random() * 4)];
+    return ["", "#f50", "#87d068", "#2db7f5"][Math.round(Math.random() * 3)];
   }
 
   render() {

@@ -5,7 +5,7 @@ import pureRender from "pure-render-decorator";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Card, Form, Input, Select, Button, message } from "antd";
-
+import { saveClientConfig } from "scripts/util";
 const FormItem = Form.Item,
       Option = Select.Option;
 
@@ -54,6 +54,7 @@ export default class extends React.Component {
         return false;
       }
       localStorage.setItem("config", JSON.stringify(values));
+      saveClientConfig(values);
       message.success("保存成功！")
     });
   }
@@ -138,6 +139,17 @@ export default class extends React.Component {
                   rules: [ { required: true, whitespace: true, message: "请输入WebDriver地址！" } ]
                 })(
                   <Input placeholder="WebDriver地址" />
+                )
+              }
+            </FormItem>
+            <FormItem wrapperCol={{ span: 16, offset: 6 }}>
+              其他配置
+            </FormItem>
+            <FormItem { ...formItemLayout } label="白名单" help="如若不配置白名单，则监听全部地址。">
+              { getFieldDecorator("whiteLists", {
+                  initialValue: config.whiteLists
+                })(
+                  <Input type="textarea" rows={4} />
                 )
               }
             </FormItem>

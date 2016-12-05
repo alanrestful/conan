@@ -14,18 +14,14 @@ import Play from "common/play";
 import CreateCaseModal from "./modals/create_case";
 import ViewjsonModal from "../modals/viewjson";
 import { playback } from "actions/actions";
-import { checkedCase, deleteCase, createCase, editCase, editCaseExpect, exportCase } from "actions/groups";
+import { deleteCase, createCase, editCase, editCaseExpect, exportCase, checkedCases, selectedCase, commonCaseExpect } from "actions/groups";
 import { isEmpty } from "scripts/helpers";
 
 @connect(state => ({
-  models: state.groups.models,
-  cases: state.groups.cases,
-  selectedGroup: state.groups.selectedGroup,
-  selectedModel: state.groups.selectedModel,
-  checkedIds: state.groups.checkedIds,
+  groups: state.groups.groups,
   playSetting: state.groups.playSetting,
   project: state.projects.project
-}), dispatch => bindActionCreators({ playback, checkedCase, deleteCase, createCase, editCase, editCaseExpect, exportCase }, dispatch))
+}), dispatch => bindActionCreators({ playback, deleteCase, createCase, editCase, editCaseExpect, exportCase, checkedCases, selectedCase, commonCaseExpect }, dispatch))
 @pureRender
 export default class extends React.Component {
 
@@ -33,11 +29,9 @@ export default class extends React.Component {
     super(props);
     this.state = {
       jsons: "",
-      checkedCases: [],
-      selectedCase: {},
       createCaseModalVisible: false,
-      viewjsonModalVisible: false,
-
+      isEditCaseModelVisible: false,
+      viewjsonModalVisible: false
     }
   }
 
@@ -63,7 +57,7 @@ export default class extends React.Component {
       expect: value,
       expectEditing: false
     });
-    this.props.editCaseExpect(this.state.selectedCase, hash, value, this.props.cases);
+    this.props.editCaseExpect(this.props.groups, hash, value, this.getSelectedCase());
   }
 
   /**
@@ -87,7 +81,7 @@ export default class extends React.Component {
       expect: undefined,
       expectEditing: false
     });
-    this.props.editCaseExpect(this.state.selectedCase, hash, "", this.props.cases);
+    this.props.editCaseExpect(this.props.groups, hash, "", this.getSelectedCase());
   }
 
   /**
@@ -97,8 +91,8 @@ export default class extends React.Component {
    * @return {[type]}        [description]
    */
   expectCommon(hash, expect) {
-    let selectedCase = this.state.selectedCase,
-        fragment = JSON.parse(selectedCase.fragment);
+    let models = this.getCases(),
+        fragment = JSON.parse(models.model.fragment);
     fragment = fragment.map(v => {
       if(v.hash == hash) {
         v = { ...v, ...expect };
@@ -113,11 +107,14 @@ export default class extends React.Component {
       }
       return v;
     });
-    this.setState({
-      selectedCase: { ...selectedCase, fragment: JSON.stringify(fragment) }
-    });
+    this.props.commonCaseExpect(this.props.groups, models.model._id, JSON.stringify(fragment));
   }
 
+  /**
+   * 回放
+   * @param  {Object} playSetting 回放设置
+   * @return {[type]}             [description]
+   */
   playIt(playSetting) {
     this.serializePlay(undefined, playSetting);
   }
@@ -126,9 +123,10 @@ export default class extends React.Component {
    * 显示创建用例对话框
    * @return {[type]} [description]
    */
-  showCreateCaseModal() {
+  showCreateCaseModal(isEdit) {
     this.setState({
-      createCaseModalVisible: true
+      createCaseModalVisible: true,
+      isEditCaseModelVisible: isEdit
     });
   }
 
@@ -138,7 +136,8 @@ export default class extends React.Component {
    */
   closeCreatesModal() {
     this.setState({
-      createCaseModalVisible: false
+      createCaseModalVisible: false,
+      isEditCaseModelVisible: false
     });
   }
 
@@ -149,8 +148,13 @@ export default class extends React.Component {
    * @return {[type]}      [description]
    */
   createCaseModalSubmit(data, tag) {
-    this.props.createCase({ ...data, pid: this.props.project.id }, this.props.cases);
-    tag && this.serializePlay(this.serializeModel(JSON.parse(this.props.selectedModel.fragment), data));
+    let models = this.getCases();
+    if(!this.state.isEditCaseModelVisible) {
+      this.props.createCase(this.props.groups, { ...data, pid: this.props.project.id });
+    } else {
+      this.props.editCase(this.props.groups, { ...data, pid: this.props.project.id });
+    }
+    tag && this.serializePlay(this.serializeModel(JSON.parse(models.model.fragment), data));
     message.success("用例创建成功！");
   }
 
@@ -173,7 +177,7 @@ export default class extends React.Component {
       });
       actions = { ...actions, tArray: [ actions.tArray ]};
     } else {
-      actions = [ ...this.state.checkedCases ];
+      actions = this.getCheckedCases(this.props.groups);
       actions = actions.length == 1 ? actions[0] : actions;
     }
     let { drivers, background } = playSetting || this.props.playSetting || {};
@@ -185,8 +189,52 @@ export default class extends React.Component {
     this.props.playback(actions, actions instanceof Array ? drivers[0] : drivers , background);
     notification.success({
       message: "提示",
-      description: "所选用例已经开始尝试执行，请耐心等待执行结果！"
+      description: "所选用例已经开始尝试执行，请稍后去 结果 页面查看执行结果！"
     });
+  }
+
+  /**
+   * 获取用例数据
+   * @return {Object} 用例对象
+   */
+  getCases() {
+    let groups = this.props.groups || [],
+        model = {},
+        cases = [];
+    groups.map(v => {
+      if(v.current.selected) {
+        v.children.map(v => {
+          if(v.current.selected) {
+            model = v.current;
+            cases = v.children;
+          }
+        })
+      }
+    });
+    return { model, cases };
+  }
+
+  /**
+   * 获取选中的用例
+   * @param  {Array}  children 模板组列表
+   * @return {Array}          所选中的用例列表
+   */
+  getCheckedCases(children = []) {
+    let cases = [];
+    children.map(v => {
+      if(v.current.indeterminate || v.current.checked) {
+        v.children.map(v => {
+          if(v.current.indeterminate || v.current.checked) {
+            v.children.map(v => {
+              if(v.selected) {
+                cases.push(v);
+              }
+            });
+          }
+        });
+      }
+    });
+    return cases;
   }
 
   /**
@@ -195,10 +243,7 @@ export default class extends React.Component {
    * @return {[type]}       [description]
    */
   deleteCase(c) {
-    this.props.deleteCase(c, this.props.cases);
-    this.setState({
-      selectedCase: {}
-    });
+    this.props.deleteCase(this.props.groups, this.getSelectedCase());
     message.success("用例删除成功！");
   }
 
@@ -207,63 +252,8 @@ export default class extends React.Component {
    * @param  {Object} c 用例数据
    * @return {[type]}       [description]
    */
-  checkedCase(c) {
-    let checkedCases = this.state.checkedCases,
-        checkedIds = this.props.checkedIds || {},
-        groupId = this.props.selectedGroup._id,
-        model = this.props.selectedModel,
-        modelId = model._id,
-        current = checkedIds[groupId];
-    let _c = { ...c, ...this.serializeModel(JSON.parse(model.fragment), JSON.parse(c.data))[0] };
-    if(current) {
-      if(current[modelId]) {
-        current = current[modelId];
-        if(current.includes(c._id)) {
-          current.splice(current.indexOf(c._id), 1);
-          checkedCases.map((v, i) => {
-            if(v._id == c._id) {
-              checkedCases.splice(i, 1);
-            }
-          })
-        } else {
-          current.push(c._id);
-          checkedCases.push(_c);
-        }
-      } else {
-        current[modelId] = [c._id];
-        checkedCases.push(_c);
-      }
-    } else {
-      checkedIds[groupId] = {};
-      checkedIds[groupId][modelId] = [c._id];
-      checkedCases.push(_c);
-    }
-    this.setState({
-      checkedCases
-    });
-    this.props.checkedCase({ ...this.eliminateIds(checkedIds) });
-  }
-
-  /**
-   * 清除空的id
-   * @param  {Array} ids [description]
-   * @return {[type]}     [description]
-   */
-  eliminateIds(ids) {
-    Object.keys(ids).map(k => {
-      if(isEmpty(ids[k])) {
-        delete ids[k];
-      } else {
-        if(ids[k] instanceof Array) {
-          if(isEmpty(ids[k])) {
-            delete ids[k];
-          }
-        } else {
-          ids[k] = this.eliminateIds(ids[k]);
-        }
-      }
-    });
-    return ids;
+  checkedCase(c, event) {
+    this.props.checkedCases(this.props.groups, c._id, event.target.checked);
   }
 
   /**
@@ -272,10 +262,7 @@ export default class extends React.Component {
    * @return {[type]}      [description]
    */
   selectedCase(info) {
-    let model = this.props.selectedModel;
-    this.setState({
-      selectedCase: { ...info, fragment: JSON.stringify(this.serializeModel(JSON.parse(model.fragment), JSON.parse(info.data))) }
-    });
+    this.props.selectedCase(this.props.groups, info._id);
   }
 
   /**
@@ -298,10 +285,20 @@ export default class extends React.Component {
     });
   }
 
+  /**
+   * 导出用例
+   * @return {[type]} [description]
+   */
   exportCase() {
-    this.props.exportCase(this.props.selectedModel);
+    this.props.exportCase(this.getCases().model);
   }
 
+  /**
+   * 查看JSON
+   * @param  {Int} index [description]
+   * @param  {Object} jsons [description]
+   * @return {[type]}       [description]
+   */
   viewJson(index, jsons) {
     if(index) {
       let actions = [ ...jsons ];
@@ -323,35 +320,68 @@ export default class extends React.Component {
     });
   }
 
+  /**
+   * 关闭查看JSON对话框
+   * @return {[type]} [description]
+   */
   closeViewjsonModal() {
     this.setState({
       viewjsonModalVisible: false
     })
   }
 
+  /**
+   * 搜索
+   * @param  {Stringify} value 搜索的值
+   * @return {[type]}       [description]
+   */
+  onSearch(value) {
+    console.log("SEARCH:", value);
+  }
+
+  /**
+   * 获取选中的用例
+   * @return {Object} 所选中的用例对象
+   */
+  getSelectedCase() {
+    let groups = this.props.groups || [],
+        selectedCase = {};
+    groups.map(v => {
+      if(v.current.selected) {
+        v.children.map(v => {
+          if(v.current.selected) {
+            v.children.map(v => {
+              if(v.selected) {
+                selectedCase = v;
+              }
+            });
+          }
+        });
+      }
+    });
+    return selectedCase;
+  }
+
   render() {
-    let cases = this.props.cases || [],
-        selectedCase = this.state.selectedCase,
-        checkedCases = this.state.checkedCases,
-        model = this.props.selectedModel || {},
-        fragment = isEmpty(selectedCase) ? [] : JSON.parse(selectedCase.fragment),
-        checkedIds = this.props.checkedIds || {},
-        groupId = this.props.selectedGroup ? this.props.selectedGroup._id : "",
-        checkedCurrent = checkedIds[groupId] ? checkedIds[groupId][model._id] || [] : [];
+    let models = this.getCases(),
+        cases = models.cases,
+        selectedCases = this.getSelectedCase(),
+        model = models.model,
+        fragment = isEmpty(model) || isEmpty(selectedCases) ? [] : this.serializeModel(JSON.parse(model.fragment), JSON.parse(selectedCases.data));
     return (
       <div>
-        <Card title={ `${ model.name || "用例" } ${ isEmpty(cases) ? "" : `${ cases.length }个用例` }` } extra={ <span>{ isEmpty(checkedCases) ? null : <Play callback={ this.playIt.bind(this) } /> }{ isEmpty(model) ? null : <Tooltip title="创建用例"><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip> }{ isEmpty(selectedCase) ? null : <span><Tooltip title="编辑"><a onClick={ this.showCreateCaseModal.bind(this) }><Icon type="edit" /></a></Tooltip><Popconfirm title="此操作将不可恢复，您确定要删除此用例？" placement="bottom" onConfirm={ this.deleteCase.bind(this, selectedCase) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> }</span> } className="panel">
+        <Card title={ `${ model.name || "用例" } ${ isEmpty(cases) ? "" : `${ cases.length }个用例` }` } extra={ <span>{ isEmpty(this.getCheckedCases(this.props.groups)) ? null : <Play callback={ this.playIt.bind(this) } /> }{ isEmpty(model) ? null : <Tooltip title="创建用例"><a onClick={ this.showCreateCaseModal.bind(this, false) }><Icon type="plus-circle-o" /></a></Tooltip> }{ isEmpty(selectedCases) ? null : <span><Tooltip title="编辑"><a onClick={ this.showCreateCaseModal.bind(this, true) }><Icon type="edit" /></a></Tooltip><Popconfirm title="此操作将不可恢复，您确定要删除此用例？" placement="bottom" onConfirm={ this.deleteCase.bind(this, selectedCases) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> }</span> } className="panel">
           {
             isEmpty(cases) ? <Spin done text="您还没有选择模板，或者所选模板暂无数据~" /> : (
               <Row className="group-detail">
                 <Col span={10} className="group-list-wrapper">
-                  <div className="group-search"><Search /></div>
+                  <div className="group-search"><Search onSearch={ this.onSearch.bind(this) } /></div>
                   <ul className="group-list">
                   {
                     cases.map((v, i) => {
                       return (
-                        <li key={ i } className={ selectedCase._id == v._id ? "actived" : "" }>
-                          <Checkbox onChange={ this.checkedCase.bind(this, v) } checked={ checkedCurrent.includes(v._id) } />
+                        <li key={ i } className={ v.selected ? "actived" : "" }>
+                          <Checkbox onChange={ this.checkedCase.bind(this, v) } checked={ v.checked } indeterminate={ v.indeterminate }/>
                           <p className="link" onClick={ this.selectedCase.bind(this, v) }>{ v.name }</p>
                           <p className="time" onClick={ this.selectedCase.bind(this, v) }><Icon type="clock-circle-o" /> { moment(v.updated_at).format("YYYY-MM-DD HH:mm:ss") } &nbsp;&nbsp;&nbsp;&nbsp;<Icon type="user" /> JSANN</p>
                         </li>
@@ -361,11 +391,11 @@ export default class extends React.Component {
                   </ul>
                 </Col>
                 {
-                  isEmpty(selectedCase) ? <Spin done text="您还没有选择用例，或者所选用例暂无数据~" /> : (
+                  isEmpty(selectedCases) ? <Spin done text="您还没有选择用例，或者所选用例暂无数据~" /> : (
                     <Col span={ 14 } className="group-item">
                       <div className="group-item-title clearfix">
-                        <h4>{ selectedCase.name }</h4>
-                        <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, undefined, selectedCase) }>JSON</Button>
+                        <h4>{ selectedCases.name }</h4>
+                        <Button size="small" type="ghost" onClick={ this.viewJson.bind(this, undefined, selectedCases) }>JSON</Button>
                         <Button size="small" onClick={ this.exportCase.bind(this) }>导出</Button>
                       </div>
                       {
@@ -443,7 +473,7 @@ export default class extends React.Component {
           )
         }
         </Card>
-        <CreateCaseModal visible={ this.state.createCaseModalVisible } cases={ selectedCase } model={ model } onSubmit={ this.createCaseModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
+        <CreateCaseModal visible={ this.state.createCaseModalVisible } cases={ selectedCases } model={ model } onSubmit={ this.createCaseModalSubmit.bind(this) } onClose={ this.closeCreatesModal.bind(this) } />
         <ViewjsonModal jsons={ this.state.jsons } visible={ this.state.viewjsonModalVisible } onClose={ this.closeViewjsonModal.bind(this) } />
       </div>
     )

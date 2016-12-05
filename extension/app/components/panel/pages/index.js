@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 import { Card, Icon, Popconfirm, Checkbox, Tooltip, message } from "antd";
 
 import Spin from "common/spin";
-import { getActionData, clearAllPages, pageActived } from "actions/actions";
+import { getActionData, clearAllPages, checkedPages, selectedPages } from "actions/actions";
 import { isEmpty } from "scripts/helpers";
 
 @connect(state => {
@@ -36,7 +36,7 @@ import { isEmpty } from "scripts/helpers";
     pages: [ ...pages ],
     selectedActionIndexs: state.actions.selectedActionIndexs
   }
-}, dispatch => bindActionCreators({ getActionData, clearAllPages, pageActived }, dispatch))
+}, dispatch => bindActionCreators({ getActionData, clearAllPages, checkedPages, selectedPages }, dispatch))
 @pureRender
 export default class extends React.Component {
 
@@ -49,22 +49,17 @@ export default class extends React.Component {
     this.props.getActionData();
   }
 
-  changeSelectedActions(event) {
-    event.stopPropagation();
-  }
-
   pageItem(pages) {
-    let selectedActionIndexs = this.props.selectedActionIndexs || {};
     return (
       <ul className="pages">
       {
         pages.map((v, i) => {
           if(v) {
             return (
-              <li key={ i } onClick={ this.pageActived.bind(this, i) } className={ this.state.actived == i ? "actived" : null }>
-                <p className="link" title={ v.url }>{ v.url }</p>
-                <p className="time"><Icon type="clock-circle-o" /> { moment().format("YYYY-MM-DD HH:mm:ss") }</p>
-                <Checkbox className="checkbox" onChange={ this.changeSelectedActions.bind(this) } checked={ !!selectedActionIndexs[i] } />
+              <li key={ i } className={ v.selected ? "actived" : null }>
+                <p className="link" title={ v.url } onClick={ this.selectedPages.bind(this, i) }>{ v.url }</p>
+                <p className="time" onClick={ this.selectedPages.bind(this, i) }><Icon type="clock-circle-o" /> { moment().format("YYYY-MM-DD HH:mm:ss") }</p>
+                <Checkbox className="checkbox" onChange={ this.checkedPages.bind(this, i) } checked={ v.checked } indeterminate={ v.indeterminate } />
               </li>
             )
           }
@@ -79,11 +74,12 @@ export default class extends React.Component {
    * @param  {Int} index 页面的索引
    * @return {[type]}       [description]
    */
-  pageActived(index) {
-    this.setState({
-      actived: index
-    });
-    this.props.pageActived(index);
+  checkedPages(index, event) {
+    this.props.checkedPages(this.props.pages, index, event.target.checked);
+  }
+
+  selectedPages(index) {
+    this.props.selectedPages(this.props.pages, index);
   }
 
   /**

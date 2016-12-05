@@ -9,6 +9,9 @@
     margin-bottom: -1000px;
     .group-search {
       padding: 24px;
+      .ant-search-input-wrapper {
+        width: 100%;
+      }
     }
   }
   .group-item {

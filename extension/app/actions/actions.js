@@ -46,6 +46,8 @@ export const getActionData = () => {
   }
 };
 
+export const setPages = pages => actionCreator("SUCCESS_LOAD_PAGES", { result: [ ...pages ]});
+
 /**
  * 删除指定页面
  * @param  {Int}   index    页面索引
@@ -78,13 +80,6 @@ export const clearAllPages = callback => {
 };
 
 /**
- * 选择页面
- * @param  {Int} index 索引
- * @return {[type]}       [description]
- */
-export const pageActived = index => actionCreator("SET_ACTIVED_PAGE_INDEX", { result: index });
-
-/**
  * 回放
  * @param  {Object} data    回放数据
  * @return {[type]}         [description]
@@ -100,7 +95,7 @@ export const playback  = (data, drivers, background) => {
       clientPlay({
         method: "play",
         data
-      }, drivers)
+      }, drivers);
     }
   }
 };
@@ -121,12 +116,62 @@ export const createGroups = data => {
   }
 };
 
-/**
- * 更改所选的动作
- * @param  {Object} data    所选的动作数据
- * @return {[type]}         [description]
- */
-export const changeSelectedActions = data => actionCreator("CHANGE_SELECTED_ACTIONS", { result: data });
+export const checkedPages = (pages, index, checked) => {
+  return dispatch => {
+    pages.map((v, i) => {
+      if(i == index) {
+        v.checked = checked;
+        v.indeterminate = false;
+        v.tArray[0].map(v => {
+          v.checked = checked;
+        });
+      }
+    });
+    dispatch(actionCreator("SUCCESS_LOAD_PAGES", { result: [ ...pages ]}));
+  }
+}
+
+export const checkedActions = (pages, index, checked) => {
+  return dispatch => {
+    pages.map(v => {
+      if(v.selected) {
+        let length = 0;
+        v.tArray[0].map((v, i) => {
+          if(i == index) {
+            v.checked = checked;
+          }
+          if(v.checked) {
+            length += 1;
+          }
+        });
+        if(length == v.tArray[0].length) {
+          v.checked = true;
+          v.indeterminate = false;
+        } else if(!length) {
+          v.checked = false;
+          v.indeterminate = false;
+        } else {
+          v.checked = false;
+          v.indeterminate = true;
+        }
+      }
+    });
+    dispatch(actionCreator("SUCCESS_LOAD_PAGES", { result: [ ...pages ]}));
+  }
+}
+
+export const selectedPages = (pages, index) => {
+  return dispatch => {
+    pages.map((v, i) => {
+      if(i == index) {
+        v.selected = true;
+      } else {
+        v.selected = false;
+      }
+    });
+    dispatch(actionCreator("SUCCESS_LOAD_PAGES", { result: [ ...pages ]}));
+  }
+}
 
 export const editExpect = (pageIndex, tIndex, actionIndex, value) => {
   return dispatch => {
