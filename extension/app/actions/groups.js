@@ -112,15 +112,24 @@ export const createModel = (groups, model) => {
       headers: json,
       body: JSON.stringify(model)
     }).then(result => {
+      let { group, model, data } = result.result,
+          status = false;
+      model = {
+        current: model,
+        children: [ data ]
+      }
       groups.map(v => {
-        if(v.current.selected) {
-          v.children.map(v => {
-            if(v.current.selected) {
-              v.children.push(result.result);
-            }
-          })
+        if(v.current._id == group._id) {
+          status = true;
+          v.children.push(model);
         }
       });
+      if(!status) {
+        groups.push({
+          current: group,
+          children: [ model ]
+        });
+      }
       dispatch(actionCreator("SUCCESS_LOAD_GROUPS", { result: [ ...groups ]}));
     });
   }
