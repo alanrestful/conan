@@ -245,7 +245,7 @@ export default class extends React.Component {
         selectedGroupIndex = this.getSelectedGroup();
     return (
       <div>
-        <Card title="模板" extra={ isEmpty(model) ? null : <span><Tooltip title="创建模板"><a onClick={ this.showCreateModelModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip><Tooltip title="编辑"><a onClick={ this.showEditModelModal.bind(this) }><Icon type="edit" /></a></Tooltip><Popconfirm title="此操作将不可恢复，您确定要删除此模板？" placement="bottom" onConfirm={ this.deleteModel.bind(this, model) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> } className="panel">
+        <Card title="模板" extra={ <span>{ isEmpty(model) && isEmpty(checkedModels) ? null : <Tooltip title="创建模板"><a onClick={ this.showCreateModelModal.bind(this) }><Icon type="plus-circle-o" /></a></Tooltip> }{ isEmpty(model) ? null : <span><Tooltip title="编辑"><a onClick={ this.showEditModelModal.bind(this) }><Icon type="edit" /></a></Tooltip><Popconfirm title="此操作将不可恢复，您确定要删除此模板？" placement="bottom" onConfirm={ this.deleteModel.bind(this, model) }><Tooltip title="删除"><a><Icon type="cross-circle-o" /></a></Tooltip></Popconfirm></span> }</span> } className="panel">
           <Collapse accordion defaultActiveKey={[ isEmpty(selectedGroupIndex) ?  "" : `${selectedGroupIndex}` ]} onChange={ this.selectedGroup.bind(this)}>
           {
             this.renderGroups()
