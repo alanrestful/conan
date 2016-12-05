@@ -239,7 +239,6 @@ export default class extends React.Component {
   }
 
   render() {
-    console.log(this.props.groups)
     let model = this.getSelectedModel(),
         checkedModels = this.getCheckedModels(),
         fragment = isEmpty(model) ? [] : JSON.parse(model.fragment),

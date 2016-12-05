@@ -105,7 +105,6 @@ export const deleteGroup = (group, groups) => {
  */
 export const createModel = (groups, model) => {
   return dispatch => {
-    console.log(222, groups, model)
     fetchUtil({
       url: `/api/cases`,
       method: "POST",
