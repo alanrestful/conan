@@ -165,8 +165,9 @@ export const saveClientConfig = config => {
       conanConfig.syncTester = config.syncTester;
     }
 
+    //设置白名单
     if(!config.whiteLists){
-      conanConfig.whiteLists = config.whiteLists;
+      conanConfig.whiteLists = config.whiteLists ? [] : config.whiteLists;
     }
 
     chrome.storage.local.set(result);
