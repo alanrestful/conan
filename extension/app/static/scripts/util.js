@@ -167,7 +167,7 @@ export const saveClientConfig = config => {
 
     //设置白名单
     if(!config.whiteLists){
-      conanConfig.whiteLists = config.whiteLists ? [] : config.whiteLists;
+      conanConfig.whiteLists = config.whiteLists ? config.whiteLists : [];
     }
 
     chrome.storage.local.set(result);
