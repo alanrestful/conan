@@ -30,19 +30,14 @@ phatomjs 安装方式： 直接解压后将bin下的phantomjs执行文件放到/
 最后复制该插件的ID。
 ![Alt text](/Users/sherry/terminus/gitbook/Import/conan-readme/assets/extension.png)
 
-
 5.修改conan/com.conan.client.json.example文件名称为com.conan.client.json，打开该文件，用从插件中复制过来的ID，替换该文件中allowed_origins下chrome-extension 后的内容，如图所示：
-
-
 
 6.修改conan/client/config/default.json.example的文件名为default.json，打开该文件，检查各个参数配置是否正确，如下图所示；查看/var/log/conan 这个目录是否存在，若不存在，新建一个：
 
-sudo mkdir -p /var/log/conan
-
+> sudo mkdir -p /var/log/conan
 
 7.在conan目录下，执行如下命令，该动作可能会持续较长时间，因为需要下载很多的依赖；
-
-sudo npm run conan
+> sudo npm run conan
 正常情况下，执行完之后，会在/usr/local/bin/生成对应的conanClient.
 
 至此为止，conan已经安装结束。
