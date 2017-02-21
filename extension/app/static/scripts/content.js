@@ -418,9 +418,11 @@ function ConanForm(){
       var event_obj = $(e.target);
       var form_obj = __pml_form_obj(event_obj);
 
+      $("#conan_form_icon").remove();
+
       // 获取extension资源
       var imagePath = chrome.extension.getURL("assest/images/logo.png");
-      var new_obj = $("<div style='cursor:pointer;background-size:16px 16px;width:16px;height:16px;position:absolute;z-index:1000;background-image:url(\""+imagePath+"\"');'></div>")
+      var new_obj = $("<div id='conan_form_icon' style='cursor:pointer;background-size:16px 16px;width:16px;height:16px;position:absolute;z-index:1000;background-image:url(\""+imagePath+"\"');'></div>")
       
       //获取相对定位及event_obj高度
       var absolute_top = event_obj.height() + Number(event_obj.css('padding-top').replace("px","")) + Number(event_obj.css('padding-bottom').replace("px",""));
@@ -491,7 +493,7 @@ function ConanForm(){
    * 表单数据记录
    */
   function __save_form_obj(event_obj){
-    var obj_val = pml_form_obj(event_obj);
+    var obj_val = __pml_form_obj(event_obj);
 
     //是否是输入元素
     if(!obj_val["isFormEl"]){
