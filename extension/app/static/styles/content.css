@@ -56,10 +56,10 @@
 .tester_contact_form input[type="text"]:required:valid + .form_hint::before {color:#28921f;}
 
 .tester_contact_form ul {
-    width:100%;
-    font-size:14px;
-    font-weight: bold;
-    list-style-type:none;
+  width:100%;
+  font-size:14px;
+  font-weight: bold;
+  list-style-type:none;
   list-style-position:outside;
   word-wrap: break-word;
   margin:0px;
@@ -72,7 +72,7 @@
   word-wrap: break-word;
 }
 .tester_contact_form li:last-child {
-    margin-bottom:10px;
+  margin-bottom:10px;
   border-bottom:1px solid #777;
 }
 .tester_wait_body_view{
@@ -80,4 +80,16 @@
   text-align:center;
   background:yellow;
   position: absolute;
+}
+
+.webui-popover-content li{
+  padding:12px;
+  border-bottom:1px solid #eee;
+  position:relative;
+  word-wrap: break-word;
+  cursor:pointer;
+}
+.webui-popover-content li:last-child {
+  margin-bottom:10px;
+  border-bottom:0px solid #777;
 }

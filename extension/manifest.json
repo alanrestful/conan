@@ -17,9 +17,13 @@
     {
       "matches": ["http://*/*", "https://*/*"],
       "all_frames": true,
-      "css": ["assest/styles/content.css"],
-      "js": ["assest/scripts/jquery.min.js", "assest/scripts/content.js"]
+      "css": ["assest/styles/content.css","assest/styles/jquery.webui-popover.min.css"],
+      "js": ["assest/scripts/jquery.min.js", "assest/scripts/content.js", "assest/scripts/jquery.webui-popover.min.js"]
     }
+  ],
+  // 共享资源
+  "web_accessible_resources":[
+    "assest/images/logo.png"
   ],
   "manifest_version": 2
 }
