@@ -34,7 +34,7 @@ if (cluster.isMaster) {
         try{
             var driver = new engine.DriverEngine(msg.driver, msg.position, msg.size);
 
-            driver.play(msg.data, function(result){
+            driver.play(msg.data, msg.cookies, function(result){
                 result["_id"] = msg.data["_id"];
                 process.send(result);
                 process.exit();
@@ -73,7 +73,7 @@ function messageHandler(msg, push, done) {
                 var driverLoc = windowLocation(msg.webDrivers.length);
                 for(var i in msg.webDrivers){
                     var worker = cluster.fork();
-                    worker.send({"data": msg.data, "driver": msg.webDrivers[i], "position": driverLoc[i].position, "size": driverLoc[i].size});
+                    worker.send({"data": msg.data, "cookies": msg.cookies, "driver": msg.webDrivers[i], "position": driverLoc[i].position, "size": driverLoc[i].size});
 
                     // 作为master的输出端到master
                     var output = new nativeMessage.Output();
@@ -94,7 +94,7 @@ function messageHandler(msg, push, done) {
                     //后台跑测试用例
                     for(var i in msg.data){
                         var worker = cluster.fork();
-                        worker.send({"data": msg.data[i], "driver": msg.webDriver});
+                        worker.send({"data": msg.data[i], "cookies": msg.cookies, "driver": msg.webDriver});
 
                         // 作为master的输出端到master
                         var output = new nativeMessage.Output();
@@ -113,7 +113,7 @@ function messageHandler(msg, push, done) {
                     var driverLoc = windowLocation(msg.data.length);
                     for(var i in msg.data){
                         var worker = cluster.fork();
-                        worker.send({"data": msg.data[i], "driver": msg.webDriver, "position": driverLoc[i].position, "size": driverLoc[i].size});
+                        worker.send({"data": msg.data[i], "cookies": msg.cookies, "driver": msg.webDriver, "position": driverLoc[i].position, "size": driverLoc[i].size});
 
                         // 作为master的输出端到master
                         var output = new nativeMessage.Output();

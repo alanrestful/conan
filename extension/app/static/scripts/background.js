@@ -36,32 +36,52 @@ var __tab_id = null;
 //监听chrome发送的message信息
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    console.log(request.method);
-    switch(request.method){
-      case "connectInit":
-        // 连接初始化
-        __tab_id = request.tabId;
-        break;
-      case "clientInit":
-        // 初始化native message
-        __initNative();
-        break;
-      case "clientPlay":
-        // 测试用例回归
-        console.log(request.tDeal);
-        request.tDeal["webDrivers"] = request.webDrivers ? request.webDrivers : ["chrome"];
-        __on_sendToNative(request.tDeal);
-        break;
-      case "clientPlays":
-        // 批量测试用例回归
-        console.log(request.tDeal);
-        request.tDeal["webDriver"] = request.webDriver ? request.webDriver : "phantomjs";
-        __on_sendToNative(request.tDeal);
-        break;
-      default:
-        // 错误请求类型
-        console.log("Undefined request method "+request.method);
-    }
+    chrome.storage.local.get('conan', function(result){
+      //默认系统参数设置
+      console.log(request.method);
+      switch(request.method){
+        case "connectInit":
+          // 连接初始化
+          __tab_id = request.tabId;
+          break;
+        case "clientInit":
+          // 初始化native message
+          __initNative();
+          break;
+        case "clientPlay":
+          // 测试用例回归
+          console.log(request.tDeal);
+          if(result.conan.syncCookie){
+            setCookie(request.tDeal, function(cookies){
+              request.tDeal["webDrivers"] = request.webDrivers ? request.webDrivers : ["chrome"];
+              request.tDeal["cookies"] = cookies;
+              __on_sendToNative(request.tDeal);
+            });
+          } else {
+            request.tDeal["webDrivers"] = request.webDrivers ? request.webDrivers : ["chrome"];
+            __on_sendToNative(request.tDeal);
+          }
+          
+          break;
+        case "clientPlays":
+          // 批量测试用例回归
+          console.log(request.tDeal);
+          if(result.conan.syncCookie){
+            setCookie(request.tDeal, function(cookies){
+              request.tDeal["webDriver"] = request.webDriver ? request.webDriver : "phantomjs";
+              request.tDeal["cookies"] = cookies;
+              __on_sendToNative(request.tDeal);
+            });
+          } else {
+            request.tDeal["webDriver"] = request.webDriver ? request.webDriver : "phantomjs";
+            __on_sendToNative(request.tDeal);
+          }
+          break;
+        default:
+          // 错误请求类型
+          console.log("Undefined request method "+request.method);
+      }
+    });
   }
 );
 
@@ -167,6 +187,11 @@ function init_localStorage() {
         result.conan.syncTester = true;
       }
 
+      //默认同步当前浏览器cookie
+      if(!result.conan.syncCookie){
+        result.conan.syncCookie = true;
+      }
+
       //测试本地数据
       if(!result.conan.tester_arrays){
         result.conan.tester_arrays = [];
@@ -234,6 +259,15 @@ function TesterArray(url , tester_obj){
   this.domain = domainPath[0];
   this.path = domainPath[1];
   this.tArray = new Array(new Array(tester_obj));
+}
+
+/********************* Cookie **********************/
+function setCookie(tDeal , callback){
+  var cookieUrl = tDeal.data instanceof Array ? tDeal.data[0]["domain"] : tDeal.data["domain"];
+
+  chrome.cookies.getAll({url: cookieUrl}, function(cookies){
+    callback(cookies);
+  })
 }
 
 // chrome.webRequest.onBeforeRequest.addListener(function(details) {

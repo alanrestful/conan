@@ -418,38 +418,40 @@ function ConanForm(){
       var event_obj = $(e.target);
       var form_obj = __pml_form_obj(event_obj);
 
-      $("#conan_form_icon").remove();
+      if(form_obj["isFormEl"]){
+        $("#conan_form_icon").remove();
 
-      // 获取extension资源
-      var imagePath = chrome.extension.getURL("assest/images/logo.png");
-      var new_obj = $("<div id='conan_form_icon' style='cursor:pointer;background-size:16px 16px;width:16px;height:16px;position:absolute;z-index:1000;background-image:url(\""+imagePath+"\"');'></div>")
-      
-      //获取相对定位及event_obj高度
-      var absolute_top = event_obj.height() + Number(event_obj.css('padding-top').replace("px","")) + Number(event_obj.css('padding-bottom').replace("px",""));
-      //设置相对定位
-      new_obj.css("top", event_obj.position().top + (absolute_top - new_obj.height())/2);
-      new_obj.css("left", event_obj.position().left + event_obj.width() + Number(event_obj.css('padding-left').replace("px","")) - new_obj.width());
+        // 获取extension资源
+        var imagePath = chrome.extension.getURL("assest/images/logo.png");
+        var new_obj = $("<div id='conan_form_icon' style='cursor:pointer;background-size:16px 16px;width:16px;height:16px;position:absolute;z-index:1000;background-image:url(\""+imagePath+"\"');'></div>")
+        
+        //获取相对定位及event_obj高度
+        var absolute_top = event_obj.height() + Number(event_obj.css('padding-top').replace("px","")) + Number(event_obj.css('padding-bottom').replace("px",""));
+        //设置相对定位
+        new_obj.css("top", event_obj.position().top + (absolute_top - new_obj.height())/2);
+        new_obj.css("left", event_obj.position().left + event_obj.width() + Number(event_obj.css('padding-left').replace("px","")) - new_obj.width());
 
-      event_obj.after(new_obj);
+        event_obj.after(new_obj);
 
-      //数据归集
-      chrome.storage.local.get('conanForm', function(result){
-        var html = '<ul class="list-group"'+' indexXPath="'+form_obj["xPath"]+'">';
-        for(index in result.conanForm.formList){
-          var index_form = result.conanForm.formList[index];
-          if(form_obj["formIndex"] == index_form["formIndex"]){
-            for(f_index in index_form["formArray"]){
-              if(form_obj["xPath"] == index_form["formArray"][f_index]["xPath"]){
-                html+='<li indexDate="'+index_form["formArray"][f_index]["indexDate"]+'" formDataVal='+index_form["formArray"][f_index]["value"]+' class="list-group-item">'
-                    + index_form["formArray"][f_index]["value"]+'</li>'; 
+        //数据归集
+        chrome.storage.local.get('conanForm', function(result){
+          var html = '<ul class="list-group"'+' indexXPath="'+form_obj["xPath"]+'">';
+          for(index in result.conanForm.formList){
+            var index_form = result.conanForm.formList[index];
+            if(form_obj["formIndex"] == index_form["formIndex"]){
+              for(f_index in index_form["formArray"]){
+                if(form_obj["xPath"] == index_form["formArray"][f_index]["xPath"]){
+                  html+='<li indexDate="'+index_form["formArray"][f_index]["indexDate"]+'" formDataVal='+index_form["formArray"][f_index]["value"]+' class="list-group-item">'
+                      + index_form["formArray"][f_index]["value"]+'</li>'; 
+                }
               }
             }
           }
-        }
-        html+='</ul>';
+          html+='</ul>';
 
-        __initPopover(new_obj , html, form_obj);
-      });
+          __initPopover(new_obj , html, form_obj);
+        });
+      }
     });
 
     $("input").blur(function(e){

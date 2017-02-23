@@ -19,10 +19,19 @@ function DriverEngine(browser, position, size){
         this.driver.manage().window().setSize(size[0], size[1]);
     }
 
-    this.play = function(tCase, callback){
+    this.play = function(tCase, cookies, callback){
         /**
          * 解决Node的异步io问题,需要将设置element的等待时间和每次执行处理时的driver的sleep时间相同
          */
+        try{
+            for(index in cookies){
+                logger.info(cookies[index]);
+                this.driver.options().addCookie(cookies[index]);
+            }
+        } catch (e){
+            logger.error(e.stack);
+        }
+
         var dealRes = new DealResult(browser, tCase._id, tCase.name, tCase.url);
         this.driver.get(tCase.url).then(function(value){
             logger.info(value);
